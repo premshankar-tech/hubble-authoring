@@ -628,7 +628,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
 <div class="lg2" id="login">
   <div class="lg2-left">
     <div class="lg2-logo"><img src="https://cetcell.mahacet.org/wp-content/uploads/2025/01/cet_cell-removebg-preview.png-removebg-preview-1.png.webp" alt="MHT-CET logo"></div>
-    <div class="lg2-title">MHT&#8211;CET <br> GyanSetu</br></div>
+    <div class="lg2-title">MHT&#8211;CET<br><b>GyanSetu</b></div>
     <div class="lg2-sub">Content Management System</div>
     <svg class="lg2-illus" viewBox="0 0 360 210" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="14" y="14" width="332" height="168" rx="12" fill="#ffffff" opacity="0.10"/>
@@ -659,7 +659,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
   <div class="lg2-right"><div class="lg2-wrap">
     <div id="step-login">
       <h2 class="lg2-h">Welcome Back &#128075;</h2>
-      <p class="lg2-hsub">Sign in to access your MHT-CET authoring dashboard</p>
+      <p class="lg2-hsub">Sign in to access your MHT-CET CMS</p>
 
       <div id="lg2-chooser">
         <div class="lg2-tabs">
@@ -715,7 +715,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
   <div class="nav-scrim" onclick="closeNav()" aria-hidden="true"></div>
   <aside class="sidebar">
     <div class="side-logo"><span class="logo-tile"><img src="https://cetcell.mahacet.org/wp-content/uploads/2025/01/cet_cell-removebg-preview.png-removebg-preview-1.png.webp" alt="MHT-CET logo"></span>
-      <div><div class="nm">Hubble Authoring</div><div class="tg">Authoring Platform</div></div></div>
+      <div><div class="nm">MHT&#8211;CET GyanSetu</div><div class="tg">Content Management System</div></div></div>
     <div class="role-chip"><div class="lb">Signed in as</div><div class="vl" id="sideRole"><i class="ti ti-user"></i> <span></span></div></div>
     <nav class="nav" id="nav" aria-label="Main navigation" onclick="setTimeout(closeNav,0)"></nav>
     <div class="side-foot"><button class="nav-item" onclick="logout()"><i class="ti ti-logout"></i> Sign out</button></div>
@@ -737,6 +737,17 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
 
 <div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
 <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+<div class="gate-ov" id="gate"></div>
+<style>
+.gate-ov{position:fixed;inset:0;background:rgba(20,18,30,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.gate-ov.show{display:flex}
+.gate-card{background:#fff;border:1px solid var(--line);border-radius:18px;max-width:382px;width:100%;padding:24px;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+.gate-ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:23px;margin-bottom:12px}
+.gate-card h3{margin:0 0 4px;font-size:18px}
+.gate-row{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0}
+.gate-box{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin:12px 0}
+.gate-mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+</style>
 
 <script id="ckeditor-build">/* CKEditor 5 classic build (inlined for offline use) */
 !function(t){const e=t.en=t.en||{};e.dictionary=Object.assign(e.dictionary||{},{"(may require <kbd>Fn</kbd>)":"(may require <kbd>Fn</kbd>)","%0 of %1":"%0 of %1",Accept:"Accept",Accessibility:"Accessibility","Accessibility help":"Accessibility help","Align cell text to the bottom":"Align cell text to the bottom","Align cell text to the center":"Align cell text to the center","Align cell text to the left":"Align cell text to the left","Align cell text to the middle":"Align cell text to the middle","Align cell text to the right":"Align cell text to the right","Align cell text to the top":"Align cell text to the top","Align table to the left":"Align table to the left","Align table to the right":"Align table to the right",Alignment:"Alignment",Aquamarine:"Aquamarine",Background:"Background","Below, you can find a list of keyboard shortcuts that can be used in the editor.":"Below, you can find a list of keyboard shortcuts that can be used in the editor.",Black:"Black","Block quote":"Block quote",Blue:"Blue",Bold:"Bold","Bold text":"Bold text",Border:"Border","Break text":"Break text","Bulleted List":"Bulleted List","Bulleted list styles toolbar":"Bulleted list styles toolbar",Cancel:"Cancel","Cannot access default workspace.":"Cannot access default workspace.","Cannot determine a category for the uploaded file.":"Cannot determine a category for the uploaded file.","Cannot upload file:":"Cannot upload file:","Caption for image: %0":"Caption for image: %0","Caption for the image":"Caption for the image","Cell properties":"Cell properties","Center table":"Center table","Centered image":"Centered image","Change image text alternative":"Change image text alternative","Choose heading":"Choose heading",Circle:"Circle",Clear:"Clear","Click to edit block":"Click to edit block",Close:"Close","Close contextual balloons, dropdowns, and dialogs":"Close contextual balloons, dropdowns, and dialogs",Code:"Code",Color:"Color","Color picker":"Color picker",Column:"Column","Content editing keystrokes":"Content editing keystrokes","Copy selected content":"Copy selected content","Could not insert image at the current position.":"Could not insert image at the current position.","Could not obtain resized image URL.":"Could not obtain resized image URL.","Create link":"Create link",Custom:"Custom","Custom image size":"Custom image size",Dashed:"Dashed",Decimal:"Decimal","Decimal with leading zero":"Decimal with leading zero","Decrease indent":"Decrease indent","Decrease list item indent":"Decrease list item indent","Delete column":"Delete column","Delete row":"Delete row","Dim grey":"Dim grey",Dimensions:"Dimensions",Disc:"Disc",Dotted:"Dotted",Double:"Double",Downloadable:"Downloadable","Drag to move":"Drag to move","Dropdown toolbar":"Dropdown toolbar","Edit block":"Edit block","Edit image":"Edit image","Edit link":"Edit link","Editor block content toolbar":"Editor block content toolbar","Editor contextual toolbar":"Editor contextual toolbar","Editor dialog":"Editor dialog","Editor editing area: %0":"Editor editing area: %0","Editor menu bar":"Editor menu bar","Editor toolbar":"Editor toolbar","Enter image caption":"Enter image caption","Enter table caption":"Enter table caption","Entering a to-do list":"Entering a to-do list","Error during image upload":"Error during image upload","Execute the currently focused button. Executing buttons that interact with the editor content moves the focus back to the content.":"Execute the currently focused button. Executing buttons that interact with the editor content moves the focus back to the content.","Failed to determine category of edited image.":"Failed to determine category of edited image.","Full size image":"Full size image",Green:"Green",Grey:"Grey",Groove:"Groove","Header column":"Header column","Header row":"Header row",Heading:"Heading","Heading 1":"Heading 1","Heading 2":"Heading 2","Heading 3":"Heading 3","Heading 4":"Heading 4","Heading 5":"Heading 5","Heading 6":"Heading 6",Height:"Height","Help Contents. To close this dialog press ESC.":"Help Contents. To close this dialog press ESC.",HEX:"HEX","Horizontal text alignment toolbar":"Horizontal text alignment toolbar","Image from computer":"Image from computer","Image resize list":"Image resize list","Image toolbar":"Image toolbar","Image upload complete":"Image upload complete","image widget":"image widget","In line":"In line","Increase indent":"Increase indent","Increase list item indent":"Increase list item indent",Insert:"Insert","Insert a hard break (a new paragraph)":"Insert a hard break (a new paragraph)","Insert a new paragraph directly after a widget":"Insert a new paragraph directly after a widget","Insert a new paragraph directly before a widget":"Insert a new paragraph directly before a widget","Insert a new table row (when in the last cell of a table)":"Insert a new table row (when in the last cell of a table)","Insert a soft break (a <code>&lt;br&gt;</code> element)":"Insert a soft break (a <code>&lt;br&gt;</code> element)","Insert column left":"Insert column left","Insert column right":"Insert column right","Insert image":"Insert image","Insert image via URL":"Insert image via URL","Insert image with file manager":"Insert image with file manager","Insert media":"Insert media","Insert paragraph after block":"Insert paragraph after block","Insert paragraph before block":"Insert paragraph before block","Insert row above":"Insert row above","Insert row below":"Insert row below","Insert table":"Insert table","Insert with file manager":"Insert with file manager","Inserting image failed":"Inserting image failed",Inset:"Inset","Invalid start index value.":"Invalid start index value.",Italic:"Italic","Italic text":"Italic text","Justify cell text":"Justify cell text","Keystrokes that can be used in a list":"Keystrokes that can be used in a list","Keystrokes that can be used in a table cell":"Keystrokes that can be used in a table cell","Keystrokes that can be used when a widget is selected (for example: image, table, etc.)":"Keystrokes that can be used when a widget is selected (for example: image, table, etc.)","Leaving a to-do list":"Leaving a to-do list","Left aligned image":"Left aligned image","Light blue":"Light blue","Light green":"Light green","Light grey":"Light grey",Link:"Link","Link image":"Link image","Link URL":"Link URL","Link URL must not be empty.":"Link URL must not be empty.","List properties":"List properties","Lower-latin":"Lower-latin","Lower–roman":"Lower–roman","Media toolbar":"Media toolbar","Media URL":"Media URL","media widget":"media widget",MENU_BAR_MENU_EDIT:"Edit",MENU_BAR_MENU_FILE:"File",MENU_BAR_MENU_FONT:"Font",MENU_BAR_MENU_FORMAT:"Format",MENU_BAR_MENU_HELP:"Help",MENU_BAR_MENU_INSERT:"Insert",MENU_BAR_MENU_TEXT:"Text",MENU_BAR_MENU_TOOLS:"Tools",MENU_BAR_MENU_VIEW:"View","Merge cell down":"Merge cell down","Merge cell left":"Merge cell left","Merge cell right":"Merge cell right","Merge cell up":"Merge cell up","Merge cells":"Merge cells","Move focus between form fields (inputs, buttons, etc.)":"Move focus between form fields (inputs, buttons, etc.)","Move focus in and out of an active dialog window":"Move focus in and out of an active dialog window","Move focus to the menu bar, navigate between menu bars":"Move focus to the menu bar, navigate between menu bars","Move focus to the toolbar, navigate between toolbars":"Move focus to the toolbar, navigate between toolbars","Move out of a link":"Move out of a link","Move out of an inline code style":"Move out of an inline code style","Move the caret to allow typing directly after a widget":"Move the caret to allow typing directly after a widget","Move the caret to allow typing directly before a widget":"Move the caret to allow typing directly before a widget","Move the selection to the next cell":"Move the selection to the next cell","Move the selection to the previous cell":"Move the selection to the previous cell","Navigate through the table":"Navigate through the table","Navigate through the toolbar or menu bar":"Navigate through the toolbar or menu bar",Next:"Next","No results found":"No results found","No searchable items":"No searchable items",None:"None","Numbered List":"Numbered List","Numbered list styles toolbar":"Numbered list styles toolbar","Open file manager":"Open file manager","Open in a new tab":"Open in a new tab","Open link in new tab":"Open link in new tab","Open media in new tab":"Open media in new tab","Open the accessibility help dialog":"Open the accessibility help dialog",Orange:"Orange",Original:"Original",Outset:"Outset",Padding:"Padding",Paragraph:"Paragraph","Paste content":"Paste content","Paste content as plain text":"Paste content as plain text","Paste the media URL in the input.":"Paste the media URL in the input.",'Please enter a valid color (e.g. "ff0000").':'Please enter a valid color (e.g. "ff0000").',"Press %0 for help.":"Press %0 for help.","Press Enter to type after or press Shift + Enter to type before the widget":"Press Enter to type after or press Shift + Enter to type before the widget",Previous:"Previous","Processing the edited image.":"Processing the edited image.",Purple:"Purple",Red:"Red",Redo:"Redo","Remove color":"Remove color","Replace from computer":"Replace from computer","Replace image":"Replace image","Replace image from computer":"Replace image from computer","Replace image with file manager":"Replace image with file manager","Replace with file manager":"Replace with file manager","Resize image":"Resize image","Resize image (in %0)":"Resize image (in %0)","Resize image to %0":"Resize image to %0","Resize image to the original size":"Resize image to the original size","Restore default":"Restore default","Reversed order":"Reversed order","Revert autoformatting action":"Revert autoformatting action","Rich Text Editor":"Rich Text Editor",Ridge:"Ridge","Right aligned image":"Right aligned image",Row:"Row",Save:"Save","Select all":"Select all","Select column":"Select column","Select row":"Select row","Selecting resized image failed":"Selecting resized image failed","Server failed to process the image.":"Server failed to process the image.","Show more items":"Show more items","Side image":"Side image",Solid:"Solid","Split cell horizontally":"Split cell horizontally","Split cell vertically":"Split cell vertically",Square:"Square","Start at":"Start at","Start index must be greater than 0.":"Start index must be greater than 0.",Strikethrough:"Strikethrough","Strikethrough text":"Strikethrough text",Style:"Style",Subscript:"Subscript",Superscript:"Superscript",Table:"Table","Table alignment toolbar":"Table alignment toolbar","Table cell text alignment":"Table cell text alignment","Table properties":"Table properties","Table toolbar":"Table toolbar","Text alternative":"Text alternative",'The color is invalid. Try "#FF0000" or "rgb(255,0,0)" or "red".':'The color is invalid. Try "#FF0000" or "rgb(255,0,0)" or "red".',"The URL must not be empty.":"The URL must not be empty.",'The value is invalid. Try "10px" or "2em" or simply "2".':'The value is invalid. Try "10px" or "2em" or simply "2".',"The value must not be empty.":"The value must not be empty.","The value should be a plain number.":"The value should be a plain number.","These keyboard shortcuts allow for quick access to content editing features.":"These keyboard shortcuts allow for quick access to content editing features.","This link has no URL":"This link has no URL","This media URL is not supported.":"This media URL is not supported.","Tip: Paste the URL into the content to embed faster.":"Tip: Paste the URL into the content to embed faster.","To-do List":"To-do List","Toggle caption off":"Toggle caption off","Toggle caption on":"Toggle caption on","Toggle the circle list style":"Toggle the circle list style","Toggle the decimal list style":"Toggle the decimal list style","Toggle the decimal with leading zero list style":"Toggle the decimal with leading zero list style","Toggle the disc list style":"Toggle the disc list style","Toggle the lower–latin list style":"Toggle the lower–latin list style","Toggle the lower–roman list style":"Toggle the lower–roman list style","Toggle the square list style":"Toggle the square list style","Toggle the upper–latin list style":"Toggle the upper–latin list style","Toggle the upper–roman list style":"Toggle the upper–roman list style",Turquoise:"Turquoise","Type or paste your content here.":"Type or paste your content here.","Type your title":"Type your title",Underline:"Underline","Underline text":"Underline text",Undo:"Undo",Unlink:"Unlink",Update:"Update","Update image URL":"Update image URL","Upload failed":"Upload failed","Upload from computer":"Upload from computer","Upload image from computer":"Upload image from computer","Upload in progress":"Upload in progress","Uploading image":"Uploading image","Upper-latin":"Upper-latin","Upper-roman":"Upper-roman","Use the following keystrokes for more efficient navigation in the CKEditor 5 user interface.":"Use the following keystrokes for more efficient navigation in the CKEditor 5 user interface.","User interface and content navigation keystrokes":"User interface and content navigation keystrokes","Vertical text alignment toolbar":"Vertical text alignment toolbar",White:"White","Widget toolbar":"Widget toolbar",Width:"Width","Wrap text":"Wrap text",Yellow:"Yellow"})}(window.CKEDITOR_TRANSLATIONS||(window.CKEDITOR_TRANSLATIONS={})),
@@ -799,7 +810,7 @@ let DB=EMPTY(), state=EMPTY(), SCREEN='dashboard', db=null, lockouts={};
 function uid(p){return p+Math.random().toString(36).slice(2,7);}
 function bytesToB64(u8){let s='';const CH=0x8000;for(let i=0;i<u8.length;i+=CH)s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));return btoa(s);}
 function b64ToBytes(b){const bin=atob(b);const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);return u8;}
-const TABLES=['institutes','projects','banks','questions','team','sets','users','audit'];
+const TABLES=['institutes','projects','banks','questions','team','sets','users','audit','settings'];
 function schema(){TABLES.forEach(t=>db.run('CREATE TABLE IF NOT EXISTS '+t+'(id TEXT PRIMARY KEY, data TEXT)'));}
 function loadAll(){TABLES.forEach(t=>{DB[t]=[];try{const r=db.exec('SELECT data FROM '+t);if(r[0])r[0].values.forEach(v=>{try{DB[t].push(JSON.parse(v[0]));}catch(e){}});}catch(e){}});ensureQMeta();applyDemoIdentities();}
 function persist(){if(!db)return;ensureQMeta();applyDemoIdentities();
@@ -837,6 +848,11 @@ var DEMO_NAMES={'admin@hubble.io':'Hubblehox HO','admin@mhcet.edu':'Shri Dileep 
 function applyDemoIdentities(){(DB.users||[]).forEach(function(u){var n=DEMO_NAMES[(u.email||'').toLowerCase()];if(n)u.name=n;});(DB.team||[]).forEach(function(t){var n=DEMO_NAMES[(t.email||'').toLowerCase()];if(n)t.name=n;});}
 function ensureQMeta(){var mx=0;DB.questions.forEach(function(q){var m=/^Q-(\d+)$/.exec(q.code||'');if(m)mx=Math.max(mx,parseInt(m[1],10));});DB.questions.forEach(function(q){if(!q.code){mx+=1;q.code='Q-'+String(mx).padStart(4,'0');}if(!q.version||q.version<1)q.version=1;if(!Array.isArray(q.history))q.history=[];});}
 function codeBadge(q){return q.code?`<span class="badge" style="background:var(--violet-soft);color:var(--violet-ink)" title="Question ID">${q.code}</span>`:'';}
+function marksScheme(){var s=(DB.settings||[]).find(function(x){return x.id==='marks';});return {easy:(s&&s.easy!=null)?s.easy:1,medium:(s&&s.medium!=null)?s.medium:2,hard:(s&&s.hard!=null)?s.hard:4};}
+function setMarksScheme(e,m,h){DB.settings=DB.settings||[];var s=DB.settings.find(function(x){return x.id==='marks';});if(!s){s={id:'marks'};DB.settings.push(s);}s.easy=e;s.medium=m;s.hard=h;persist();}
+function qMarks(q){if(!q)return 0;if(q.marks!=null&&q.marks!=='')return Number(q.marks)||0;var ms=marksScheme();return Number(ms[q.diff]||0);}
+function marksBadge(q){return '<span class="badge bg-gray" title="Marks"><i class="ti ti-award"></i> '+qMarks(q)+'</span>';}
+function setTotalMarks(s){var t=0;((s&&s.questionIds)||[]).forEach(function(qid){var q=state.questions.find(function(x){return x.id===qid;});if(q)t+=qMarks(q);});return t;}
 function save(){ // merge scoped state writes back into DB (upsert by id), then persist + rescope
   if(!session){persist();return;}
   ['institutes','projects','banks','questions','team','sets'].forEach(k=>{
@@ -896,6 +912,11 @@ function establishSession(u,remember){
   audit('auth.login',{email:u.email});
   openApp(u);
 }
+function gateRequired(role){return role!=='sysadmin'&&role!=='instadmin';}
+function ensureDeviceRec(u){if(!u)return;if(!u.device)u.device={status:'none'};if(typeof u.keyGenerated!=='boolean')u.keyGenerated=false;}
+function uaInfo(){var ua=(typeof navigator!=='undefined'&&navigator.userAgent)||'';var br='Browser';if(/Edg\//.test(ua))br='Edge';else if(/Chrome\//.test(ua))br='Chrome';else if(/Firefox\//.test(ua))br='Firefox';else if(/Safari\//.test(ua))br='Safari';var os='Device';if(/Windows/.test(ua))os='Windows';else if(/Mac OS X|Macintosh/.test(ua))os='macOS';else if(/Android/.test(ua))os='Android';else if(/iPhone|iPad|iOS/.test(ua))os='iOS';else if(/Linux/.test(ua))os='Linux';return{browser:br,os:os};}
+function randFp(n){n=n||5;var b=new Uint8Array(n);try{(window.crypto||{}).getRandomValues&&window.crypto.getRandomValues(b);}catch(e){for(var k=0;k<n;k++)b[k]=Math.floor(Math.random()*256);}var s=[];for(var i=0;i<n;i++)s.push(('0'+b[i].toString(16)).slice(-2).toUpperCase());return s.join(':');}
+async function pubKeyFingerprint(pub){try{var raw=await crypto.subtle.exportKey('spki',pub);var hash=await crypto.subtle.digest('SHA-256',raw);var arr=Array.from(new Uint8Array(hash)).slice(0,8);return arr.map(function(x){return ('0'+x.toString(16)).slice(-2).toUpperCase();}).join(':');}catch(e){return randFp(8);}}
 
 /* =========================================================
    4. PERMISSIONS  (RBAC matrix — enforced on every mutation)
@@ -935,13 +956,13 @@ function audit(action,detail){
 ========================================================= */
 const ROLES={
   sysadmin:{name:'System Admin',icon:'ti-shield-cog',color:'#6C5CE7',desc:'Top-level. Creates client admins.'},
-  itadmin:{name:'IT Admin',icon:'ti-server-cog',color:'#0F9D8C',desc:'Operates a client: courses, subjects, team & review.'},
+  itadmin:{name:'IT Admin',icon:'ti-server-cog',color:'#0F9D8C',desc:'Operates a client: exams, subjects, team & review.'},
   instadmin:{name:'Admin',icon:'ti-eye-check',color:'#2D9CDB',desc:'Views overall project progress (read-only).'},
-  projadmin:{name:'Project Admin',icon:'ti-folder-cog',color:'#00B894',desc:'Manages courses & team for the client.'},
+  projadmin:{name:'Project Admin',icon:'ti-folder-cog',color:'#00B894',desc:'Manages exams & team for the client.'},
   creator:{name:'Content Creator',icon:'ti-pencil-plus',color:'#F5A623',desc:'Authors content (manual / Excel / AI).'},
   reviewer:{name:'Content Verifier',icon:'ti-checkup-list',color:'#FF6B57',desc:'Verifies & approves content across levels.'},
   translator:{name:'Content Translator',icon:'ti-language',color:'#E84393',desc:'Translates subjects side-by-side.'},
-  transverifier:{name:'Translation Verifier',icon:'ti-checks',color:'#16A085',desc:'Verifies translations of subjects / courses.'},
+  transverifier:{name:'Translation Verifier',icon:'ti-checks',color:'#16A085',desc:'Verifies translations of subjects / exams.'},
   publisher:{name:'QP Creator',icon:'ti-stack-2',color:'#8E44AD',desc:'Builds question-paper sets from verified content.'},
   qpverifier:{name:'QP Verifier',icon:'ti-clipboard-check',color:'#2D9CDB',desc:'Verifies built question-paper sets.'},
   qppublisher:{name:'Publisher',icon:'ti-rocket',color:'#00B894',desc:'Final publish of verified question papers.'},
@@ -949,7 +970,7 @@ const ROLES={
 const NAV={
   sysadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['institutes','User Management','ti-users-cog'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   itadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
-  instadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['audit','Audit Log','ti-history']],
+  instadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history']],
   projadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   creator:[['dashboard','My Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
   reviewer:[['dashboard','My Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
@@ -1060,6 +1081,11 @@ function cancelMfa(){mfaUser=null;$('#step-mfa').style.display='none';$('#step-l
 function openApp(u){
   try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(function(){});}catch(e){}
   rescope();
+  if(gateRequired(u.role)){ensureDeviceRec(u);if(u.device.status!=='approved'){return showDeviceGate(u);}if(!u.keyGenerated){return showKeyGate(u);}}
+  enterApp(u);
+}
+function enterApp(u){
+  hideGate();
   const r=ROLES[u.role];
   $('#login').style.display='none';$('#app').classList.add('active');
   $('#step-mfa').style.display='none';$('#step-login').style.display='block';
@@ -1070,12 +1096,52 @@ function openApp(u){
   document.documentElement.style.setProperty('--violet',r.color);
   buildNav();go(NAV[u.role][0][0]);
 }
-function logout(){audit('auth.logout',{});try{localStorage.removeItem('hub_session');}catch(e){}session=null;_unlocked={};
+function logout(){audit('auth.logout',{});try{localStorage.removeItem('hub_session');}catch(e){}session=null;_unlocked={};hideGate();
   $('#app').classList.remove('active');$('#login').style.display='';document.documentElement.style.setProperty('--violet','#6C5CE7');resetLoginUI();}
+function hideGate(){var g=document.getElementById('gate');if(g){g.classList.remove('show');g.innerHTML='';}}
+function showGate(html){var g=document.getElementById('gate');if(!g)return;g.innerHTML='<div class="gate-card">'+html+'</div>';g.classList.add('show');var lg=document.getElementById('login');if(lg)lg.style.display='none';}
+function recheckGate(){var u=currentUser();if(!u)return;ensureDeviceRec(u);if(u.device.status==='approved'&&u.keyGenerated){hideGate();return enterApp(u);}if(u.device.status==='approved'){return showKeyGate(u);}return showDeviceGate(u);}
+function showDeviceGate(u){ensureDeviceRec(u);var d=u.device;var info=uaInfo();
+  if(d.status==='pending'){
+    showGate('<div class="gate-ic" style="background:#fdf0d6;color:#8a5a00"><i class="ti ti-clock-hour-4"></i></div>'
+      +'<h3>Awaiting approval</h3><div class="muted small" style="margin-bottom:10px">Your request has been sent to the Admin. You\'ll get access once this device is approved.</div>'
+      +'<div class="gate-box"><div class="gate-row"><span class="muted">Request</span><span class="gate-mono">'+(d.reqId||'')+'</span></div><div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">Status</span><span style="color:#8a5a00">Pending</span></div></div>'
+      +'<button class="btn ghost" style="width:100%" onclick="checkDeviceStatus()"><i class="ti ti-refresh"></i> Check status</button>'
+      +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>'
+      +'<div class="tiny muted" style="text-align:center;margin-top:8px">Navigation stays locked until approved</div>');return;}
+  if(d.status==='rejected'){
+    showGate('<div class="gate-ic" style="background:#fde7e1;color:#b23a23"><i class="ti ti-shield-x"></i></div>'
+      +'<h3>Device rejected</h3><div class="muted small" style="margin-bottom:10px">Your Admin rejected this device'+(d.rejectReason?(': '+escAttr(d.rejectReason)):'')+'. You can send a new request.</div>'
+      +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Send registration request</button>'
+      +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>');return;}
+  showGate('<div class="gate-ic" style="background:#efeafe;color:#5b46d6"><i class="ti ti-shield-lock"></i></div>'
+    +'<h3>Register this device</h3><div class="muted small" style="margin-bottom:10px">For security, this device must be registered and approved by your Admin before you can access the workspace.</div>'
+    +'<div class="gate-box"><div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">User</span><span>'+escAttr(u.name)+'</span></div></div>'
+    +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Send registration request</button>'
+    +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>'
+    +'<div class="tiny muted" style="text-align:center;margin-top:8px">No close \u2014 registration is mandatory</div>');}
+function sendDeviceRequest(){var u=currentUser();if(!u)return;ensureDeviceRec(u);var info=uaInfo();u.device={status:'pending',fp:randFp(5),browser:info.browser,os:info.os,reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};persist();audit('device.request',{device:info.browser+'/'+info.os,fp:u.device.fp});toast('Registration request sent to Admin','ok');showDeviceGate(u);}
+function checkDeviceStatus(){var u=currentUser();if(!u)return;ensureDeviceRec(u);if(u.device.status==='approved'){toast('Device approved \u2713','ok');return recheckGate();}if(u.device.status==='rejected'){return showDeviceGate(u);}toast('Still awaiting Admin approval','warn');}
+function showKeyGate(u){ensureDeviceRec(u);
+  showGate('<div class="gate-ic" style="background:#d9f5ec;color:#0a7a5f"><i class="ti ti-key"></i></div>'
+    +'<h3>Generate your security key</h3><div class="small" style="color:#1b7a44;margin-bottom:8px"><i class="ti ti-circle-check"></i> Device approved</div>'
+    +'<div class="muted small" style="margin-bottom:10px">Generate a signing key to finish setup \u2014 this is the last step before your workspace.</div>'
+    +'<div class="gate-box"><div class="gate-row"><span class="muted">Algorithm</span><span>ECDSA \u00b7 P-256</span></div><div class="gate-row"><span class="muted">Private key</span><span>stays on device</span></div></div>'
+    +'<button class="btn pri" style="width:100%" id="genKeyBtn" onclick="generateUserKey()"><i class="ti ti-key"></i> Generate key</button>'
+    +'<div class="tiny muted" style="text-align:center;margin-top:8px">Public key is registered to your account</div>');}
+async function generateUserKey(){var u=currentUser();if(!u)return;var btn=document.getElementById('genKeyBtn');if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Generating...';}
+  var fp='';try{var kp=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);fp=await pubKeyFingerprint(kp.publicKey);}catch(e){fp=randFp(8);}
+  u.keyGenerated=true;u.keyFp=fp;u.keyTs=Date.now();persist();audit('key.generate',{fp:fp});
+  showGate('<div class="gate-ic" style="background:#e3f6ec;color:#1b7a44"><i class="ti ti-shield-check"></i></div>'
+    +'<h3>Security key ready</h3><div class="muted small" style="margin-bottom:10px">Your key pair has been generated and the public key registered. You\'re all set.</div>'
+    +'<div class="gate-box"><div class="tiny muted" style="margin-bottom:4px">Public key fingerprint</div><div class="gate-mono" style="font-size:12.5px;word-break:break-all">'+fp+'</div></div>'
+    +'<button class="btn pri" style="width:100%" onclick="continueAfterGates()">Continue to workspace <i class="ti ti-arrow-right"></i></button>'
+    +'<div class="tiny muted" style="text-align:center;margin-top:8px">All tasks unlock after this</div>');}
+function continueAfterGates(){var u=currentUser();if(!u)return;hideGate();enterApp(u);}
 function navFor(role){
   if(role==='itadmin'){
     const u=currentUser(); const inst=u&&DB.institutes.find(i=>i.id===u.institute_id);
-    const items=[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['team','Team & Assignments','ti-users']];
+    const items=[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['team','Team & Assignments','ti-users'],['marks','Marks','ti-award']];
     if(inst&&inst.needsProjectAdmin)items.push(['users','Project Admins','ti-users-group']);
     items.push(['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']);
     return items;
@@ -1085,7 +1151,7 @@ function navFor(role){
 function buildNav(){
   const items=navFor(session.role);const pending=state.questions.filter(q=>q.status==='pending').length;
   $('#nav').innerHTML=`<div class="nav-sec">Workspace</div>`+items.map(([id,label,ic])=>{
-    let b=(id==='review'&&pending)?`<span class="nav-badge">${pending}</span>`:'';
+    let b=(id==='review'&&pending)?`<span class="nav-badge">${pending}</span>`:'';if(id==='devices'){var dp=(DB.users||[]).filter(function(x){return gateRequired(x.role)&&x.device&&x.device.status==='pending';}).length;if(dp)b=`<span class="nav-badge">${dp}</span>`;}
     return `<button class="nav-item" data-screen="${id}" onclick="go('${id}')"><i class="ti ${ic}"></i> ${label}${b}</button>`;}).join('');
 }
 function goHome(){if(!session)return;closeModal();go('dashboard');}
@@ -1098,7 +1164,7 @@ function go(screen){ckDestroyAll();
   const titles={dashboard:['Dashboard',''],work:['Exams','Pick an exam, then a subject'],institutes:['Clients','Manage client institutes & their admin logins'],projects:['Exams','Exams for this client'],
     users:['Project Admins','Create & manage project admins'],qbank:['Subjects','Subjects & question banks by exam'],team:['Team & Assignments','Assign subjects to creators, reviewers & translators'],
     create:['Create Questions',''],review:['Review Queue','Approve questions through review levels'],translate:['Translation Workspace',''],
-    export:['Sets & Export','Build sets, export & push to AssessPro'],audit:['Audit Log','Immutable record of all actions'],settings:['Security & Settings',''],transverify:['Verify Translations','Approve translated content'],qpverify:['Verify QP Sets','Check built question papers'],publish:['Publish QP','Final publish of verified papers']};
+    export:['Sets & Export','Build sets, export & push to AssessPro'],audit:['Audit Log','Immutable record of all actions'],marks:['Marks','Marks per difficulty for question papers'],devices:['Device Approvals','Approve devices before users can sign in'],settings:['Security & Settings',''],transverify:['Verify Translations','Approve translated content'],qpverify:['Verify QP Sets','Check built question papers'],publish:['Publish QP','Final publish of verified papers']};
   const[t,s]=titles[screen]||[screen,''];
   $('#pageTitle').firstChild.textContent=t;$('#pageSub').textContent=s;
   (RENDER[screen]||(()=>$('#content').innerHTML=`<div class="empty"><i class="ti ti-tool"></i>Coming soon</div>`))();
@@ -1154,10 +1220,10 @@ function adminDetail(type){
   var title='Details',icon='ti-info-circle',rows='';
   if(type==='courses'||type==='courses_done'||type==='courses_pending'){
     var list=courses.map(function(c){var st=courseStat(c);return {c:c,st:st};});
-    if(type==='courses_done'){title='Completed courses';icon='ti-circle-check';list=list.filter(function(x){return x.st.done;});}
-    else if(type==='courses_pending'){title='Pending courses';icon='ti-clock';list=list.filter(function(x){return !x.st.done;});}
-    else {title='All courses';icon='ti-folders';}
-    rows=list.length?list.map(function(x){return row(x.c.name,x.st.pct+'% · '+x.st.ver+'/'+x.st.tgt,x.st.pct,x.st.done?'var(--green)':(x.st.pct<60?'var(--amber)':'var(--violet)'));}).join(''):empty('No courses here');
+    if(type==='courses_done'){title='Completed exams';icon='ti-circle-check';list=list.filter(function(x){return x.st.done;});}
+    else if(type==='courses_pending'){title='Pending exams';icon='ti-clock';list=list.filter(function(x){return !x.st.done;});}
+    else {title='All exams';icon='ti-folders';}
+    rows=list.length?list.map(function(x){return row(x.c.name,x.st.pct+'% · '+x.st.ver+'/'+x.st.tgt,x.st.pct,x.st.done?'var(--green)':(x.st.pct<60?'var(--amber)':'var(--violet)'));}).join(''):empty('No exams here');
   } else if(type==='questions'){title='Questions by subject';icon='ti-database';rows=banks.length?banks.map(function(b){return row(b.name,qs.filter(function(q){return q.bank===b.id;}).length+' created');}).join(''):empty('No subjects');}
   else if(type==='verified'){title='Verified by subject';icon='ti-rosette-discount-check';rows=banks.length?banks.map(function(b){var v=qs.filter(function(q){return q.bank===b.id&&q.status==='verified';}).length;var pct=b.target>0?Math.min(100,Math.round(v/b.target*100)):0;return row(b.name,v+'/'+(b.target||0),pct,'var(--green)');}).join(''):empty('No subjects');}
   else if(type==='pending'){title='Pending review by subject';icon='ti-clock';rows=banks.length?banks.map(function(b){return row(b.name,qs.filter(function(q){return q.bank===b.id&&q.status==='pending';}).length+' pending');}).join(''):empty('No subjects');}
@@ -1186,7 +1252,7 @@ function renderAdminDash(){
   if(!rows)rows='<tr><td colspan="7"><div class="empty" style="padding:24px"><i class="ti ti-users"></i>No team members yet.</div></td></tr>';
   var pipe=function(l,v,c){return barRow(l,total>0?Math.round(v/total*100):0,v,c);};
   var diffRow=function(d,label,c){var tgt=state.banks.reduce(function(s,b){return s+Math.round((b.target||0)*(((b.dist&&b.dist[d])||0)/100));},0);var got=qs.filter(function(q){return q.diff===d;}).length;var pct=tgt>0?Math.min(100,Math.round(got/tgt*100)):0;return barRow(label,pct,pct+'%',c);};
-  var courseRows=(state.projects||[]).map(function(c){var cb=state.banks.filter(function(b){return b.project===c.id;});var tgt=cb.reduce(function(s,b){return s+(b.target||0);},0);var ver=qs.filter(function(q){return cb.some(function(b){return b.id===q.bank;})&&q.status==='verified';}).length;var pct=tgt>0?Math.min(100,Math.round(ver/tgt*100)):0;return barRow(escAttr(c.name),pct,pct+'%',pct<60?'var(--amber)':'var(--violet)');}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-folder-off"></i>No courses</div>';
+  var courseRows=(state.projects||[]).map(function(c){var cb=state.banks.filter(function(b){return b.project===c.id;});var tgt=cb.reduce(function(s,b){return s+(b.target||0);},0);var ver=qs.filter(function(q){return cb.some(function(b){return b.id===q.bank;})&&q.status==='verified';}).length;var pct=tgt>0?Math.min(100,Math.round(ver/tgt*100)):0;return barRow(escAttr(c.name),pct,pct+'%',pct<60?'var(--amber)':'var(--violet)');}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-folder-off"></i>No exams</div>';
   var alerts=[];
   members.forEach(function(t){var st=memberStats(t);if(['Behind','Overdue','Idle','Overloaded'].indexOf(st.status)>=0){var ic=st.status==='Overloaded'?'ti-flame':st.status==='Idle'?'ti-user-off':'ti-clock';var col=st.color==='danger'?'var(--coral)':'var(--amber)';alerts.push('<div class="flex gap8" style="padding:8px 0;border-bottom:1px solid var(--line)"><i class="ti '+ic+'" style="color:'+col+'"></i><div><div class="small fw6">'+escAttr(t.name)+' — '+st.status+'</div><div class="tiny muted">'+st.done+' done · '+st.pending+' pending'+(t.dueDate?(' · '+(st.dleft<0?'overdue':st.dleft+'d left')):'')+'</div></div></div>');}});
   var rev={};state.team.filter(function(t){return t.role==='reviewer';}).forEach(function(t){(t.banks||[]).forEach(function(b){rev[b]=1;});});
@@ -1195,9 +1261,9 @@ function renderAdminDash(){
   var atRisk=alerts.length;
   $('#content').innerHTML=
     '<div class="grid g4" style="margin-bottom:14px">'
-    +stat('Total courses',courses.length,'ti-folders','#2D9CDB','tap for list',"adminDetail('courses')")
+    +stat('Total exams',courses.length,'ti-folders','#2D9CDB','tap for list',"adminDetail('courses')")
     +stat('Exams completed',courseDone,'ti-circle-check','#27AE60','100% verified',"adminDetail('courses_done')")
-    +stat('Pending courses',coursePending,'ti-clock','#F5A623','in progress',"adminDetail('courses_pending')")
+    +stat('Pending exams',coursePending,'ti-clock','#F5A623','in progress',"adminDetail('courses_pending')")
     +stat('Team',members.length,'ti-users','#8E44AD',(atRisk?atRisk+' need action':'all on track'),"adminDetail('team')")
     +'</div>'
     +'<div class="grid g3" style="margin-bottom:16px">'
@@ -1371,7 +1437,7 @@ RENDER.transverify=()=>{
 };
 function transVerifyCard(q){const langs=Object.keys(q.translations||{});const b=bankById(q.bank);
   return `<div class="card" style="margin-bottom:12px"><div class="flex between" style="gap:12px"><div style="flex:1">
-    <div class="flex gap8 wrap" style="margin-bottom:8px">${codeBadge(q)}${verBadge(q)}${diffBadge(q.diff)}<span class="chip">${b?escAttr(b.name):''}</span>${langs.map(l=>`<span class="chip"><i class="ti ti-language"></i> ${LANGS[l]||l}</span>`).join('')}${q.transFlag?'<span class="badge bg-coral"><i class="ti ti-flag"></i> Rejected</span>':''}</div>
+    <div class="flex gap8 wrap" style="margin-bottom:8px">${codeBadge(q)}${verBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}<span class="chip">${b?escAttr(b.name):''}</span>${langs.map(l=>`<span class="chip"><i class="ti ti-language"></i> ${LANGS[l]||l}</span>`).join('')}${q.transFlag?'<span class="badge bg-coral"><i class="ti ti-flag"></i> Rejected</span>':''}</div>
     <div class="fw6">${q.text}</div>
     ${langs.map(l=>`<div class="small muted" style="margin-top:8px;padding:8px 11px;background:var(--surface-2);border-radius:8px"><b>${LANGS[l]||l}:</b> ${(q.translations[l]&&q.translations[l].text)||''}</div>`).join('')}</div>
     <div class="flex gap8" style="flex-shrink:0;align-items:flex-start"><button class="btn ok sm" onclick="verifyTranslation('${q.id}')"><i class="ti ti-check"></i> Approve</button><button class="btn danger sm" onclick="flagTranslation('${q.id}')"><i class="ti ti-x"></i> Reject</button></div></div></div>`;}
@@ -1383,7 +1449,7 @@ function qpvCourses(){QPV_COURSE=null;QPV_SET=null;RENDER.qpverify();}
 function qpCourseCard(c,onOpen,stats){return '<div class="ccard" onclick="'+onOpen+'(\''+c.id+'\')"><div class="ccnm"><i class="ti ti-folder" style="color:var(--violet)"></i> '+escAttr(c.name)+'</div><div class="flex gap8 wrap" style="margin-top:8px">'+stats.map(function(s){return '<span class="badge '+s.cls+'" style="font-size:10px;padding:2px 7px">'+s.val+' '+s.label+'</span>';}).join('')+'</div></div>';}
 async function qpReview(id){const _qs=(state.sets||[]).find(x=>x.id===id);if(_qs&&!await requireCourseAccess(_qs.course))return;QPV_SET=id;RENDER.qpverify();window.scrollTo&&window.scrollTo(0,0);}
 function qpBack(){QPV_SET=null;RENDER.qpverify();}
-function qpQuestionCard(qq,idx){if(!qq)return '';var b=bankById(qq.bank);var opts=(qq.options||[]).map(function(o,i){var ok=i===qq.correct;return '<div class="flex gap8 center" style="padding:3px 0"><span style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;flex-shrink:0;background:'+(ok?'var(--green)':'var(--surface-2)')+';color:'+(ok?'#fff':'var(--ink-2)')+'">'+String.fromCharCode(65+i)+'</span><span class="small '+(ok?'fw6':'')+'">'+escAttr(o)+'</span>'+(ok?'<i class="ti ti-check" style="color:var(--green)"></i>':'')+'</div>';}).join('');return '<div class="card" style="margin-bottom:10px"><div class="flex between" style="gap:10px;margin-bottom:8px"><span class="fw6" style="flex:1">Q'+idx+'. '+(qq.text||'')+'</span><div class="flex gap8" style="flex-shrink:0">'+(qq.code?'<span class="chip">'+qq.code+'</span>':'')+diffBadge(qq.diff)+(b?'<span class="chip">'+escAttr(b.name)+'</span>':'')+'</div></div>'+opts+(qq.explain?'<div class="tiny muted" style="margin-top:8px;padding:8px 11px;background:var(--surface-2);border-radius:8px"><b>Explanation:</b> '+(qq.explain)+'</div>':'')+'</div>';}
+function qpQuestionCard(qq,idx){if(!qq)return '';var b=bankById(qq.bank);var opts=(qq.options||[]).map(function(o,i){var ok=i===qq.correct;return '<div class="flex gap8 center" style="padding:3px 0"><span style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;flex-shrink:0;background:'+(ok?'var(--green)':'var(--surface-2)')+';color:'+(ok?'#fff':'var(--ink-2)')+'">'+String.fromCharCode(65+i)+'</span><span class="small '+(ok?'fw6':'')+'">'+escAttr(o)+'</span>'+(ok?'<i class="ti ti-check" style="color:var(--green)"></i>':'')+'</div>';}).join('');return '<div class="card" style="margin-bottom:10px"><div class="flex between" style="gap:10px;margin-bottom:8px"><span class="fw6" style="flex:1">Q'+idx+'. '+(qq.text||'')+'</span><div class="flex gap8" style="flex-shrink:0">'+(qq.code?'<span class="chip">'+qq.code+'</span>':'')+diffBadge(qq.diff)+marksBadge(qq)+(b?'<span class="chip">'+escAttr(b.name)+'</span>':'')+'</div></div>'+opts+(qq.explain?'<div class="tiny muted" style="margin-top:8px;padding:8px 11px;background:var(--surface-2);border-radius:8px"><b>Explanation:</b> '+(qq.explain)+'</div>':'')+'</div>';}
 RENDER.qpverify=()=>{const sets=state.sets||[];
   if(QPV_SET){
     const s=sets.find(x=>x.id===QPV_SET);
@@ -1411,7 +1477,7 @@ RENDER.qpverify=()=>{const sets=state.sets||[];
   $('#content').innerHTML='<div class="cgrid">'+courses.map(c=>{const cs=sets.filter(s=>s.course===c.id);const d=cs.filter(s=>(s.status||'draft')==='draft').length;const v=cs.filter(s=>s.status==='qp_verified').length;const p=cs.filter(s=>s.status==='published').length;return qpCourseCard(c,'qpvOpenCourse',[{val:d,label:'to verify',cls:'bg-amber'},{val:v,label:'verified',cls:'bg-green'},{val:p,label:'published',cls:'bg-violet'}]);}).join('')+'</div>';
 };
 function qpVerifyCard(s){const st=s.status||'draft';
-  return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions${s.qpFlag&&st==='draft'?' · rejected: '+escAttr(s.qpFlag.reason||'rework'):''}</div></div>${qpStatusBadge(st)}<button class="btn sm" onclick="qpReview('${s.id}')"><i class="ti ti-eye"></i> Review</button>${st==='draft'?`<button class="btn ok sm" onclick="verifySet('${s.id}')"><i class="ti ti-check"></i> Verify</button>`:''}${st!=='published'?`<button class="btn danger sm" onclick="flagSet('${s.id}')"><i class="ti ti-flag"></i> Reject</button>`:''}</div>`;}
+  return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · ${setTotalMarks(s)} marks${s.qpFlag&&st==='draft'?' · rejected: '+escAttr(s.qpFlag.reason||'rework'):''}</div></div>${qpStatusBadge(st)}<button class="btn sm" onclick="qpReview('${s.id}')"><i class="ti ti-eye"></i> Review</button>${st==='draft'?`<button class="btn ok sm" onclick="verifySet('${s.id}')"><i class="ti ti-check"></i> Verify</button>`:''}${st!=='published'?`<button class="btn danger sm" onclick="flagSet('${s.id}')"><i class="ti ti-flag"></i> Reject</button>`:''}</div>`;}
 
 let PUB_COURSE=null;
 async function pubOpenCourse(cid){if(!await requireCourseAccess(cid))return;PUB_COURSE=cid;RENDER.publish();window.scrollTo&&window.scrollTo(0,0);}
@@ -1467,7 +1533,7 @@ RENDER.publish=()=>{const sets=state.sets||[];
 function publisherExport(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var rows=setRows(s);if(!rows.length)return toast('No questions in this set','warn');downloadRows(rows,(s.name||'set').replace(/[\/\\:*?"<>|]+/g,'-'),'excel');var me=currentUser();if((s.status||'')!=='published'){s.status='published';s.publishedBy={by:me.name,ts:Date.now(),via:'export'};audit('qp.export',{set:s.name,count:rows.length});save();}toast('Exported '+rows.length+' questions','ok');if(SCREEN==='publish')RENDER.publish();}
 function assessProModal(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var courses=(state.projects||[]).map(function(c){return '<option>'+escAttr(c.name)+'</option>';}).join('');modal('<div class="modal-h"><h3><i class="ti ti-rocket" style="color:var(--violet);margin-right:8px"></i>Send to AssessPro</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div><div class="modal-b"><p class="small muted" style="margin-top:0">Pushing <b>'+escAttr(s.name)+'</b> ('+(s.count||(s.questionIds||[]).length)+' questions) to the AssessPro exam engine.</p><div class="field"><label class="fl">Drive</label><div class="input-ic"><i class="ti ti-server"></i><select id="ap_drive"><option>Primary Drive</option><option>Secondary Drive</option><option>Archive Drive</option></select></div></div><div class="field"><label class="fl">Exam</label><div class="input-ic"><i class="ti ti-folders"></i><select id="ap_course">'+courses+'</select></div></div><div class="field"><label class="fl">Batch</label><div class="input-ic"><i class="ti ti-users"></i><select id="ap_batch"><option>2026 — Batch A</option><option>2026 — Batch B</option><option>2026 — Crash Exam</option></select></div></div></div><div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="confirmAssessPro(\''+id+'\')"><i class="ti ti-send"></i> Push to AssessPro</button></div>');}
 function confirmAssessPro(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var me=currentUser();var f={drive:($('#ap_drive')||{}).value||'',course:($('#ap_course')||{}).value||'',batch:($('#ap_batch')||{}).value||''};s.status='published';s.assesspro=f;s.publishedBy={by:me.name,ts:Date.now(),via:'assesspro'};audit('qp.assesspro',{set:s.name,batch:f.batch});save();closeModal();toast('Sent to AssessPro · '+f.batch,'ok');if(SCREEN==='publish')RENDER.publish();}
-function publishCard(s){return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · verified by ${s.verifiedBy?escAttr(s.verifiedBy.by):'\u2014'}</div></div>${qpStatusBadge('qp_verified')}<button class="btn sm" onclick="publisherExport('${s.id}')"><i class="ti ti-file-spreadsheet"></i> Export</button><button class="btn pri sm" onclick="assessProModal('${s.id}')"><i class="ti ti-rocket"></i> Send to AssessPro</button></div>`;}
+function publishCard(s){return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · ${setTotalMarks(s)} marks · verified by ${s.verifiedBy?escAttr(s.verifiedBy.by):'\u2014'}</div></div>${qpStatusBadge('qp_verified')}<button class="btn sm" onclick="publisherExport('${s.id}')"><i class="ti ti-file-spreadsheet"></i> Export</button><button class="btn pri sm" onclick="assessProModal('${s.id}')"><i class="ti ti-rocket"></i> Send to AssessPro</button></div>`;}
 
 function renderTransVerifierDash(){
   var me=currentUser();var mt=myTeam();
@@ -1511,7 +1577,7 @@ function renderPublisherFinalDash(){
     '<div class="grid g4" style="margin-bottom:16px">'
     +stat('Ready to publish',ready,'ti-clipboard-check','#27AE60','QP verified',"go('publish')")
     +stat('Published',published,'ti-rocket','#00B894','total',"go('publish')")
-    +stat('Total courses',(state.projects||[]).length,'ti-folders','#6C5CE7','',"go('publish')")
+    +stat('Total exams',(state.projects||[]).length,'ti-folders','#6C5CE7','',"go('publish')")
     +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"go('publish')")
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Recently published</span></div>'+rows+'</div>';
@@ -1645,7 +1711,7 @@ RENDER.institutes=()=>{
             <div class="field"><label class="fl">Login ID <span style="color:var(--coral)">*</span></label><input id="cl_login" value="${adminUser?escAttr(adminUser.email):''}" placeholder="priya@local.com" style="background:var(--violet-soft);border-color:#d8d2ff">${editing?'<p class="tiny muted" style="margin-top:5px">Admin sign-in email — editable</p>':''}</div>
             <div class="field"><label class="fl">Password <span style="color:var(--coral)">*</span></label><input id="cl_pw" type="password" placeholder="${editing?'•••• (use Reset password)':'At least 6 characters'}" style="background:var(--violet-soft);border-color:#d8d2ff" ${editing?'disabled':''}></div>
           </div>
-          <div class="field" style="margin-top:8px"><label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" id="cl_hierarchy" style="margin-top:3px" ${editing&&editing.needsProjectAdmin?'checked':''}><span><span class="fw6 small">Enable Project Admin hierarchy</span><span class="tiny muted" style="display:block;margin-top:2px">If on, this client's Admin can create Project Admins who manage courses. If off, the Admin manages courses directly.</span></span></label></div>
+          <div class="field" style="margin-top:8px"><label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" id="cl_hierarchy" style="margin-top:3px" ${editing&&editing.needsProjectAdmin?'checked':''}><span><span class="fw6 small">Enable Project Admin hierarchy</span><span class="tiny muted" style="display:block;margin-top:2px">If on, this client's Admin can create Project Admins who manage exams. If off, the Admin manages exams directly.</span></span></label></div>
           <div class="flex" style="justify-content:flex-end;margin-top:14px">
             <button class="btn dark" onclick="saveClient()"><i class="ti ti-check"></i> ${editing?'Save changes':'Create client'}</button>
           </div>
@@ -1754,17 +1820,17 @@ RENDER.projects=()=>{
   if(_courseView&&!state.projects.find(p=>p.id===_courseView))_courseView=null;
   if(_courseView){renderCourseDetail(_courseView);return;}
   $('#content').innerHTML=`
-  <div class="actionrow"><div class="searchbar"><i class="ti ti-search"></i><input placeholder="Search courses..."></div>
+  <div class="actionrow"><div class="searchbar"><i class="ti ti-search"></i><input placeholder="Search exams..."></div>
     ${can('project.create')?`<button class="btn pri" onclick="modalProject()"><i class="ti ti-plus"></i> New Exam</button>`:''}</div>
   <div class="card" style="padding:0;overflow:hidden"><table><thead><tr><th style="padding-left:20px">Exam</th><th>Grade</th><th>Subjects</th><th>Review levels</th><th>Status</th><th></th></tr></thead><tbody>
-    ${state.projects.length?state.projects.map(p=>{const subs=state.banks.filter(b=>b.project===p.id);const lv=p.reviewLevels||1;return `<tr style="cursor:pointer" onclick="configCourse('${p.id}')"><td style="padding-left:20px" class="fw6">${escAttr(p.name)}</td><td class="muted small">${escAttr(p.grade||'—')}</td><td><span class="badge bg-violet">${subs.length} subject${subs.length===1?'':'s'}</span></td><td onclick="event.stopPropagation()">${can('review.configure')?`<select onchange="setCourseLevels('${p.id}',this.value)" style="width:auto;padding:4px 8px"><option value="1" ${lv===1?'selected':''}>1 level</option><option value="2" ${lv===2?'selected':''}>2 levels</option><option value="3" ${lv===3?'selected':''}>3 levels</option></select>`:`<span class="chip">${lv} level${lv>1?'s':''}</span>`}</td><td>${statusBadge(p.status)}</td><td onclick="event.stopPropagation()">${can('bank.create')||can('review.configure')?`<button class="btn pri sm" onclick="configCourse('${p.id}')"><i class="ti ti-adjustments-cog"></i> Configure</button>`:''}</td></tr>`;}).join(''):`<tr><td colspan="6"><div class="empty" style="padding:28px"><i class="ti ti-folders"></i>No courses yet — create one to begin.</div></td></tr>`}
+    ${state.projects.length?state.projects.map(p=>{const subs=state.banks.filter(b=>b.project===p.id);const lv=p.reviewLevels||1;return `<tr style="cursor:pointer" onclick="configCourse('${p.id}')"><td style="padding-left:20px" class="fw6">${escAttr(p.name)}</td><td class="muted small">${escAttr(p.grade||'—')}</td><td><span class="badge bg-violet">${subs.length} subject${subs.length===1?'':'s'}</span></td><td onclick="event.stopPropagation()">${can('review.configure')?`<select onchange="setCourseLevels('${p.id}',this.value)" style="width:auto;padding:4px 8px"><option value="1" ${lv===1?'selected':''}>1 level</option><option value="2" ${lv===2?'selected':''}>2 levels</option><option value="3" ${lv===3?'selected':''}>3 levels</option></select>`:`<span class="chip">${lv} level${lv>1?'s':''}</span>`}</td><td>${statusBadge(p.status)}</td><td onclick="event.stopPropagation()">${can('bank.create')||can('review.configure')?`<button class="btn pri sm" onclick="configCourse('${p.id}')"><i class="ti ti-adjustments-cog"></i> Configure</button>`:''}</td></tr>`;}).join(''):`<tr><td colspan="6"><div class="empty" style="padding:28px"><i class="ti ti-folders"></i>No exams yet — create one to begin.</div></td></tr>`}
   </tbody></table></div>`;};
 function configCourse(id){_courseView=id;go('projects');window.scrollTo&&window.scrollTo(0,0);}
 function closeCourse(){_courseView=null;go('projects');}
 function renderCourseDetail(id){const p=projectById(id);if(!p){_courseView=null;return RENDER.projects();}
   const subs=state.banks.filter(b=>b.project===id);const lv=p.reviewLevels||1;
   $('#content').innerHTML=`
-  <button class="btn ghost sm" onclick="closeCourse()" style="margin-bottom:14px"><i class="ti ti-arrow-left"></i> All courses</button>
+  <button class="btn ghost sm" onclick="closeCourse()" style="margin-bottom:14px"><i class="ti ti-arrow-left"></i> All exams</button>
   <div class="card" style="margin-bottom:16px"><div class="flex between wrap gap12" style="align-items:flex-start">
     <div class="flex center gap8"><div class="avatar" style="width:42px;height:42px;border-radius:12px;background:var(--violet-soft);color:var(--violet-ink)"><i class="ti ti-folder" style="font-size:21px"></i></div>
       <div><div class="fw7" style="font-size:18px">${escAttr(p.name)}</div><div class="tiny muted">${escAttr(p.grade||'Multi-grade')} · ${subs.length} subject${subs.length===1?'':'s'} · target ${p.qTarget||300} Qs/subject · ${p.pwHash?'<i class="ti ti-lock"></i> protected':'<i class="ti ti-lock-open"></i> no password'} · ${escAttr(p.status||'active')}</div></div></div>
@@ -1792,9 +1858,9 @@ function modalProject(){modal(`<div class="modal-h"><h3>Create Exam</h3><button 
   <div class="modal-b"><div class="field"><label class="fl">Exam name</label><input id="m_pname" placeholder="e.g. Grade 10 Mathematics"></div>
     <div class="field"><label class="fl">Grade / level <span class="tiny muted">(optional)</span></label><input id="m_pgrade" placeholder="Grade 10"></div>
     <div class="field"><label class="fl">Target questions per subject</label><input id="m_ptarget" type="number" value="300" min="0"><p class="tiny muted" style="margin-top:5px">Used to pre-fill each new subject\u2019s total \u2014 adjustable per subject.</p></div>
-    <div class="field"><label class="fl">Exam password <span style="color:var(--coral)">*</span></label><input id="m_cpw" type="password" placeholder="At least 6 characters" style="background:var(--violet-soft);border-color:#d8d2ff"><p class="tiny muted" style="margin-top:5px">Publishers must enter this to unlock the course before building sets.</p></div>
+    <div class="field"><label class="fl">Exam password <span style="color:var(--coral)">*</span></label><input id="m_cpw" type="password" placeholder="At least 6 characters" style="background:var(--violet-soft);border-color:#d8d2ff"><p class="tiny muted" style="margin-top:5px">Publishers must enter this to unlock the exam before building sets.</p></div>
     <div class="field"><label class="fl">Review levels</label><select id="m_plevels"><option value="1">1 — single review</option><option value="2">2 — two-stage</option><option value="3">3 — three-stage</option></select><p class="tiny muted" style="margin-top:5px">Sequential approvals a question needs before it is verified.</p></div></div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addProject()"><i class="ti ti-check"></i> Create course</button></div>`);}
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addProject()"><i class="ti ti-check"></i> Create exam</button></div>`);}
 async function addProject(){if(!guard('project.create'))return;const n=$('#m_pname').value.trim();if(!n)return toast('Exam name required','warn');
   const pw=$('#m_cpw').value;if(pw.length<6)return toast('Exam password must be at least 6 characters','warn');
   const cur=currentUser(); const inst=cur&&cur.institute_id?cur.institute_id:'';
@@ -1850,7 +1916,7 @@ RENDER.team=()=>{$('#content').innerHTML=`
 let TEAM_EDIT_ID=null;
 function userForTeam(t){return (t&&t.user_id&&DB.users.find(u=>u.id===t.user_id))||DB.users.find(u=>u.email&&t&&u.email.toLowerCase()===(t.email||'').toLowerCase());}
 function teamAssignHTML(selected){selected=selected||[];
-  if(!state.banks.length)return '<p class="tiny muted">No subjects exist yet — create courses & subjects first, or assign later.</p>';
+  if(!state.banks.length)return '<p class="tiny muted">No subjects exist yet — create exams & subjects first, or assign later.</p>';
   const block=(title,cid,subs)=>`<div class="assign-course" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px">
     <label class="checkline" style="font-weight:600;margin:0"><input type="checkbox" class="course-all" data-course="${cid}" onchange="toggleCourseSubs(this)" ${subs.length&&subs.every(b=>selected.includes(b.id))?'checked':''}> <i class="ti ti-folder" style="color:var(--violet-ink)"></i> ${escAttr(title)} <span class="tiny muted" style="margin-left:auto">${subs.length} subject${subs.length===1?'':'s'}</span></label>
     <div style="padding-left:22px;margin-top:4px">${subs.map(b=>`<label class="checkline" style="margin:2px 0"><input type="checkbox" class="subj-cb" data-bid="${b.id}" data-course="${cid}" onchange="syncCourseAll('${cid}')" ${selected.includes(b.id)?'checked':''}> ${escAttr(b.name)} <span class="tiny muted" style="margin-left:auto">${qCount(b.id)} Qs</span></label>`).join('')}</div></div>`;
@@ -1885,7 +1951,7 @@ function modalTeam(editId){
     <p class="tiny muted"><i class="ti ti-info-circle"></i> Used to monitor pace — work done is tracked against time elapsed in the dashboard.</p>
     <div class="divider"></div>
     <div id="m_assignSec" style="${(t&&instWideRole(t.role))?'display:none':''}">
-      <div class="sec-label" style="margin-bottom:8px"><i class="ti ti-folder-cog"></i> Exam & subject access <span class="tiny muted">— tick a course to select all its subjects, or pick individually (multi-select)</span></div>
+      <div class="sec-label" style="margin-bottom:8px"><i class="ti ti-folder-cog"></i> Exam & subject access <span class="tiny muted">— tick an exam to select all its subjects, or pick individually (multi-select)</span></div>
       <div id="m_assignWrap">${teamAssignHTML(t?t.banks:[])}</div>
       <p class="tiny muted mt8">Publishers get access to every subject automatically, so this is skipped for them.</p>
     </div>
@@ -1958,7 +2024,7 @@ RENDER.work=()=>{
     h+='</div>'+(cb.length?'':'<div class="empty"><i class="ti ti-database-off"></i>No subjects in this exam assigned to you.</div>');
     $('#content').innerHTML=h;return;
   }
-  if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No courses assigned to you yet.</div>';return;}
+  if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams assigned to you yet.</div>';return;}
   let h='<div class="cgrid">';
   courses.forEach(c=>{const cb=banks.filter(b=>b.project===c.id);
     const total=cb.reduce((s,b)=>s+qCount(b.id),0),ver=cb.reduce((s,b)=>s+verifiedCount(b.id),0),tgt=cb.reduce((s,b)=>s+(b.target||0),0);
@@ -1980,13 +2046,13 @@ function qbCard(b){const total=qCount(b.id),ver=verifiedCount(b.id),pct=total?Ma
     :`<button class="btn pri sm" style="flex:1" onclick="modalQBConfig('${b.id}')"><i class="ti ti-adjustments"></i> Configure</button><button class="btn sm" onclick="viewBank('${b.id}')" title="Browse questions"><i class="ti ti-list-search"></i></button>${session.role==='itadmin'?'':'<button class="btn sm" onclick="go(&#39;export&#39;)" title="Export"><i class="ti ti-file-export"></i></button>'}`;
   return `<div class="qb-card"><div class="qb-top" style="background:${b.color}"></div><div class="qb-body">
     <div class="flex between" style="margin-bottom:10px"><div><div class="fw7" style="font-size:15px">${b.name}</div><div class="tiny muted">${b.grade}</div></div>${statusBadge(b.status)}</div>
-    <div class="flex gap8 wrap" style="margin-bottom:12px"><span class="chip" style="background:var(--violet-soft);color:var(--violet-ink)"><i class="ti ti-folder"></i> ${escAttr((projectById(b.project)||{}).name||'No course')}</span><span class="chip"><i class="ti ti-books"></i> ${b.topics.length} topics</span><span class="chip"><i class="ti ti-help-circle"></i> ${total}/${b.target} Qs</span><span class="chip"><i class="ti ti-${b.pwHash?'lock':'lock-open'}"></i> ${b.pwHash?'Protected':'Open'}</span></div>
+    <div class="flex gap8 wrap" style="margin-bottom:12px"><span class="chip" style="background:var(--violet-soft);color:var(--violet-ink)"><i class="ti ti-folder"></i> ${escAttr((projectById(b.project)||{}).name||'No exam')}</span><span class="chip"><i class="ti ti-books"></i> ${b.topics.length} topics</span><span class="chip"><i class="ti ti-help-circle"></i> ${total}/${b.target} Qs</span><span class="chip"><i class="ti ti-${b.pwHash?'lock':'lock-open'}"></i> ${b.pwHash?'Protected':'Open'}</span></div>
     <div class="progress"><div style="width:${pct}%;background:${b.color}"></div></div>
     <div class="flex between tiny muted mt8"><span>${pct}% verified</span><span>${b.topics.length} topics</span></div>
     <div class="flex gap8" style="margin-top:auto;padding-top:14px">${acts}</div></div></div>`;}
 function qbSum(p){const ids=p==='m'?['m_de','m_dm','m_dh']:['c_e','c_m','c_h'];const t=ids.reduce((s,id)=>{const e=$('#'+id);return s+(e?(+e.value||0):0);},0);const el=$(p==='m'?'#m_qtotal':'#c_qtotal');if(el)el.textContent=t;}
 function qbCourseChanged(){const id=$('#m_qbcourse').value;const c=(state.projects||[]).find(p=>p.id===id);const T=c&&c.qTarget?c.qTarget:300;const de=Math.round(T*0.3),dm=Math.round(T*0.5),dh=Math.max(0,T-de-dm);if($('#m_de'))$('#m_de').value=de;if($('#m_dm'))$('#m_dm').value=dm;if($('#m_dh'))$('#m_dh').value=dh;qbSum('m');}
-function modalQB(){const courses=state.projects;if(!courses.length){toast('Create a course first','warn');return;}
+function modalQB(){const courses=state.projects;if(!courses.length){toast('Create an exam first','warn');return;}
   const locked=!!(_qbCourse&&courses.find(c=>c.id===_qbCourse));const pre=locked?_qbCourse:courses[0].id;_qbCourse=null;
   const preCourse=courses.find(c=>c.id===pre)||courses[0];const T=(preCourse&&preCourse.qTarget)?preCourse.qTarget:300;const de=Math.round(T*0.3),dm=Math.round(T*0.5),dh=Math.max(0,T-de-dm);
   modal(`<div class="modal-h"><h3>New Subject</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
@@ -2001,14 +2067,14 @@ function addQB(){if(!guard('bank.create'))return;const n=$('#m_qbname').value.tr
   const course=$('#m_qbcourse').value;if(!course)return toast('Pick an exam','warn');
   const e=+$('#m_de').value||0,m=+$('#m_dm').value||0,h=+$('#m_dh').value||0;const target=e+m+h;if(target<=0)return toast('Set at least one difficulty count','warn');
   state.banks.push({id:uid('qb'),name:n,project:course,grade:$('#m_qbgrade').value||'—',color:$('#m_qbcolor').value,status:'draft',topics:$('#m_qbtopics').value.split(',').map(s=>s.trim()).filter(Boolean),sections:[],dist:{easy:e,medium:m,hard:h},target,pwHash:'',pwSalt:''});
-  audit('subject.create',{name:n});save();closeModal();afterSubjectChange();toast('Subject created · mapped to course','ok');}
+  audit('subject.create',{name:n});save();closeModal();afterSubjectChange();toast('Subject created · mapped to exam','ok');}
 function modalQBConfig(bid){const b=bankById(bid);modal(`<div class="modal-h"><h3>Configure — ${b.name}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><div class="grid g2"><div><label class="fl">Topics</label><div>${b.topics.map((t,i)=>`<span class="tag">${t}<i class="ti ti-x" onclick="rmCfg('${bid}','topics',${i})"></i></span>`).join('')}<span class="tag add" onclick="addCfg('${bid}','topics')"><i class="ti ti-plus"></i> Add</span></div></div>
     </div>
     <div class="divider"></div><label class="fl">Question targets by difficulty (counts)</label><div class="row" style="margin-bottom:8px">
       <div style="flex:1"><span class="diff-easy">Easy</span><input type="number" id="c_e" value="${b.dist.easy}" class="mt8" oninput="qbSum('c')"></div><div style="flex:1"><span class="diff-medium">Medium</span><input type="number" id="c_m" value="${b.dist.medium}" class="mt8" oninput="qbSum('c')"></div><div style="flex:1"><span class="diff-hard">Hard</span><input type="number" id="c_h" value="${b.dist.hard}" class="mt8" oninput="qbSum('c')"></div></div>
       <p class="tiny muted" style="margin:-2px 0 8px">Total target: <b id="c_qtotal">${b.target}</b> questions <span class="muted">(editable per subject)</span></p>
-    <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> Export access is protected by the <b>course password</b> (set on the course), not per subject.</p></div>
+    <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> Export access is protected by the <b>exam password</b> (set on the exam), not per subject.</p></div>
   <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveCfg('${bid}')"><i class="ti ti-check"></i> Save</button></div>`,true);}
 function genPw(){$('#c_pw').value='qb-'+Math.random().toString(36).slice(2,8);}
 function addCfg(bid,key){const v=prompt('New '+key.slice(0,-1)+':');if(v&&v.trim()){bankById(bid)[key].push(v.trim());save();modalQBConfig(bid);}}
@@ -2140,7 +2206,7 @@ RENDER.review=()=>{let qs=state.questions.filter(q=>q.status!=='verified'&&q.sta
     <span class="badge bg-amber" style="padding:7px 12px">${qs.length} pending</span></div>
     ${qs.length?qs.map(reviewCard).join(''):`<div class="empty"><i class="ti ti-checks"></i>All caught up — nothing to review.</div>`}`;};
 function reviewCard(q){return `<div class="card" style="margin-bottom:12px"><div class="flex between" style="margin-bottom:12px;gap:12px"><div style="flex:1">
-    <div class="flex gap8 wrap" style="margin-bottom:8px">${codeBadge(q)}${diffBadge(q.diff)}${typeBadge(q.type)}<span class="chip">${q.topic}</span><span class="chip">${q.section}</span><span class="chip"><i class="ti ti-stairs-up"></i> L${(q.reviewLevel||0)}/${courseLevelsFor(q)}</span>${srcBadge(q.source)}${verBadge(q)}${q.status==='rejected'?statusBadge('rejected'):''}</div>
+    <div class="flex gap8 wrap" style="margin-bottom:8px">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${typeBadge(q.type)}<span class="chip">${q.topic}</span><span class="chip">${q.section}</span><span class="chip"><i class="ti ti-stairs-up"></i> L${(q.reviewLevel||0)}/${courseLevelsFor(q)}</span>${srcBadge(q.source)}${verBadge(q)}${q.status==='rejected'?statusBadge('rejected'):''}</div>
     <div class="fw6">${q.text}</div></div>
     <div class="flex gap8" style="flex-shrink:0;align-items:flex-start">${(q.version>1||(q.history&&q.history.length))?`<button class="btn sm ghost" onclick="viewHistory('${q.id}')" title="Version history"><i class="ti ti-history"></i></button>`:''}<button class="btn ok sm" onclick="verifyQ('${q.id}')"><i class="ti ti-check"></i> Approve (L${(q.reviewLevel||0)+1})</button><button class="btn sm" onclick="editQ('${q.id}')"><i class="ti ti-edit"></i> Edit</button><button class="btn danger sm" onclick="rejectQ('${q.id}')"><i class="ti ti-x"></i> Reject</button></div></div>
     ${q.options&&q.options.length?`<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">${q.options.map((o,i)=>`<div class="flex center gap8 small" style="padding:8px 11px;border-radius:8px;${i===q.correct?'background:var(--teal-soft);border:1px solid #bce8dc':'background:var(--surface-2)'}"><div class="opt-radio ${i===q.correct?'on':''}" style="width:16px;height:16px"></div>${o}${i===q.correct?'<span class="tiny" style="margin-left:auto;color:var(--teal-ink)">Correct</span>':''}</div>`).join('')}</div>`:''}
@@ -2185,7 +2251,7 @@ function renderBankView(){const b=bankById(BANKVIEW);if(!b){go('qbank');return;}
     ${can('question.create')?`<button class="btn pri" onclick="CREATE.bank='${b.id}';resetDraft();go('create')"><i class="ti ti-plus"></i> Add</button>`:''}</div>
    <div id="bvList">${qs.length?qs.map(q=>qRow(q,edit)).join(''):`<div class="empty"><i class="ti ti-help-octagon"></i>No questions match these filters.</div>`}</div>`;}
 function usedBadge(q){const n=(q.usedIn||[]).length;const last=(q.usedIn||[])[n-1];return `<span class="badge" style="background:#efe3fa;color:#7d3ca8" title="${last?escAttr(last.set):''}"><i class="ti ti-recycle"></i> Used${n>1?' ·'+n+'×':''}</span>`;}
-function qRow(q,edit){return `<div class="card" style="margin-bottom:10px"><div class="flex between gap12 wrap" style="margin-bottom:8px"><div class="flex gap8 wrap center">${codeBadge(q)}${diffBadge(q.diff)}${typeBadge(q.type)}<span class="chip">${q.topic}</span><span class="chip">${q.section}</span>${statusBadge(q.status)}${srcBadge(q.source)}${verBadge(q)}${q.used?usedBadge(q):''}</div>
+function qRow(q,edit){return `<div class="card" style="margin-bottom:10px"><div class="flex between gap12 wrap" style="margin-bottom:8px"><div class="flex gap8 wrap center">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${typeBadge(q.type)}<span class="chip">${q.topic}</span><span class="chip">${q.section}</span>${statusBadge(q.status)}${srcBadge(q.source)}${verBadge(q)}${q.used?usedBadge(q):''}</div>
     <div class="flex gap8">${(q.version>1||(q.history&&q.history.length))?`<button class="btn sm ghost" onclick="viewHistory('${q.id}')" title="History"><i class="ti ti-history"></i></button>`:''}${(q.status!=='verified'&&can('question.verify'))?`<button class="btn ok sm" onclick="verifyQ('${q.id}')" title="Verify"><i class="ti ti-check"></i></button>`:''}${edit?`<button class="btn sm" onclick="editQ('${q.id}')" title="Edit"><i class="ti ti-edit"></i></button><button class="btn danger sm" onclick="deleteQ('${q.id}')" title="Delete"><i class="ti ti-trash"></i></button>`:''}</div></div>
     <div class="fw6 small" style="margin-bottom:6px">${q.text}</div>
     ${q.options&&q.options.length?`<div class="flex gap8 wrap">${q.options.map((o,j)=>`<span class="chip" style="${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}. ${o}${j===q.correct?' ✓':''}</span>`).join('')}</div>`:''}
@@ -2233,7 +2299,7 @@ function autoTranslate(){if(!guard('question.translate'))return;const qs=state.q
 let EXPORT={course:'',numSets:2};
 RENDER.export=()=>{
   const courses=(state.projects||[]);
-  if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No courses available yet.</div>';return;}
+  if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams available yet.</div>';return;}
   if(!courses.find(c=>c.id===EXPORT.course))EXPORT.course=courses[0].id;
   const course=projectById(EXPORT.course);const unlocked=isCourseUnlocked(course.id);
   const subs=state.banks.filter(b=>b.project===course.id);const sets=state.sets.filter(s=>s.course===course.id);
@@ -2245,11 +2311,11 @@ RENDER.export=()=>{
     <div class="card" style="background:linear-gradient(150deg,#efedff66,#e3f2fc66);border-color:#d8d2ff">
       <div class="flex center gap12"><div style="width:44px;height:44px;border-radius:12px;background:var(--violet-soft);display:grid;place-items:center;color:var(--violet-ink);flex-shrink:0"><i class="ti ti-${unlocked?'lock-open-2':((course&&course.pwHash)?'lock':'lock-x')}" style="font-size:21px"></i></div>
         <div style="flex:1"><div class="fw6 small" style="margin-bottom:3px">Exam access ${unlocked?'<span class="badge bg-green">Unlocked</span>':''}</div><div class="tiny muted">${escAttr(course.name)}</div></div></div>
-      ${(!course.pwHash)?`<p class="tiny muted mt8"><i class="ti ti-alert-triangle"></i> No password set on this course — ask an admin to set one.</p>`:(unlocked?`<button class="btn sm" style="width:100%;justify-content:center;margin-top:10px" onclick="lockCourse('${course.id}')"><i class="ti ti-lock"></i> Lock course</button>`:`<input type="password" id="ex_cpw" placeholder="Enter course password" style="margin-top:10px"><button class="btn pri sm" style="width:100%;justify-content:center;margin-top:8px" onclick="unlockCourse('${course.id}')"><i class="ti ti-key"></i> Unlock to build sets</button>`)}
+      ${(!course.pwHash)?`<p class="tiny muted mt8"><i class="ti ti-alert-triangle"></i> No password set on this exam — ask an admin to set one.</p>`:(unlocked?`<button class="btn sm" style="width:100%;justify-content:center;margin-top:10px" onclick="lockCourse('${course.id}')"><i class="ti ti-lock"></i> Lock exam</button>`:`<input type="password" id="ex_cpw" placeholder="Enter exam password" style="margin-top:10px"><button class="btn pri sm" style="width:100%;justify-content:center;margin-top:8px" onclick="unlockCourse('${course.id}')"><i class="ti ti-key"></i> Unlock to build sets</button>`)}
     </div></div>
   <div>
     <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Subjects, difficulty & pool mix</span></div>
-      ${!unlocked?`<div class="empty" style="padding:26px"><i class="ti ti-lock"></i>Unlock this course with its password to pick subjects and build sets.</div>`:(!subs.length?`<div class="empty"><i class="ti ti-database-off"></i>No subjects in this exam yet.</div>`:`
+      ${!unlocked?`<div class="empty" style="padding:26px"><i class="ti ti-lock"></i>Unlock this exam with its password to pick subjects and build sets.</div>`:(!subs.length?`<div class="empty"><i class="ti ti-database-off"></i>No subjects in this exam yet.</div>`:`
       <p class="small muted" style="margin:0 0 10px">Tick a subject, then set fresh + used counts per difficulty. Subtotal updates live.</p>
       <div id="ex_subjects">${subs.map(b=>{const fe=verifiedByDiff(b.id,'easy','fresh'),fm=verifiedByDiff(b.id,'medium','fresh'),fh=verifiedByDiff(b.id,'hard','fresh'),ue=verifiedByDiff(b.id,'easy','used'),um=verifiedByDiff(b.id,'medium','used'),uh=verifiedByDiff(b.id,'hard','used');return `<div class="subj-row" data-bid="${b.id}" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px">
         <label class="checkline" style="font-weight:600;margin:0 0 8px"><input type="checkbox" class="subj-pick" onchange="exTotals()"> ${escAttr(b.name)} <span class="tiny muted" style="margin-left:auto">avail · fresh ${fe}/${fm}/${fh} · used ${ue}/${um}/${uh}</span></label>
@@ -2264,8 +2330,8 @@ RENDER.export=()=>{
       ${sets.length?`<div class="divider"></div><div class="flex gap8 between center"><span class="tiny muted"><i class="ti ti-info-circle"></i> ${sets.filter(s=>s.status==='pushed').length} of ${sets.length} pushed</span><div class="flex gap8">${can('assesspro.push')?`<button class="btn" style="background:#8E44AD;color:#fff;border-color:#8E44AD" onclick="pushAssessPro()"><i class="ti ti-rocket"></i> Push to AssessPro</button>`:''}<button class="btn pri" onclick="exportFile('excel')"><i class="ti ti-file-spreadsheet"></i> Export all (Excel)</button></div></div>`:''}
     </div>
   </div></div>`;};
-function setCard(s){return `<div class="set-card"><div class="set-num">S${(s.name.match(/\d+/)||[''])[0]||''}</div><div style="flex:1"><div class="fw6 small">${s.name}</div><div class="tiny muted">${s.count} questions · ${escAttr(s.filters||'')}</div></div>${s.status==='pushed'?'<span class="badge" style="background:#efe3fa;color:#7d3ca8"><i class="ti ti-rocket"></i> Pushed</span>':statusBadge(s.status)}<button class="btn sm" onclick="exportSet('${s.id}')" title="Export this set"><i class="ti ti-download"></i></button><button class="btn sm ghost" onclick="rmSet('${s.id}')"><i class="ti ti-trash"></i></button></div>`;}
-function pushAssessPro(){if(!guard('assesspro.push'))return;const course=projectById(EXPORT.course);if(!course)return;if(!isCourseUnlocked(course.id))return toast('Unlock the course with its password first','warn');
+function setCard(s){return `<div class="set-card"><div class="set-num">S${(s.name.match(/\d+/)||[''])[0]||''}</div><div style="flex:1"><div class="fw6 small">${s.name}</div><div class="tiny muted">${s.count} questions · ${setTotalMarks(s)} marks · ${escAttr(s.filters||'')}</div></div>${s.status==='pushed'?'<span class="badge" style="background:#efe3fa;color:#7d3ca8"><i class="ti ti-rocket"></i> Pushed</span>':statusBadge(s.status)}<button class="btn sm" onclick="exportSet('${s.id}')" title="Export this set"><i class="ti ti-download"></i></button><button class="btn sm ghost" onclick="rmSet('${s.id}')"><i class="ti ti-trash"></i></button></div>`;}
+function pushAssessPro(){if(!guard('assesspro.push'))return;const course=projectById(EXPORT.course);if(!course)return;if(!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
   const pending=state.sets.filter(s=>s.course===course.id&&s.status!=='pushed');if(!pending.length)return toast('Build sets first','warn');
   pending.forEach(s=>s.status='pushed');audit('assesspro.push',{course:course.name,sets:pending.length});save();RENDER.export();toast(pending.length+' set(s) pushed to AssessPro \u2713','ok');}
 function shuffleArr(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -2275,7 +2341,7 @@ function setSpecsFromDOM(){const specs=[];document.querySelectorAll('#ex_subject
 function addMetaTag(k,v){const wrap=$('#sm_tags');if(!wrap)return;const div=document.createElement('div');div.className='row tag-row';div.style.cssText='margin-bottom:6px;gap:6px';div.innerHTML='<input class="tag-k" placeholder="Label (e.g. Shift)" value="'+(k?escAttr(k):'')+'" style="flex:1"><input class="tag-v" placeholder="Value (e.g. Morning)" value="'+(v?escAttr(v):'')+'" style="flex:1"><button class="btn sm ghost" onclick="this.parentElement.remove()" title="Remove"><i class="ti ti-x"></i></button>';wrap.appendChild(div);}
 function updateSetPreview(){const s=(($('#sm_session')||{}).value||'').trim()||'YEAR',e=(($('#sm_exam')||{}).value||'').trim()||'EXAM';const el=$('#sm_preview');if(el)el.textContent=s+'_'+e+'_SET 1';}
 function modalSetMeta(){if(!guard('set.build'))return;const course=projectById(EXPORT.course);if(!course)return toast('Pick an exam','warn');
-  if(!isCourseUnlocked(course.id))return toast('Unlock the course with its password first','warn');
+  if(!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
   if(!setSpecsFromDOM().length)return toast('Select subjects and enter fresh/used counts first','warn');
   const num=Math.max(1,+($('#ex_num')||{}).value||1);const total=setSpecsFromDOM().reduce((s,sp)=>s+sp.fresh.easy+sp.fresh.medium+sp.fresh.hard+sp.used.easy+sp.used.medium+sp.used.hard,0);
   modal(`<div class="modal-h"><h3>Set metadata &amp; tags</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
@@ -2299,7 +2365,7 @@ function confirmBuild(){const session=($('#sm_session').value||'').trim(),exam=(
   const tags=[...document.querySelectorAll('#sm_tags .tag-row')].map(r=>({k:r.querySelector('.tag-k').value.trim(),v:r.querySelector('.tag-v').value.trim()})).filter(t=>t.k&&t.v);
   closeModal();buildSets({session,exam,num,tags});}
 function buildSets(meta){if(!guard('set.build'))return;const course=projectById(EXPORT.course);if(!course)return toast('Pick an exam','warn');
-  if(!isCourseUnlocked(course.id))return toast('Unlock the course with its password first','warn');
+  if(!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
   meta=meta||{};const session=meta.session||'',exam=meta.exam||'',tags=meta.tags||[];
   const numSets=Math.max(1,+(meta.num||($('#ex_num')||{}).value)||1);EXPORT.numSets=numSets;
   const specs=setSpecsFromDOM();if(!specs.length)return toast('Select subjects and enter fresh/used counts','warn');
@@ -2324,18 +2390,48 @@ let _unlocked={};
 async function requireCourseAccess(courseId){var c=projectById(courseId);if(!c||!c.pwHash)return true;if(_unlocked[courseId])return true;return await askCoursePassword(c);}
 function askCoursePassword(c){return new Promise(function(resolve){modal(`<div class="modal-h"><h3><i class="ti ti-lock"></i> Enter security key</h3><button class="x" onclick="__coursePwCancel()" aria-label="Close"><i class="ti ti-x"></i></button></div><div class="modal-b"><p class="small muted" style="margin:0 0 12px">Enter the security key to access <b>${escAttr(c.name)}</b> and its subjects &amp; papers.</p><div class="input-ic"><i class="ti ti-key"></i><input type="password" id="coursePwInput" placeholder="Security key" autocomplete="off" onkeydown="if(event.key==='Enter')__coursePwOk()"></div><p class="tiny" id="coursePwErr" style="color:var(--coral);min-height:15px;margin-top:7px"></p></div><div class="modal-f"><button class="btn ghost" onclick="__coursePwCancel()">Cancel</button><button class="btn pri" onclick="__coursePwOk()"><i class="ti ti-lock-open"></i> Unlock</button></div>`);setTimeout(function(){var el=document.getElementById('coursePwInput');if(el)el.focus();},40);function cleanup(){window.__coursePwOk=null;window.__coursePwCancel=null;}window.__coursePwOk=async function(){var v=(document.getElementById('coursePwInput')||{}).value||'';var ok=await verifyPassword(v,c.pwSalt,c.pwHash);if(ok){_unlocked[c.id]=true;audit('course.unlock',{name:c.name});closeModal();cleanup();toast('Unlocked: '+c.name,'ok');resolve(true);}else{var e=document.getElementById('coursePwErr');if(e)e.textContent='Incorrect security key — please try again.';var i=document.getElementById('coursePwInput');if(i){i.value='';i.focus();}}};window.__coursePwCancel=function(){closeModal();cleanup();resolve(false);};});}
 function isCourseUnlocked(courseId){return !!_unlocked[courseId];}
-async function unlockCourse(courseId){const c=projectById(courseId);if(!c||!c.pwHash)return toast('No password set on this course','warn');const pw=($('#ex_cpw')||{}).value||'';if(!pw)return toast('Enter the course password','warn');const ok=await verifyPassword(pw,c.pwSalt,c.pwHash);if(!ok)return toast('Incorrect course password','err');_unlocked[courseId]=true;audit('course.unlock',{course:c.name});RENDER.export();toast('Exam unlocked — build & export enabled','ok');}
+async function unlockCourse(courseId){const c=projectById(courseId);if(!c||!c.pwHash)return toast('No password set on this exam','warn');const pw=($('#ex_cpw')||{}).value||'';if(!pw)return toast('Enter the exam password','warn');const ok=await verifyPassword(pw,c.pwSalt,c.pwHash);if(!ok)return toast('Incorrect exam password','err');_unlocked[courseId]=true;audit('course.unlock',{course:c.name});RENDER.export();toast('Exam unlocked — build & export enabled','ok');}
 function lockCourse(courseId){delete _unlocked[courseId];RENDER.export();toast('Exam locked','warn');}
 function downloadRows(rows,base,kind){if(!rows.length)return toast('Nothing to export','warn');
   if(kind!=='csv'&&window.XLSX){const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Questions');XLSX.writeFile(wb,base+'.xlsx');}
   else{const headers=Object.keys(rows[0]);const esc=v=>{v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};const csv=[headers.join(','),...rows.map(r=>headers.map(h=>esc(r[h])).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=base+'.csv';a.click();}}
-function setRows(s){const tagText=(s.tags||[]).map(t=>t.k+': '+t.v).join('; ');const rows=[];(s.questionIds||[]).forEach((qid,i)=>{const q=state.questions.find(x=>x.id===qid);if(!q)return;rows.push({Session:s.session||'',Exam:s.exam||'',Set:s.name,Tags:tagText,No:i+1,QID:q.code||'',Subject:(bankById(q.bank)||{name:''}).name,Type:q.type,Topic:q.topic||'',Difficulty:q.diff,Version:q.version||1,Question:stripHTML(q.text),OptionA:(q.options||[])[0]||'',OptionB:(q.options||[])[1]||'',OptionC:(q.options||[])[2]||'',OptionD:(q.options||[])[3]||'',Correct:(q.correct!=null&&q.options&&q.options.length)?String.fromCharCode(65+q.correct):'',Explanation:stripHTML(q.explain||'')});});return rows;}
-function exportSet(id){if(!guard('export.run'))return;const s=state.sets.find(x=>x.id===id);if(!s)return;if(!isCourseUnlocked(s.course))return toast('Unlock the course first','warn');const rows=setRows(s);if(!rows.length)return toast('No questions in this set','warn');downloadRows(rows,(s.name||'set').replace(/[\/\\:*?"<>|]+/g,'-'),'excel');audit('export.run',{set:s.name,count:rows.length});toast('Exported '+rows.length+' questions','ok');}
-function exportFile(kind){if(!guard('export.run'))return;const course=projectById(EXPORT.course);if(!course)return;if(!isCourseUnlocked(course.id))return toast('Unlock the course with its password first','warn');
+function setRows(s){const tagText=(s.tags||[]).map(t=>t.k+': '+t.v).join('; ');const rows=[];(s.questionIds||[]).forEach((qid,i)=>{const q=state.questions.find(x=>x.id===qid);if(!q)return;rows.push({Session:s.session||'',Exam:s.exam||'',Set:s.name,Tags:tagText,No:i+1,QID:q.code||'',Subject:(bankById(q.bank)||{name:''}).name,Type:q.type,Topic:q.topic||'',Difficulty:q.diff,Marks:qMarks(q),Version:q.version||1,Question:stripHTML(q.text),OptionA:(q.options||[])[0]||'',OptionB:(q.options||[])[1]||'',OptionC:(q.options||[])[2]||'',OptionD:(q.options||[])[3]||'',Correct:(q.correct!=null&&q.options&&q.options.length)?String.fromCharCode(65+q.correct):'',Explanation:stripHTML(q.explain||'')});});return rows;}
+function exportSet(id){if(!guard('export.run'))return;const s=state.sets.find(x=>x.id===id);if(!s)return;if(!isCourseUnlocked(s.course))return toast('Unlock the exam first','warn');const rows=setRows(s);if(!rows.length)return toast('No questions in this set','warn');downloadRows(rows,(s.name||'set').replace(/[\/\\:*?"<>|]+/g,'-'),'excel');audit('export.run',{set:s.name,count:rows.length});toast('Exported '+rows.length+' questions','ok');}
+function exportFile(kind){if(!guard('export.run'))return;const course=projectById(EXPORT.course);if(!course)return;if(!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
   const sets=state.sets.filter(s=>s.course===course.id);if(!sets.length)return toast('Build at least one set first','warn');
   let rows=[];sets.forEach(s=>{rows=rows.concat(setRows(s));});if(!rows.length)return toast('No questions in sets to export','warn');
   downloadRows(rows,(course.name+'_sets').replace(/[^a-z0-9]+/gi,'_').toLowerCase(),kind==='csv'?'csv':'excel');
   audit('export.run',{course:course.name,sets:sets.length,count:rows.length});toast('Exported '+rows.length+' questions across '+sets.length+' set(s)','ok');}
+
+/* MARKS CONFIG (IT Admin) */
+RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only IT Admin can configure marks.</div>';return;}
+  var ms=marksScheme();
+  $('#content').innerHTML=`<div class="card" style="max-width:560px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks configuration</span><span class="badge bg-gray">Per difficulty</span></div>
+    <p class="small muted" style="margin:0 0 14px">Marks awarded per question by difficulty. Each question inherits marks from its difficulty; the question-paper total is computed from the mix.</p>
+    <div class="field"><label class="fl"><span class="diff-easy">Easy</span></label><input id="mk_easy" type="number" min="0" step="0.5" value="${ms.easy}" style="max-width:140px"></div>
+    <div class="field"><label class="fl"><span class="diff-medium">Medium</span></label><input id="mk_medium" type="number" min="0" step="0.5" value="${ms.medium}" style="max-width:140px"></div>
+    <div class="field"><label class="fl"><span class="diff-hard">Hard</span></label><input id="mk_hard" type="number" min="0" step="0.5" value="${ms.hard}" style="max-width:140px"></div>
+    <div style="margin-top:6px"><button class="btn pri" onclick="saveMarks()"><i class="ti ti-check"></i> Save marks scheme</button></div>
+    <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> Applies to every question and to the total marks shown when a question paper is built.</p></div>`;};
+function saveMarks(){if(session.role!=='itadmin')return;var e=Math.max(0,+($('#mk_easy')||{}).value||0),m=Math.max(0,+($('#mk_medium')||{}).value||0),h=Math.max(0,+($('#mk_hard')||{}).value||0);setMarksScheme(e,m,h);audit('marks.configure',{easy:e,medium:m,hard:h});toast('Marks scheme saved \u00b7 Easy '+e+' / Medium '+m+' / Hard '+h,'ok');}
+
+/* DEVICE APPROVALS (Admin) */
+RENDER.devices=()=>{if(session.role!=='instadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only Admin can review device approvals.</div>';return;}
+  var me=currentUser();var inst=me?me.institute_id:'';
+  var users=(DB.users||[]).filter(function(x){return gateRequired(x.role)&&x.device&&x.device.status&&x.device.status!=='none'&&(x.institute_id===inst||!inst);});
+  var pending=users.filter(function(x){return x.device.status==='pending';});
+  var done=users.filter(function(x){return x.device.status!=='pending';});
+  function row(x){var d=x.device;var r=ROLES[x.role]||{name:x.role,color:'#6C5CE7'};var act='';
+    if(d.status==='pending')act='<button class="btn ok sm" onclick="approveDevice(\''+x.id+'\')"><i class="ti ti-check"></i> Approve</button><button class="btn danger sm" onclick="rejectDevice(\''+x.id+'\')"><i class="ti ti-x"></i> Reject</button>';
+    else if(d.status==='approved')act='<span class="badge bg-green"><i class="ti ti-circle-check"></i> Approved</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Revoke device"><i class="ti ti-rotate-2"></i></button>';
+    else act='<span class="badge bg-coral"><i class="ti ti-shield-x"></i> Rejected</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Reset"><i class="ti ti-rotate-2"></i></button>';
+    return '<div class="flex between center" style="gap:12px;padding:11px 0;border-bottom:1px solid var(--line)"><div class="flex center gap8" style="flex:1;min-width:0"><span class="avatar" style="width:34px;height:34px;font-size:12px;background:'+r.color+'">'+initials(x.name)+'</span><div style="min-width:0"><div class="small fw6">'+escAttr(x.name)+'</div><div class="tiny muted">'+escAttr(r.name)+' \u00b7 '+(d.browser||'?')+' \u00b7 '+(d.os||'?')+(d.ts?(' \u00b7 '+timeAgo(d.ts)):'')+'</div></div></div><span class="tiny gate-mono" style="color:var(--ink-3)">'+(d.fp||'')+'</span><div class="flex gap8" style="flex-shrink:0">'+act+'</div></div>';}
+  $('#content').innerHTML='<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-devices"></i> Device approvals</span><span class="badge bg-amber">'+pending.length+' pending</span></div>'
+    +(pending.length?pending.map(row).join(''):'<div class="empty" style="padding:22px"><i class="ti ti-device-desktop-check"></i>No pending device requests.</div>')
+    +(done.length?'<div class="sec-label" style="margin:14px 0 4px"><i class="ti ti-history"></i> Reviewed</div>'+done.map(row).join(''):'')+'</div>';};
+function approveDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;x.device.status='approved';x.device.approvedTs=Date.now();delete x.device.rejectReason;persist();audit('device.approve',{user:x.name});toast('Device approved for '+x.name,'ok');RENDER.devices();buildNav();}
+function rejectDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;var why=(typeof window!=='undefined'&&window.prompt)?window.prompt('Reason for rejecting this device (optional):',''):'';x.device.status='rejected';x.device.rejectReason=(why||'').trim();persist();audit('device.reject',{user:x.name});toast('Device rejected for '+x.name,'warn');RENDER.devices();buildNav();}
+function revokeDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x)return;x.device={status:'none'};x.keyGenerated=false;delete x.keyFp;persist();audit('device.revoke',{user:x.name});toast('Device access reset for '+x.name+' \u2014 they must re-register','warn');RENDER.devices();buildNav();}
 
 /* AUDIT LOG */
 RENDER.audit=()=>{if(!can('audit.view')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>You don\'t have permission to view the audit log.</div>';return;}
