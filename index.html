@@ -842,7 +842,7 @@ function save(){ // merge scoped state writes back into DB (upsert by id), then 
    3. AUTH  (sessions, lockout, MFA)
 ========================================================= */
 const DEMO_USERS=[
-  {name:'Asha Rao',role:'sysadmin',email:'admin@hubble.io',mfa:true},
+  {name:'Hubblehox HO',role:'sysadmin',email:'admin@hubble.io',mfa:true},
 ];
 async function ensureUsers(){
   let added=0;
@@ -2389,18 +2389,18 @@ if(location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.pr
 async function seedDemo(){
   if(DB.institutes.length) return;
   const instId=uid('i');
-  DB.institutes.push({id:instId,name:'MHT-CET Cell',code:'MHCET01',address:'MG Road, Pune 411001',admin:'Fiona Naik',spoc_contact:'+91 98765 43210',email:'spoc@mhcet.edu',slug:'mhcet',logo:'',needsProjectAdmin:true,since:'Jun 2026',status:'active'});
+  DB.institutes.push({id:instId,name:'MHT-CET Cell',code:'MHCET01',address:'MG Road, Pune 411001',admin:'Shri Dileep B. Sardesai',spoc_contact:'+91 98765 43210',email:'spoc@mhcet.edu',slug:'mhcet',logo:'',needsProjectAdmin:true,since:'Jun 2026',status:'active'});
   const mk=async(name,email,role)=>{const u=await createAccount(name,email,role,{institute_id:instId,username:email.split('@')[0]},'demo1234');if(u)u.mfaEnabled=true;return u;};
-  const admin=await mk('Fiona Naik','admin@mhcet.edu','instadmin');
-  await mk('Ishan Verma','itadmin@mhcet.edu','itadmin');
+  const admin=await mk('Shri Dileep B. Sardesai','admin@mhcet.edu','instadmin');
+  await mk('Mrs Ashwani Munde','itadmin@mhcet.edu','itadmin');
   await mk('Pawan Joshi','proj@mhcet.edu','projadmin');
-  const cr=await mk('Cara Dev','creator@mhcet.edu','creator');
-  const rv=await mk('Vinay Rao','verifier@mhcet.edu','reviewer');
-  const tr=await mk('Tara Singh','translator@mhcet.edu','translator');
-  const tv=await mk('Tanvi Iyer','transverifier@mhcet.edu','transverifier');
-  const qc=await mk('Qadir Khan','qpcreator@mhcet.edu','publisher');
-  const qv=await mk('Quentin Bose','qpverifier@mhcet.edu','qpverifier');
-  const pb=await mk('Pooja Nair','publisher@mhcet.edu','qppublisher');
+  const cr=await mk('Dr. Mugdha Sanjay Patki(Physics)','creator@mhcet.edu','creator');
+  const rv=await mk('Dr. Dilip Shivaji Maske(Physics)','verifier@mhcet.edu','reviewer');
+  const tr=await mk('Dr. Vinod Kumare','translator@mhcet.edu','translator');
+  const tv=await mk('Dr. Anil Sapkal','transverifier@mhcet.edu','transverifier');
+  const qc=await mk('Mr. Kunal Deokar','qpcreator@mhcet.edu','publisher');
+  const qv=await mk('Mr. Moreshwar Bhalerao','qpverifier@mhcet.edu','qpverifier');
+  const pb=await mk('Shri Dileep B. Sardesai','publisher@mhcet.edu','qppublisher');
   const salt=randomSalt();const hash=await hashPassword('course123',salt);
   const courseId=uid('p');
   DB.projects.push({id:courseId,name:'MHCET MBA 2026',institute:instId,admin:'',grade:'',status:'active',reviewLevels:2,qTarget:120,pwSalt:salt,pwHash:hash});
