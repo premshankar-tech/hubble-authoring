@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!-- ==================================================================
+     MHT-CET GyanSetu — Question Authoring & Exam CMS
+     VERSION: v1.0 (FINAL)
+     build:   gyansetu-v1.0-final
+     date:    2026-06-07
+     ================================================================== -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -667,7 +673,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
           <button class="lg2-tab" id="lg2-tab-email" onclick="loginTab('email')"><i class="ti ti-mail"></i> Email / Password</button>
         </div>
         <div id="lg2-mobile">
-          <label class="lg2-lab">Mobile number</label>
+          <label class="lg2-lab">Mobile Number</label>
           <div class="input-ic phone"><i class="ti ti-device-mobile"></i><span class="cc">+91</span><input id="lg_mobile" inputmode="numeric" maxlength="10" placeholder="Enter your mobile number" onkeydown="if(event.key==='Enter')sendMobileOtp()"></div>
           <button class="btn pri lg2-otp" id="lg_sendotp" onclick="sendMobileOtp()" style="margin-top:12px">Send OTP <i class="ti ti-arrow-right"></i></button>
           <p class="tiny muted" style="margin-top:8px"><i class="ti ti-info-circle"></i> Demo numbers 9000000001&#8211;9000000011, or just pick a role below.</p>
@@ -687,7 +693,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
       </div>
 
       <div id="lg2-otpstep" style="display:none">
-        <label class="lg2-lab">Mobile number</label>
+        <label class="lg2-lab">Mobile Number</label>
         <div class="input-ic phone filled"><i class="ti ti-device-mobile"></i><span class="cc">+91</span><input id="otp_num" readonly></div>
         <button class="btn pri lg2-otp" onclick="resendOtp()" style="margin-top:12px"><i class="ti ti-refresh"></i> Resend OTP</button>
         <label class="lg2-lab" style="margin-top:18px">Enter OTP</label>
@@ -704,7 +710,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
       <p class="lg2-hsub">Enter the 6-digit code to continue.</p>
       <div class="mfa-code" id="mfaInputs"></div>
       <p class="tiny muted" style="text-align:center;margin:6px 0 14px"><i class="ti ti-info-circle"></i> Demo code: <b>123456</b></p>
-      <button class="btn pri lg2-otp" onclick="verifyMfa()"><i class="ti ti-shield-check"></i> Verify &amp; continue</button>
+      <button class="btn pri lg2-otp" onclick="verifyMfa()"><i class="ti ti-shield-check"></i> Verify &amp; Continue</button>
       <button class="btn ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="cancelMfa()">Back</button>
     </div>
   </div></div>
@@ -718,7 +724,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
       <div><div class="nm">MHT&#8211;CET GyanSetu</div><div class="tg">Content Management System</div></div></div>
     <div class="role-chip"><div class="lb">Signed in as</div><div class="vl" id="sideRole"><i class="ti ti-user"></i> <span></span></div></div>
     <nav class="nav" id="nav" aria-label="Main navigation" onclick="setTimeout(closeNav,0)"></nav>
-    <div class="side-foot"><button class="nav-item" onclick="logout()"><i class="ti ti-logout"></i> Sign out</button></div>
+    <div class="side-foot"><button class="nav-item" onclick="logout()"><i class="ti ti-logout"></i> Sign Out</button></div>
   </aside>
   <div class="main">
     <div class="topbar">
@@ -858,7 +864,7 @@ function examMarksForQuestion(q){var b=q&&bankById(q.bank);return examMarksForPr
 function qMarks(q){if(!q)return 0;if(q.marks!=null&&q.marks!=='')return Number(q.marks)||0;var ms=examMarksForQuestion(q);return Number(ms[q.diff]||0);}
 function marksBadge(q){return '<span class="badge bg-gray" title="Marks"><i class="ti ti-award"></i> '+qMarks(q)+'</span>';}
 function setTotalMarks(s){var t=0;((s&&s.questionIds)||[]).forEach(function(qid){var q=state.questions.find(function(x){return x.id===qid;});if(q)t+=qMarks(q);});return t;}
-function qpMarksTable(s){var ms=examMarksForProject(s&&s.course);var by={easy:0,medium:0,hard:0};((s&&s.questionIds)||[]).forEach(function(qid){var q=state.questions.find(function(x){return x.id===qid;});if(q&&by[q.diff]!=null)by[q.diff]++;});var rows=[['easy','Easy','diff-easy'],['medium','Medium','diff-medium'],['hard','Hard','diff-hard']].map(function(r){var n=by[r[0]],mk=Number(ms[r[0]]||0),sub=n*mk;return '<tr><td style="padding:4px 0"><span class="'+r[2]+'">'+r[1]+'</span></td><td style="text-align:right">'+n+'</td><td style="text-align:center;color:var(--ink-3)">\u00d7 '+mk+'</td><td style="text-align:right;font-weight:600">'+sub+'</td></tr>';}).join('');var total=setTotalMarks(s),qn=((s&&s.questionIds)||[]).length;return '<div class="card" style="margin-bottom:12px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks summary</span><span class="badge bg-violet" style="margin-left:auto">'+total+' marks</span></div><table style="width:100%;font-size:13px"><thead><tr style="color:var(--ink-3);font-size:11px;text-transform:uppercase"><th style="text-align:left">Difficulty</th><th style="text-align:right">Qs</th><th style="text-align:center">Mark</th><th style="text-align:right">Subtotal</th></tr></thead><tbody>'+rows+'<tr style="border-top:2px solid var(--line-2)"><td class="fw7" style="padding-top:6px">Total</td><td style="text-align:right;padding-top:6px" class="fw7">'+qn+'</td><td></td><td style="text-align:right;padding-top:6px;color:var(--violet);font-weight:700">'+total+'</td></tr></tbody></table></div>';}
+function qpMarksTable(s){var ms=examMarksForProject(s&&s.course);var by={easy:0,medium:0,hard:0};((s&&s.questionIds)||[]).forEach(function(qid){var q=state.questions.find(function(x){return x.id===qid;});if(q&&by[q.diff]!=null)by[q.diff]++;});var rows=[['easy','Easy','diff-easy'],['medium','Medium','diff-medium'],['hard','Hard','diff-hard']].map(function(r){var n=by[r[0]],mk=Number(ms[r[0]]||0),sub=n*mk;return '<tr><td style="padding:4px 0"><span class="'+r[2]+'">'+r[1]+'</span></td><td style="text-align:right">'+n+'</td><td style="text-align:center;color:var(--ink-3)">\u00d7 '+mk+'</td><td style="text-align:right;font-weight:600">'+sub+'</td></tr>';}).join('');var total=setTotalMarks(s),qn=((s&&s.questionIds)||[]).length;return '<div class="card" style="margin-bottom:12px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks Summary</span><span class="badge bg-violet" style="margin-left:auto">'+total+' marks</span></div><table style="width:100%;font-size:13px"><thead><tr style="color:var(--ink-3);font-size:11px;text-transform:uppercase"><th style="text-align:left">Difficulty</th><th style="text-align:right">Qs</th><th style="text-align:center">Mark</th><th style="text-align:right">Subtotal</th></tr></thead><tbody>'+rows+'<tr style="border-top:2px solid var(--line-2)"><td class="fw7" style="padding-top:6px">Total</td><td style="text-align:right;padding-top:6px" class="fw7">'+qn+'</td><td></td><td style="text-align:right;padding-top:6px;color:var(--violet);font-weight:700">'+total+'</td></tr></tbody></table></div>';}
 /* ---- image / media helpers ---- */
 function qImg(src){return src?'<img src="'+src+'" alt="" loading="lazy" style="display:block;max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--line);margin:4px 0 8px">':'';}
 function qImgInline(src){return src?' <img src="'+src+'" alt="" loading="lazy" style="height:30px;border-radius:5px;border:1px solid var(--line);vertical-align:middle;margin-left:4px">':'';}
@@ -888,7 +894,7 @@ function _crc32(u8){var crc=0xFFFFFFFF;for(var i=0;i<u8.length;i++){crc^=u8[i];f
 function makeZip(files){var enc=(typeof TextEncoder!=='undefined')?new TextEncoder():null;function bytesOf(d){if(typeof d!=='string')return d;if(enc)return enc.encode(d);var u=new Uint8Array(d.length);for(var i=0;i<d.length;i++)u[i]=d.charCodeAt(i)&255;return u;}var out=[],central=[],offset=0;function w16(a,n){a.push(n&255,(n>>8)&255);}function w32(a,n){a.push(n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255);}function wb(a,u8){for(var i=0;i<u8.length;i++)a.push(u8[i]);}files.forEach(function(f){var nameB=bytesOf(f.name),data=bytesOf(f.data),crc=_crc32(data),local=offset;out.push(0x50,0x4b,0x03,0x04);w16(out,20);w16(out,0);w16(out,0);w16(out,0);w16(out,0);w32(out,crc);w32(out,data.length);w32(out,data.length);w16(out,nameB.length);w16(out,0);wb(out,nameB);wb(out,data);offset=out.length;central.push(0x50,0x4b,0x01,0x02);w16(central,20);w16(central,20);w16(central,0);w16(central,0);w16(central,0);w16(central,0);w32(central,crc);w32(central,data.length);w32(central,data.length);w16(central,nameB.length);w16(central,0);w16(central,0);w16(central,0);w16(central,0);w32(central,0);w32(central,local);wb(central,nameB);});var cdStart=out.length;for(var i=0;i<central.length;i++)out.push(central[i]);out.push(0x50,0x4b,0x05,0x06);w16(out,0);w16(out,0);w16(out,files.length);w16(out,files.length);w32(out,central.length);w32(out,cdStart);w16(out,0);return new Uint8Array(out);}
 function downloadZipTemplate(){var csv='type,topic,section,difficulty,question,optionA,optionB,optionC,optionD,correct,explanation,QuestionImage,OptionAImage,OptionBImage,OptionCImage,OptionDImage,ExplanationImage\nmcq,Circuits,Section A,medium,Identify the element marked X,Resistor,Capacitor,Inductor,Diode,B,A capacitor stores charge between two plates.,circuit-x.png,,optB.png,,,\n';var readme='GyanSetu - image question import\n\n1. Fill questions.csv (one question per row).\n2. Put image files inside the images/ folder.\n3. Reference each image by file name in the *Image columns: QuestionImage, OptionAImage..OptionDImage, ExplanationImage.\n4. Select questions.csv + the images folder, zip them together, then upload the .zip.\nSupported images: png, jpg, jpeg, gif, webp.\n';var zip=makeZip([{name:'questions.csv',data:csv},{name:'README.txt',data:readme},{name:'images/place-images-here.txt',data:'Put your image files in this folder.'}]);var blob=new Blob([zip],{type:'application/zip'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gyansetu_image_questions_template.zip';a.click();toast('ZIP template downloaded','ok');}
 async function handleZip(e){if(!guard('question.create'))return;var f=e.target.files&&e.target.files[0];if(!f)return;CREATE._fileName=f.name;try{var buf=await f.arrayBuffer();var files=await unzip(buf);var names=Object.keys(files);var manName=names.find(function(n){return /\.csv$/i.test(n);})||names.find(function(n){return /\.xlsx?$/i.test(n);});if(!manName){toast('No CSV/Excel manifest found inside the ZIP','err');e.target.value='';return;}var rows;if(/\.csv$/i.test(manName)){rows=csvToObjects(_decodeText(files[manName]));}else{if(!window.XLSX){toast('Excel manifest needs the XLSX parser — put a CSV in the ZIP instead','warn');e.target.value='';return;}var wb=XLSX.read(files[manName],{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});}var imgMap={};names.forEach(function(n){var m=_extMime(n);if(m&&!/\.(csv|xlsx?|txt)$/i.test(n))imgMap[_base(n).toLowerCase()]='data:'+m+';base64,'+_b64(files[n]);});var gen=rowsToQuestions(rows,imgMap);showImportPreview(gen,true);}catch(err){if(typeof console!=='undefined')console.error(err);toast('Could not read ZIP: '+(err&&err.message||'error'),'err');}e.target.value='';}
-function showImportPreview(gen,isZip){if(!gen||!gen.length)return toast('No valid rows found in file','warn');window._importGen=gen;var withImg=gen.filter(function(q){return hasMedia(q);}).length;$('#xlPreview').innerHTML='<div class="flex between center mt16" style="margin-bottom:10px"><span class="fw6 small"><i class="ti ti-file-check" style="color:var(--teal)"></i> '+gen.length+' questions parsed from '+(CREATE._fileName||'file')+(isZip?(' \u00b7 '+withImg+' with image(s)'):'')+'</span><button class="btn teal sm" onclick="acceptImport()"><i class="ti ti-check"></i> Import all (as pending)</button></div>'+gen.slice(0,40).map(function(q){return '<div class="card" style="margin-bottom:8px;padding:13px"><div class="flex gap8 wrap" style="margin-bottom:7px">'+diffBadge(q.diff)+typeBadge(q.type)+'<span class="chip">'+escAttr(q.topic)+'</span>'+mediaBadge(q)+'<span class="badge '+(isZip?'bg-violet':'bg-teal')+'"><i class="ti '+(isZip?'ti-file-zip':'ti-file-spreadsheet')+'"></i> '+(isZip?'ZIP':'Excel')+'</span></div><div class="fw6 small" style="margin-bottom:7px">'+q.text+'</div>'+qImg(q.image)+((q.options&&q.options.length)?('<div class="flex gap8 wrap">'+q.options.map(function(o,j){return '<span class="chip" style="'+(j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':'')+'">'+String.fromCharCode(65+j)+'. '+escAttr(o)+((q.optionImages&&q.optionImages[j])?qImgInline(q.optionImages[j]):'')+(j===q.correct?' \u2713':'')+'</span>';}).join('')+'</div>'):'')+'</div>';}).join('')+(gen.length>40?('<p class="tiny muted">\u2026and '+(gen.length-40)+' more</p>'):'');}
+function showImportPreview(gen,isZip){if(!gen||!gen.length)return toast('No valid rows found in file','warn');window._importGen=gen;var withImg=gen.filter(function(q){return hasMedia(q);}).length;$('#xlPreview').innerHTML='<div class="flex between center mt16" style="margin-bottom:10px"><span class="fw6 small"><i class="ti ti-file-check" style="color:var(--teal)"></i> '+gen.length+' questions parsed from '+(CREATE._fileName||'file')+(isZip?(' \u00b7 '+withImg+' with image(s)'):'')+'</span><button class="btn teal sm" onclick="acceptImport()"><i class="ti ti-check"></i> Import All (as Pending)</button></div>'+gen.slice(0,40).map(function(q){return '<div class="card" style="margin-bottom:8px;padding:13px"><div class="flex gap8 wrap" style="margin-bottom:7px">'+diffBadge(q.diff)+typeBadge(q.type)+'<span class="chip">'+escAttr(q.topic)+'</span>'+mediaBadge(q)+'<span class="badge '+(isZip?'bg-violet':'bg-teal')+'"><i class="ti '+(isZip?'ti-file-zip':'ti-file-spreadsheet')+'"></i> '+(isZip?'ZIP':'Excel')+'</span></div><div class="fw6 small" style="margin-bottom:7px">'+q.text+'</div>'+qImg(q.image)+((q.options&&q.options.length)?('<div class="flex gap8 wrap">'+q.options.map(function(o,j){return '<span class="chip" style="'+(j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':'')+'">'+String.fromCharCode(65+j)+'. '+escAttr(o)+((q.optionImages&&q.optionImages[j])?qImgInline(q.optionImages[j]):'')+(j===q.correct?' \u2713':'')+'</span>';}).join('')+'</div>'):'')+'</div>';}).join('')+(gen.length>40?('<p class="tiny muted">\u2026and '+(gen.length-40)+' more</p>'):'');}
 function save(){ // merge scoped state writes back into DB (upsert by id), then persist + rescope
   if(!session){persist();return;}
   ['institutes','projects','banks','questions','team','sets'].forEach(k=>{
@@ -1019,13 +1025,13 @@ const NAV={
   itadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   instadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history']],
   projadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
-  creator:[['dashboard','My Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
-  reviewer:[['dashboard','My Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
-  translator:[['dashboard','My Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
-  publisher:[['dashboard','My Work','ti-layout-dashboard'],['export','Build QP Sets','ti-stack-2']],
-  transverifier:[['dashboard','My Work','ti-layout-dashboard'],['transverify','Exams','ti-folders']],
-  qpverifier:[['dashboard','My Work','ti-layout-dashboard'],['qpverify','Verify QP Sets','ti-clipboard-check']],
-  qppublisher:[['dashboard','My Work','ti-layout-dashboard'],['publish','Publish QP','ti-rocket']],
+  creator:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
+  reviewer:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
+  translator:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
+  publisher:[['dashboard','Work','ti-layout-dashboard'],['export','Build QP Sets','ti-stack-2']],
+  transverifier:[['dashboard','Work','ti-layout-dashboard'],['transverify','Exams','ti-folders']],
+  qpverifier:[['dashboard','Work','ti-layout-dashboard'],['qpverify','Verify QP Sets','ti-clipboard-check']],
+  qppublisher:[['dashboard','Work','ti-layout-dashboard'],['publish','Publish QP','ti-rocket']],
 };
 
 /* =========================================================
@@ -1151,37 +1157,37 @@ function recheckGate(){var u=currentUser();if(!u)return;ensureDeviceRec(u);if(u.
 function showDeviceGate(u){ensureDeviceRec(u);var d=u.device;var info=uaInfo();var bridge=hasDeviceBridge();_devPreview=null;
   if(d.status==='pending'){
     showGate('<div class="gate-ic" style="background:#fdf0d6;color:#8a5a00"><i class="ti ti-clock-hour-4"></i></div>'
-      +'<h3>Awaiting approval</h3><div class="muted small" style="margin-bottom:10px">Your request has been sent to the Admin. You\'ll get access once this device is approved.</div>'
+      +'<h3>Awaiting Approval</h3><div class="muted small" style="margin-bottom:10px">Your request has been sent to the Admin. You\'ll get access once this device is approved.</div>'
       +'<div class="gate-box"><div class="gate-row"><span class="muted">Request</span><span class="gate-mono">'+(d.reqId||'')+'</span></div><div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">Status</span><span style="color:#8a5a00">Pending</span></div></div>'
-      +'<button class="btn ghost" style="width:100%" onclick="checkDeviceStatus()"><i class="ti ti-refresh"></i> Check status</button>'
-      +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>'
+      +'<button class="btn ghost" style="width:100%" onclick="checkDeviceStatus()"><i class="ti ti-refresh"></i> Check Status</button>'
+      +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to Sign in</button>'
       +'<div class="tiny muted" style="text-align:center;margin-top:8px">Navigation stays locked until approved</div>');return;}
   if(d.status==='rejected'){
     showGate('<div class="gate-ic" style="background:#fde7e1;color:#b23a23"><i class="ti ti-shield-x"></i></div>'
-      +'<h3>Device rejected</h3><div class="muted small" style="margin-bottom:10px">Your Admin rejected this device'+(d.rejectReason?(': '+escAttr(d.rejectReason)):'')+'. You can send a new request.</div>'
-      +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register your device</button>'
-      +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>');return;}
+      +'<h3>Device Rejected</h3><div class="muted small" style="margin-bottom:10px">Your Admin rejected this device'+(d.rejectReason?(': '+escAttr(d.rejectReason)):'')+'. You can send a new request.</div>'
+      +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register Your Device</button>'
+      +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to Sign in</button>');return;}
   showGate('<div class="gate-ic" style="background:#efeafe;color:#5b46d6"><i class="ti ti-shield-lock"></i></div>'
-    +'<h3>Register this device</h3><div class="muted small" style="margin-bottom:10px">For security, this device must be registered and approved by your Admin before you can access the workspace.</div>'
-    +'<div style="text-align:center;margin-bottom:10px">'+(bridge?'<span class="badge bg-teal"><i class="ti ti-discount-check"></i> Verified desktop app</span>':'<span class="badge bg-amber"><i class="ti ti-browser"></i> Browser \u2014 limited identity</span>')+'</div>'
+    +'<h3>Register This Device</h3><div class="muted small" style="margin-bottom:10px">For security, this device must be registered and approved by your Admin before you can access the workspace.</div>'
+    +'<div style="text-align:center;margin-bottom:10px">'+(bridge?'<span class="badge bg-teal"><i class="ti ti-discount-check"></i> Verified Desktop App</span>':'<span class="badge bg-amber"><i class="ti ti-browser"></i> Browser \u2014 limited identity</span>')+'</div>'
     +'<div class="gate-box" id="dgFields">'+(bridge?'<div class="gate-row"><span class="muted">Reading device\u2026</span><span class="gate-mono">\u2022\u2022\u2022</span></div>':('<div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">User</span><span>'+escAttr(u.name)+'</span></div>'))+'</div>'
-    +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register your device</button>'
-    +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>'
+    +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register Your Device</button>'
+    +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to Sign in</button>'
     +'<div class="tiny muted" style="text-align:center;margin-top:8px">No close \u2014 registration is mandatory</div>');if(bridge)previewDevice(u);}
 async function sendDeviceRequest(){var u=currentUser();if(!u)return;ensureDeviceRec(u);var m=_devPreview||await collectMachine();var dev;if(m){var fp=await hwFingerprint(m)||browserFp();dev={status:'pending',verified:true,machine:m,fp:fp,browser:m.os||'Desktop',os:m.os||'',reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}else{var info=uaInfo();dev={status:'pending',verified:false,fp:browserFp(),browser:info.browser,os:info.os,reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}u.device=dev;_devPreview=null;persist();audit('device.request',{device:(dev.verified?('desktop/'+(m.system||'')):('browser/'+dev.browser)),fp:dev.fp});toast('Registration request sent to Admin','ok');showDeviceGate(u);}
 function checkDeviceStatus(){var u=currentUser();if(!u)return;ensureDeviceRec(u);if(u.device.status==='approved'){toast('Device approved \u2713','ok');return recheckGate();}if(u.device.status==='rejected'){return showDeviceGate(u);}toast('Still awaiting Admin approval','warn');}
 function showKeyGate(u){ensureDeviceRec(u);
   showGate('<div class="gate-ic" style="background:#d9f5ec;color:#0a7a5f"><i class="ti ti-key"></i></div>'
-    +'<h3>Generate your security key</h3><div class="small" style="color:#1b7a44;margin-bottom:8px"><i class="ti ti-circle-check"></i> Device approved</div>'
+    +'<h3>Generate Your Security Key</h3><div class="small" style="color:#1b7a44;margin-bottom:8px"><i class="ti ti-circle-check"></i> Device approved</div>'
     +'<div class="muted small" style="margin-bottom:10px">Generate a signing key to finish setup \u2014 this is the last step before your workspace.</div>'
     +'<div class="gate-box"><div class="gate-row"><span class="muted">Algorithm</span><span>ECDSA \u00b7 P-256</span></div><div class="gate-row"><span class="muted">Private key</span><span>stays on device</span></div></div>'
-    +'<button class="btn pri" style="width:100%" id="genKeyBtn" onclick="generateUserKey()"><i class="ti ti-key"></i> Generate key</button>'
+    +'<button class="btn pri" style="width:100%" id="genKeyBtn" onclick="generateUserKey()"><i class="ti ti-key"></i> Generate Key</button>'
     +'<div class="tiny muted" style="text-align:center;margin-top:8px">Public key is registered to your account</div>');}
 async function generateUserKey(){var u=currentUser();if(!u)return;var btn=document.getElementById('genKeyBtn');if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Generating...';}
   var fp='';try{var kp=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);fp=await pubKeyFingerprint(kp.publicKey);}catch(e){fp=randFp(8);}
   u.keyGenerated=true;u.keyFp=fp;u.keyTs=Date.now();persist();audit('key.generate',{fp:fp});
   showGate('<div class="gate-ic" style="background:#e3f6ec;color:#1b7a44"><i class="ti ti-shield-check"></i></div>'
-    +'<h3>Security key ready</h3><div class="muted small" style="margin-bottom:10px">Your key pair has been generated and the public key registered. You\'re all set.</div>'
+    +'<h3>Security Key Ready</h3><div class="muted small" style="margin-bottom:10px">Your key pair has been generated and the public key registered. You\'re all set.</div>'
     +'<div class="gate-box"><div class="tiny muted" style="margin-bottom:4px">Public key fingerprint</div><div class="gate-mono" style="font-size:12.5px;word-break:break-all">'+fp+'</div></div>'
     +'<button class="btn pri" style="width:100%" onclick="continueAfterGates()">Continue to workspace <i class="ti ti-arrow-right"></i></button>'
     +'<div class="tiny muted" style="text-align:center;margin-top:8px">All tasks unlock after this</div>');}
@@ -1255,8 +1261,8 @@ function sysAnalytics(){
   var maxr=Math.max.apply(null,[1].concat(roles.map(rc)));
   var pipe=function(l,v,c){return barRow(l,total>0?Math.round(v/total*100):0,v,c);};
   return '<div class="grid g2" style="margin-bottom:16px">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> System question pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.translations&&Object.values(q.translations).some(function(t){return t&&t.verified;});}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-users-group"></i> Users by role</span></div>'+roles.map(function(r){return barRow(ROLES[r].name,Math.round(rc(r)/maxr*100),rc(r));}).join('')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> System Question Pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.translations&&Object.values(q.translations).some(function(t){return t&&t.verified;});}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-users-group"></i> Users by Role</span></div>'+roles.map(function(r){return barRow(ROLES[r].name,Math.round(rc(r)/maxr*100),rc(r));}).join('')+'</div>'
     +'</div>';
 }
 function adminDetail(type){
@@ -1319,11 +1325,11 @@ function renderAdminDash(){
     +stat('Pending review',pending,'ti-clock','#F5A623',(rejected?rejected+' rejected':'awaiting'),"adminDetail('pending')")
     +'</div>'
     +'<div style="margin-bottom:16px">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> Review pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.translations&&Object.values(q.translations).some(function(t){return t&&t.verified;});}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> Review Pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.translations&&Object.values(q.translations).some(function(t){return t&&t.verified;});}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
     +'</div>'
     +'<div class="grid g2">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-alert-triangle"></i> Needs action</span></div>'+alertsHtml+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-folders"></i> Exam progress</span></div>'+courseRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-alert-triangle"></i> Needs Action</span></div>'+alertsHtml+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-folders"></i> Exam Progress</span></div>'+courseRows+'</div>'
     +'</div>';
 }
 function renderCreatorDash(){
@@ -1348,11 +1354,11 @@ function renderCreatorDash(){
     +stat('Needs Rework',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Progress by subject</span></div>'+subRows+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-bar"></i> My difficulty mix</span></div>'+diffMine('easy','Easy','var(--green)')+diffMine('medium','Medium','var(--amber)')+diffMine('hard','Hard','var(--coral)')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Progress by Subject</span></div>'+subRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-bar"></i> Difficulty Mix</span></div>'+diffMine('easy','Easy','var(--green)')+diffMine('medium','Medium','var(--amber)')+diffMine('hard','Hard','var(--coral)')+'</div>'
     +'</div>'
     +'<div class="grid g2">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs timeline</span></div>'+pace+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs Timeline</span></div>'+pace+'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rotate-clockwise"></i> Needs Rework</span></div>'+fixRows+'</div>'
     +'</div>';
 }
@@ -1377,12 +1383,12 @@ function renderReviewerDash(){
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-details"></i> Queue by subject</span></div>'+subRows+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stairs-up"></i> Queue by level</span></div>'+lvlRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-details"></i> Queue by Subject</span></div>'+subRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stairs-up"></i> Queue by Level</span></div>'+lvlRows+'</div>'
     +'</div>'
     +'<div class="grid g2">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-pie"></i> Accepted vs rejected</span></div>'+barRow('Accepted',apprPct,approvedByMe,'var(--green)')+barRow('Rejected',100-apprPct,rejectedByMe,'var(--coral)')+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs timeline</span></div>'+pace+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-pie"></i> Accepted vs Rejected</span></div>'+barRow('Accepted',apprPct,approvedByMe,'var(--green)')+barRow('Rejected',100-apprPct,rejectedByMe,'var(--coral)')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs Timeline</span></div>'+pace+'</div>'
     +'</div>';
 }
 function renderTranslatorDash(){
@@ -1404,7 +1410,7 @@ function renderTranslatorDash(){
     +'</div>'
     +'<div class="grid g2">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translated</span></div>'+subRows+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs timeline</span></div>'+pace+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs Timeline</span></div>'+pace+'</div>'
     +'</div>';
 }
 function renderPublisherDash(){
@@ -1427,10 +1433,10 @@ function renderPublisherDash(){
     +stat('Sets built',sets.length,'ti-stack-2','#2D9CDB','',"go('export')")
     +stat('Pushed',pushed,'ti-rocket','#8E44AD','to AssessPro',"go('export')")
     +'</div>'
-    +'<div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-database"></i> Pool availability by subject</span><span class="small muted"><span style="color:var(--green)">■</span> fresh <span style="color:var(--ink-3)">■</span> used</span></div>'+poolRows+'</div>'
+    +'<div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-database"></i> Pool Availability by Subject</span><span class="small muted"><span style="color:var(--green)">■</span> fresh <span style="color:var(--ink-3)">■</span> used</span></div>'+poolRows+'</div>'
     +'<div class="grid g2">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-bar"></i> Fresh by difficulty</span></div>'+diffRows+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Recent sets</span></div>'+setRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-bar"></i> Fresh by Difficulty</span></div>'+diffRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Recent Sets</span></div>'+setRows+'</div>'
     +'</div>';
 }
 /* ===== NEW ROLE WORKFLOWS: translation verify, QP verify, publish ===== */
@@ -1475,7 +1481,7 @@ RENDER.transverify=()=>{
   });
   const orphans=banks.filter(b=>!courses.some(c=>c.id===b.project));
   if(orphans.length){
-    html+=`<div class="card-h" style="margin:4px 2px 10px"><span class="ttl"><i class="ti ti-folder-question"></i> Other subjects</span></div><div class="cgrid" style="margin-bottom:18px">`;
+    html+=`<div class="card-h" style="margin:4px 2px 10px"><span class="ttl"><i class="ti ti-folder-question"></i> Other Subjects</span></div><div class="cgrid" style="margin-bottom:18px">`;
     orphans.forEach(b=>{const tr=state.questions.filter(q=>q.bank===b.id&&Object.keys(q.translations||{}).length>0);const pend=tr.filter(q=>!q.transVerified).length;html+=`<div class="ccard" onclick="transverifyOpen('${b.id}')"><div class="flex between center" style="gap:6px"><div class="ccnm">${escAttr(b.name)}</div><span class="badge ${pend?'bg-amber':'bg-green'}" style="font-size:10px;padding:2px 7px">${pend?pend+' to verify':'done'}</span></div><div class="ccmeta">${tr.length} translated</div></div>`;});
     html+='</div>';
   }
@@ -1541,10 +1547,10 @@ function shuffledSetModal(){
   const rows=pool.map(s=>`<label class="flex center gap8" style="padding:7px 9px;border:1px solid var(--line);border-radius:9px;margin-bottom:7px;cursor:pointer"><input type="checkbox" class="shuf-cb" value="${s.id}" onchange="shufCount()"><div style="flex:1"><div class="small fw6">${escAttr(s.name)}</div><div class="tiny muted">${(s.questionIds||[]).length} questions</div></div>${qpStatusBadge(s.status||'draft')}</label>`).join('');
   modal('<div class="modal-h"><h3><i class="ti ti-arrows-shuffle" style="color:var(--violet);margin-right:8px"></i>New shuffled set</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'
    +'<div class="modal-b"><p class="small muted" style="margin-top:0">Select the sets to combine. Their questions form a pool — choose how many easy / medium / hard to include, and the chosen questions are shuffled into a new set ready to export or send to AssessPro.</p>'
-   +'<div class="field"><label class="fl">New set name</label><div class="input-ic"><i class="ti ti-tag"></i><input id="shuf_name" value="2026_Shuffle '+(Math.floor(Math.random()*900)+100)+'"></div></div>'
+   +'<div class="field"><label class="fl">New Set Name</label><div class="input-ic"><i class="ti ti-tag"></i><input id="shuf_name" value="2026_Shuffle '+(Math.floor(Math.random()*900)+100)+'"></div></div>'
    +'<label class="fl">Available sets <span class="tiny muted">(verified &amp; published)</span></label>'+rows
    +'<div class="small muted" id="shuf_count" style="margin:6px 0 10px">0 sets · 0 unique questions in pool</div>'+'<label class="fl">Question mix <span class="tiny muted">(how many of each to include)</span></label>'+'<div class="flex gap12 wrap center" style="margin:4px 0">'+'<div class="flex center gap8"><span class="diff-easy">Easy</span><input type="number" id="shuf_e" min="0" value="0" style="width:74px" oninput="shufTotal()"><span class="tiny muted" id="shuf_ea">/ 0 available</span></div>'+'<div class="flex center gap8"><span class="diff-medium">Medium</span><input type="number" id="shuf_m" min="0" value="0" style="width:74px" oninput="shufTotal()"><span class="tiny muted" id="shuf_ma">/ 0 available</span></div>'+'<div class="flex center gap8"><span class="diff-hard">Hard</span><input type="number" id="shuf_h" min="0" value="0" style="width:74px" oninput="shufTotal()"><span class="tiny muted" id="shuf_ha">/ 0 available</span></div>'+'</div>'+'<div class="small fw7" style="margin-top:4px">Total questions: <span id="shuf_total" style="color:var(--violet)">0</span></div></div>'
-   +'<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="createShuffledSet()"><i class="ti ti-arrows-shuffle"></i> Create shuffled set</button></div>');
+   +'<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="createShuffledSet()"><i class="ti ti-arrows-shuffle"></i> Create Shuffled Set</button></div>');
 }
 function createShuffledSet(){
   if(!guard('qp.publish'))return;
@@ -1568,7 +1574,7 @@ RENDER.publish=()=>{const sets=state.sets||[];
     const c=(DB.projects||[]).find(p=>p.id===PUB_COURSE);
     if(!c){PUB_COURSE=null;return RENDER.publish();}
     const cs=sets.filter(s=>s.course===PUB_COURSE);const ready=cs.filter(s=>(s.status||'draft')==='qp_verified');const pub=cs.filter(s=>s.status==='published');
-    $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="pubCourses()"><i class="ti ti-arrow-left"></i> Exams</button><div style="flex:1"><div class="fw6">${escAttr(c.name)}</div><div class="tiny muted">Export or send verified sets to AssessPro</div></div><span class="badge bg-green" style="padding:7px 12px">${ready.length} ready</span><span class="badge bg-violet" style="padding:7px 12px">${pub.length} published</span><button class="btn pri sm" onclick="shuffledSetModal()" style="margin-left:6px"><i class="ti ti-arrows-shuffle"></i> New shuffled set</button></div>`
+    $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="pubCourses()"><i class="ti ti-arrow-left"></i> Exams</button><div style="flex:1"><div class="fw6">${escAttr(c.name)}</div><div class="tiny muted">Export or send verified sets to AssessPro</div></div><span class="badge bg-green" style="padding:7px 12px">${ready.length} ready</span><span class="badge bg-violet" style="padding:7px 12px">${pub.length} published</span><button class="btn pri sm" onclick="shuffledSetModal()" style="margin-left:6px"><i class="ti ti-arrows-shuffle"></i> New Shuffled Set</button></div>`
       +(ready.length?ready.map(publishCard).join(''):`<div class="empty"><i class="ti ti-clipboard-check"></i>No QP-verified sets ready in this exam.</div>`)
       +(pub.length?`<div class="card mt16"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Published</span></div>${pub.map(s=>`<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div><div class="small fw6">${escAttr(s.name)}</div>${s.assesspro?`<div class="tiny muted">AssessPro · ${escAttr(s.assesspro.batch||'')}</div>`:(s.publishedBy&&s.publishedBy.via==='export'?'<div class="tiny muted">Exported file</div>':'')}</div>${qpStatusBadge('published')}</div>`).join('')}</div>`:'');
     return;
@@ -1597,7 +1603,7 @@ function renderTransVerifierDash(){
     +stat('Verified by me',vById,'ti-checks','#27AE60','',"go('transverify')")
     +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"go('transverify')")
     +'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translation verification by subject</span></div>'+subRows+'</div>';
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translation Verification by Subject</span></div>'+subRows+'</div>';
 }
 function renderQpVerifierDash(){
   var me=currentUser();var sets=state.sets||[];
@@ -1612,7 +1618,7 @@ function renderQpVerifierDash(){
     +stat('Published',published,'ti-rocket','#8E44AD','',"go('qpverify')")
     +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"go('qpverify')")
     +'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Recent QP sets</span></div>'+rows+'</div>';
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Recent QP Sets</span></div>'+rows+'</div>';
 }
 function renderPublisherFinalDash(){
   var me=currentUser();var sets=state.sets||[];
@@ -1627,7 +1633,7 @@ function renderPublisherFinalDash(){
     +stat('Total exams',(state.projects||[]).length,'ti-folders','#6C5CE7','',"go('publish')")
     +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"go('publish')")
     +'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Recently published</span></div>'+rows+'</div>';
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Recently Published</span></div>'+rows+'</div>';
 }
 RENDER.dashboard=()=>{
   var __r=session.role;
@@ -1651,7 +1657,7 @@ RENDER.dashboard=()=>{
         <table><thead><tr><th>Name</th><th>Topics</th><th>Questions</th><th>Status</th></tr></thead><tbody>
         ${state.banks.map(b=>`<tr style="cursor:pointer" onclick="go('qbank')"><td class="fw6">${b.name}</td><td>${b.topics.length}</td><td>${qCount(b.id)} / ${b.target}</td><td>${statusBadge(b.status)}</td></tr>`).join('')||'<tr><td colspan="4"><div class="empty" style="padding:20px"><i class="ti ti-database-off"></i>No banks yet</div></td></tr>'}
         </tbody></table></div>
-      <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-activity"></i> Recent activity</span><a href="#" onclick="${can('audit.view')?"go('audit')":"toast('Audit is admin-only','warn')"};return false" class="small">View audit log →</a></div>
+      <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-activity"></i> Recent Activity</span><a href="#" onclick="${can('audit.view')?"go('audit')":"toast('Audit is admin-only','warn')"};return false" class="small">View audit log →</a></div>
         ${state.audit.slice(0,6).map(a=>`<div class="flex center gap12" style="padding:9px 0;border-bottom:1px solid var(--line)">
           <div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">${initials(a.actor)}</div>
           <div style="flex:1"><div class="small fw6">${a.actor} <span class="muted" style="font-weight:500">· ${a.action}</span></div><div class="tiny muted">${timeAgo(a.ts)}</div></div></div>`).join('')||'<div class="empty" style="padding:20px"><i class="ti ti-history"></i>No activity yet</div>'}</div>
@@ -1686,9 +1692,9 @@ function renderSysDashboard(){
       ${stat('Hierarchy',hier,'ti-sitemap','#8E44AD','use project admins')}
       ${stat('Active clients',active,'ti-circle-check','#27AE60','can sign in',"go('institutes')")}
     </div>
-    <div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-chart-bar"></i> Top clients by question volume</span></div>${topRows}</div>
+    <div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-chart-bar"></i> Top Clients by Question Volume</span></div>${topRows}</div>
     ${sysAnalytics()}
-    <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-activity"></i> Recent activity</span><a href="#" onclick="go('audit');return false" class="small">View audit log →</a></div>
+    <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-activity"></i> Recent Activity</span><a href="#" onclick="go('audit');return false" class="small">View audit log →</a></div>
       ${state.audit.slice(0,7).map(a=>`<div class="flex center gap12" style="padding:9px 0;border-bottom:1px solid var(--line)"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">${initials(a.actor)}</div><div style="flex:1"><div class="small fw6">${a.actor} <span class="muted" style="font-weight:500">· ${a.action}</span></div><div class="tiny muted">${timeAgo(a.ts)}</div></div></div>`).join('')||'<div class="empty" style="padding:20px"><i class="ti ti-history"></i>No activity yet</div>'}</div>`;
 }
 function adminRow(a){
@@ -1698,7 +1704,7 @@ function adminRow(a){
     <td><div class="flex center gap8"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">${initials(a.name)}</div><span class="fw6">${escAttr(a.name)}</span></div></td>
     <td>${inst?escAttr(inst.name):'—'}</td>
     <td class="muted small">${escAttr(a.email)}</td>
-    <td>${inst&&inst.needsProjectAdmin?'<span class="chip"><i class="ti ti-sitemap"></i> Project admins</span>':'<span class="tiny muted">Flat</span>'}</td>
+    <td>${inst&&inst.needsProjectAdmin?'<span class="chip"><i class="ti ti-sitemap"></i> Project Admins</span>':'<span class="tiny muted">Flat</span>'}</td>
     <td>${off?'<span class="badge bg-coral">Deactivated</span>':'<span class="badge bg-teal">Active</span>'}</td>
     <td><div class="flex gap8">
       <button class="btn sm" onclick="editClient('${a.institute_id}')"><i class="ti ti-edit"></i> Edit</button>
@@ -1707,7 +1713,7 @@ function adminRow(a){
     </div></td></tr>`;
 }
 function toggleAdmin(id){if(!guard('institute.create'))return;const u=DB.users.find(x=>x.id===id);if(!u)return;const now=u.status==='active'?'deactivated':'active';u.status=now;audit(now==='active'?'admin.enable':'admin.disable',{email:u.email});persist();rescope();(SCREEN==='institutes'?RENDER.institutes():go('dashboard'));toast('Admin '+(now==='active'?'enabled':'deactivated'),now==='active'?'ok':'warn');}
-function resetUserPw(userId){const u=DB.users.find(x=>x.id===userId);if(!u)return;modal(`<div class="modal-h"><h3>Reset password — ${escAttr(u.name)}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div><div class="modal-b"><p class="small muted" style="margin-bottom:14px">Set a new password for <b>${escAttr(u.email)}</b>.</p><div class="field"><label class="fl">New password</label><input id="rs_pw" type="password" placeholder="At least 6 characters"></div><div class="field"><label class="fl">Confirm new password</label><input id="rs_pw2" type="password" placeholder="Re-enter to confirm"></div></div><div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="doResetUserPw('${userId}')"><i class="ti ti-key"></i> Reset password</button></div>`);}
+function resetUserPw(userId){const u=DB.users.find(x=>x.id===userId);if(!u)return;modal(`<div class="modal-h"><h3>Reset password — ${escAttr(u.name)}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div><div class="modal-b"><p class="small muted" style="margin-bottom:14px">Set a new password for <b>${escAttr(u.email)}</b>.</p><div class="field"><label class="fl">New Password</label><input id="rs_pw" type="password" placeholder="At least 6 characters"></div><div class="field"><label class="fl">Confirm New Password</label><input id="rs_pw2" type="password" placeholder="Re-enter to confirm"></div></div><div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="doResetUserPw('${userId}')"><i class="ti ti-key"></i> Reset Password</button></div>`);}
 async function doResetUserPw(userId){const u=DB.users.find(x=>x.id===userId);if(!u)return;const pw=$('#rs_pw').value,pw2=$('#rs_pw2').value;if(pw.length<6)return toast('Password must be at least 6 characters','warn');if(pw!==pw2)return toast('Passwords do not match','warn');const salt=randomSalt();const hash=await hashPassword(pw,salt);u.pwSalt=salt;u.pwHash=hash;audit('user.passwordReset',{email:u.email});persist();closeModal();toast('Password reset for '+u.email,'ok');}
 
 /* CLIENTS (formerly Institutes) — single-form creation of institute + admin */
@@ -1719,7 +1725,7 @@ RENDER.institutes=()=>{
   const logoSrc=CLIENT_LOGO||(editing&&editing.logo)||'';
   const adminUser=editing?getInstadminFor(editing.id):null;
   if(!(CLIENT_FORM||editing)){
-    $('#content').innerHTML=`<div class="flex between center" style="margin-bottom:16px"><div><h3 style="font-size:18px;margin:0">User Management</h3><p class="tiny muted" style="margin:2px 0 0">Client institutes & their admin logins</p></div><button class="btn pri" onclick="newClient()"><i class="ti ti-plus"></i> Create client</button></div>
+    $('#content').innerHTML=`<div class="flex between center" style="margin-bottom:16px"><div><h3 style="font-size:18px;margin:0">User Management</h3><p class="tiny muted" style="margin:2px 0 0">Client institutes & their admin logins</p></div><button class="btn pri" onclick="newClient()"><i class="ti ti-plus"></i> Create Client</button></div>
     <div class="card" style="padding:0;overflow:hidden"><table><thead><tr><th style="padding-left:22px">Client</th><th>Code</th><th>SPOC</th><th>URL</th><th>Hierarchy</th><th>Status</th><th></th></tr></thead><tbody>${DB.institutes.length===0?`<tr><td colspan="7"><div class="empty" style="padding:32px"><i class="ti ti-building"></i>No clients yet — click <b>Create client</b> to add your first.</div></td></tr>`:DB.institutes.map(i=>clientRow(i)).join('')}</tbody></table></div>`;
     return;
   }
@@ -1732,7 +1738,7 @@ RENDER.institutes=()=>{
       <div class="divider" style="margin:0 0 18px"></div>
       <div class="grid" style="grid-template-columns:200px 1fr;gap:28px;align-items:flex-start">
         <div>
-          <label class="fl">Client logo</label>
+          <label class="fl">Client Logo</label>
           <div class="logo-drop" id="logoPreview" onclick="document.getElementById('cl_logo_file').click()">
             ${logoSrc?`<img src="${logoSrc}" alt="logo">`:'<span class="muted small">No logo</span>'}
           </div>
@@ -1780,7 +1786,7 @@ function clientRow(i){
     <td><span class="badge bg-gray">${escAttr(i.code||'—')}</span></td>
     <td>${i.admin?`<div class="fw6 small">${escAttr(i.admin)}</div><div class="tiny muted">${escAttr(i.email||'')}</div>`:'—'}</td>
     <td>${i.slug?`<span style="text-decoration:underline;color:var(--violet-ink);font-weight:600">/${escAttr(i.slug)}</span>`:'—'}</td>
-    <td>${i.needsProjectAdmin?'<span class="chip"><i class="ti ti-sitemap"></i> Project admins</span>':'<span class="tiny muted">Flat</span>'}</td>
+    <td>${i.needsProjectAdmin?'<span class="chip"><i class="ti ti-sitemap"></i> Project Admins</span>':'<span class="tiny muted">Flat</span>'}</td>
     <td>${off?'<span class="badge bg-coral">Deactivated</span>':'<span class="badge bg-teal">Active</span>'}</td>
     <td><div class="flex gap8">
       <button class="btn sm" onclick="editClient('${i.id}')"><i class="ti ti-edit"></i> Edit</button>
@@ -1845,9 +1851,9 @@ function resetClientPw(id){
   const u=getInstadminFor(id); if(!u) return toast('No admin user for this client','warn');
   modal(`<div class="modal-h"><h3>Reset password — ${escAttr(i.name)}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><p class="small muted" style="margin-bottom:14px">Set a new password for <b>${escAttr(u.email)}</b>. They'll use it on next sign in.</p>
-    <div class="field"><label class="fl">New password</label><input id="rs_pw" type="password" placeholder="At least 6 characters"></div>
-    <div class="field"><label class="fl">Confirm new password</label><input id="rs_pw2" type="password" placeholder="Re-enter to confirm"></div></div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="doResetPw('${id}')"><i class="ti ti-key"></i> Reset password</button></div>`);
+    <div class="field"><label class="fl">New Password</label><input id="rs_pw" type="password" placeholder="At least 6 characters"></div>
+    <div class="field"><label class="fl">Confirm New Password</label><input id="rs_pw2" type="password" placeholder="Re-enter to confirm"></div></div>
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="doResetPw('${id}')"><i class="ti ti-key"></i> Reset Password</button></div>`);
 }
 async function doResetPw(id){
   const u=getInstadminFor(id); if(!u) return;
@@ -1869,7 +1875,7 @@ RENDER.projects=()=>{
   $('#content').innerHTML=`
   <div class="actionrow"><div class="searchbar"><i class="ti ti-search"></i><input placeholder="Search exams..."></div>
     ${can('project.create')?`<button class="btn pri" onclick="modalProject()"><i class="ti ti-plus"></i> New Exam</button>`:''}</div>
-  <div class="card" style="padding:0;overflow:hidden"><table><thead><tr><th style="padding-left:20px">Exam</th><th>Grade</th><th>Subjects</th><th>Review levels</th><th>Status</th><th></th></tr></thead><tbody>
+  <div class="card" style="padding:0;overflow:hidden"><table><thead><tr><th style="padding-left:20px">Exam</th><th>Grade</th><th>Subjects</th><th>Review Levels</th><th>Status</th><th></th></tr></thead><tbody>
     ${state.projects.length?state.projects.map(p=>{const subs=state.banks.filter(b=>b.project===p.id);const lv=p.reviewLevels||1;return `<tr style="cursor:pointer" onclick="configCourse('${p.id}')"><td style="padding-left:20px" class="fw6">${escAttr(p.name)}</td><td class="muted small">${escAttr(p.grade||'—')}</td><td><span class="badge bg-violet">${subs.length} subject${subs.length===1?'':'s'}</span></td><td onclick="event.stopPropagation()">${can('review.configure')?`<select onchange="setCourseLevels('${p.id}',this.value)" style="width:auto;padding:4px 8px"><option value="1" ${lv===1?'selected':''}>1 level</option><option value="2" ${lv===2?'selected':''}>2 levels</option><option value="3" ${lv===3?'selected':''}>3 levels</option></select>`:`<span class="chip">${lv} level${lv>1?'s':''}</span>`}</td><td>${statusBadge(p.status)}</td><td onclick="event.stopPropagation()">${can('bank.create')||can('review.configure')?`<button class="btn pri sm" onclick="configCourse('${p.id}')"><i class="ti ti-adjustments-cog"></i> Configure</button>`:''}</td></tr>`;}).join(''):`<tr><td colspan="6"><div class="empty" style="padding:28px"><i class="ti ti-folders"></i>No exams yet — create one to begin.</div></td></tr>`}
   </tbody></table></div>`;};
 function configCourse(id){_courseView=id;go('projects');window.scrollTo&&window.scrollTo(0,0);}
@@ -1877,24 +1883,24 @@ function closeCourse(){_courseView=null;go('projects');}
 function renderCourseDetail(id){const p=projectById(id);if(!p){_courseView=null;return RENDER.projects();}
   const subs=state.banks.filter(b=>b.project===id);const lv=p.reviewLevels||1;
   $('#content').innerHTML=`
-  <button class="btn ghost sm" onclick="closeCourse()" style="margin-bottom:14px"><i class="ti ti-arrow-left"></i> All exams</button>
+  <button class="btn ghost sm" onclick="closeCourse()" style="margin-bottom:14px"><i class="ti ti-arrow-left"></i> All Exams</button>
   <div class="card" style="margin-bottom:16px"><div class="flex between wrap gap12" style="align-items:flex-start">
     <div class="flex center gap8"><div class="avatar" style="width:42px;height:42px;border-radius:12px;background:var(--violet-soft);color:var(--violet-ink)"><i class="ti ti-folder" style="font-size:21px"></i></div>
       <div><div class="fw7" style="font-size:18px">${escAttr(p.name)}</div><div class="tiny muted">${escAttr(p.grade||'Multi-grade')} · ${subs.length} subject${subs.length===1?'':'s'} · target ${p.qTarget||300} Qs/subject · ${p.pwHash?'<i class="ti ti-lock"></i> protected':'<i class="ti ti-lock-open"></i> no password'} · ${escAttr(p.status||'active')}</div></div></div>
-    <div class="flex gap8" style="align-items:flex-end">${can('review.configure')?`<div class="field" style="margin:0"><label class="fl" style="margin-bottom:4px">Review levels</label><select onchange="setCourseLevels('${p.id}',this.value)" style="width:auto;padding:6px 10px"><option value="1" ${lv===1?'selected':''}>1 — single</option><option value="2" ${lv===2?'selected':''}>2 — two-stage</option><option value="3" ${lv===3?'selected':''}>3 — three-stage</option></select></div>`:''}
-      ${can('project.create')?`<button class="btn sm" onclick="modalCourseEdit('${p.id}')"><i class="ti ti-edit"></i> Edit details</button>`:''}</div></div></div>
-  <div class="flex between center" style="margin-bottom:12px"><div class="sec-label"><i class="ti ti-database"></i> Subjects mapped to this exam</div>${can('bank.create')?`<button class="btn pri sm" onclick="newSubjectFor('${p.id}')"><i class="ti ti-plus"></i> Add subject</button>`:''}</div>
+    <div class="flex gap8" style="align-items:flex-end">${can('review.configure')?`<div class="field" style="margin:0"><label class="fl" style="margin-bottom:4px">Review Levels</label><select onchange="setCourseLevels('${p.id}',this.value)" style="width:auto;padding:6px 10px"><option value="1" ${lv===1?'selected':''}>1 — single</option><option value="2" ${lv===2?'selected':''}>2 — two-stage</option><option value="3" ${lv===3?'selected':''}>3 — three-stage</option></select></div>`:''}
+      ${can('project.create')?`<button class="btn sm" onclick="modalCourseEdit('${p.id}')"><i class="ti ti-edit"></i> Edit Details</button>`:''}</div></div></div>
+  <div class="flex between center" style="margin-bottom:12px"><div class="sec-label"><i class="ti ti-database"></i> Subjects mapped to this exam</div>${can('bank.create')?`<button class="btn pri sm" onclick="newSubjectFor('${p.id}')"><i class="ti ti-plus"></i> Add Subject</button>`:''}</div>
   ${subs.length?`<div class="grid g3">${subs.map(b=>qbCard(b)).join('')}${can('bank.create')?`<button class="qb-add" onclick="newSubjectFor('${p.id}')"><i class="ti ti-plus" style="font-size:28px;color:var(--ink-3)"></i><div class="fw6 muted mt8">Add subject</div><div class="tiny muted mt8">Mapped to ${escAttr(p.name)}</div></button>`:''}</div>`:`<div class="empty"><i class="ti ti-database-off"></i>No subjects mapped to this exam yet.${can('bank.create')?' Use “Add subject” to map one.':''}</div>`}`;
 }
 function setCourseLevels(pid,v){if(!guard('review.configure'))return;const p=DB.projects.find(x=>x.id===pid);if(!p)return;p.reviewLevels=Math.min(3,Math.max(1,+v||1));audit('course.reviewLevels',{course:p.name,levels:p.reviewLevels});save();go('projects');toast('Review levels set to '+p.reviewLevels,'ok');}
-function modalCourseEdit(id){const p=projectById(id);if(!p)return;const lv=p.reviewLevels||1;const mk=p.marks||{};modal(`<div class="modal-h"><h3>Edit exam</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
-  <div class="modal-b"><div class="field"><label class="fl">Exam name</label><input id="ce_name" value="${escAttr(p.name)}"></div>
-    <div class="field"><label class="fl">Grade / level</label><input id="ce_grade" value="${escAttr(p.grade||'')}" placeholder="Grade 10"></div>
-    <div class="field"><label class="fl">Target questions per subject</label><input id="ce_target" type="number" value="${p.qTarget||300}" min="0"></div>
-    <div class="field"><label class="fl">Review levels</label><select id="ce_levels"><option value="1" ${lv===1?'selected':''}>1 — single review</option><option value="2" ${lv===2?'selected':''}>2 — two-stage</option><option value="3" ${lv===3?'selected':''}>3 — three-stage</option></select></div>
-    <div class="field"><label class="fl">Marks per difficulty</label><div class="flex gap8 wrap center"><span class="diff-easy">Easy</span><input type="number" id="ce_measy" value="${mk.easy!=null?mk.easy:1}" min="0" style="width:74px"><span class="diff-medium">Medium</span><input type="number" id="ce_mmed" value="${mk.medium!=null?mk.medium:2}" min="0" style="width:74px"><span class="diff-hard">Hard</span><input type="number" id="ce_mhard" value="${mk.hard!=null?mk.hard:4}" min="0" style="width:74px"></div></div><div class="field"><label class="fl">Status</label><select id="ce_status"><option value="active" ${p.status==='active'?'selected':''}>Active</option><option value="draft" ${p.status==='draft'?'selected':''}>Draft</option><option value="archived" ${p.status==='archived'?'selected':''}>Archived</option></select></div>
+function modalCourseEdit(id){const p=projectById(id);if(!p)return;const lv=p.reviewLevels||1;const mk=p.marks||{};modal(`<div class="modal-h"><h3>Edit Exam</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+  <div class="modal-b"><div class="field"><label class="fl">Exam Name</label><input id="ce_name" value="${escAttr(p.name)}"></div>
+    <div class="field"><label class="fl">Grade / Level</label><input id="ce_grade" value="${escAttr(p.grade||'')}" placeholder="Grade 10"></div>
+    <div class="field"><label class="fl">Target Questions per Subject</label><input id="ce_target" type="number" value="${p.qTarget||300}" min="0"></div>
+    <div class="field"><label class="fl">Review Levels</label><select id="ce_levels"><option value="1" ${lv===1?'selected':''}>1 — single review</option><option value="2" ${lv===2?'selected':''}>2 — two-stage</option><option value="3" ${lv===3?'selected':''}>3 — three-stage</option></select></div>
+    <div class="field"><label class="fl">Marks per Difficulty</label><div class="flex gap8 wrap center"><span class="diff-easy">Easy</span><input type="number" id="ce_measy" value="${mk.easy!=null?mk.easy:1}" min="0" style="width:74px"><span class="diff-medium">Medium</span><input type="number" id="ce_mmed" value="${mk.medium!=null?mk.medium:2}" min="0" style="width:74px"><span class="diff-hard">Hard</span><input type="number" id="ce_mhard" value="${mk.hard!=null?mk.hard:4}" min="0" style="width:74px"></div></div><div class="field"><label class="fl">Status</label><select id="ce_status"><option value="active" ${p.status==='active'?'selected':''}>Active</option><option value="draft" ${p.status==='draft'?'selected':''}>Draft</option><option value="archived" ${p.status==='archived'?'selected':''}>Archived</option></select></div>
     <div class="field"><label class="fl">Exam password <span class="tiny muted">(leave blank to keep)</span></label><input id="ce_pw" type="password" placeholder="${p.pwHash?'•••••••• set — type to change':'Not set — enter to set'}" style="background:var(--violet-soft);border-color:#d8d2ff"></div></div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveCourse('${id}')"><i class="ti ti-check"></i> Save changes</button></div>`);}
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveCourse('${id}')"><i class="ti ti-check"></i> Save Changes</button></div>`);}
 async function saveCourse(id){if(!guard('project.create'))return;const p=DB.projects.find(x=>x.id===id);if(!p)return;const n=$('#ce_name').value.trim();if(!n)return toast('Exam name required','warn');
   const np=($('#ce_pw')||{}).value||'';if(np){if(np.length<6)return toast('Password must be at least 6 characters','warn');p.pwSalt=randomSalt();p.pwHash=await hashPassword(np,p.pwSalt);delete _unlocked[id];audit('course.setPassword',{course:n});}
   p.name=n;p.grade=$('#ce_grade').value.trim();p.reviewLevels=Math.min(3,Math.max(1,+$('#ce_levels').value||1));p.status=$('#ce_status').value;p.qTarget=Math.max(0,+$('#ce_target').value||0);p.marks={easy:Math.max(0,+(($('#ce_measy')||{}).value)||0),medium:Math.max(0,+(($('#ce_mmed')||{}).value)||0),hard:Math.max(0,+(($('#ce_mhard')||{}).value)||0)};
@@ -1902,12 +1908,12 @@ async function saveCourse(id){if(!guard('project.create'))return;const p=DB.proj
 function afterSubjectChange(){if(_courseView)go('projects');else go('qbank');}
 function newSubjectFor(courseId){_qbCourse=courseId;modalQB();}
 function modalProject(){modal(`<div class="modal-h"><h3>Create Exam</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
-  <div class="modal-b"><div class="field"><label class="fl">Exam name</label><input id="m_pname" placeholder="e.g. Grade 10 Mathematics"></div>
+  <div class="modal-b"><div class="field"><label class="fl">Exam Name</label><input id="m_pname" placeholder="e.g. Grade 10 Mathematics"></div>
     <div class="field"><label class="fl">Grade / level <span class="tiny muted">(optional)</span></label><input id="m_pgrade" placeholder="Grade 10"></div>
-    <div class="field"><label class="fl">Target questions per subject</label><input id="m_ptarget" type="number" value="300" min="0"><p class="tiny muted" style="margin-top:5px">Used to pre-fill each new subject\u2019s total \u2014 adjustable per subject.</p></div>
+    <div class="field"><label class="fl">Target Questions per Subject</label><input id="m_ptarget" type="number" value="300" min="0"><p class="tiny muted" style="margin-top:5px">Used to pre-fill each new subject\u2019s total \u2014 adjustable per subject.</p></div>
     <div class="field"><label class="fl">Exam password <span style="color:var(--coral)">*</span></label><input id="m_cpw" type="password" placeholder="At least 6 characters" style="background:var(--violet-soft);border-color:#d8d2ff"><p class="tiny muted" style="margin-top:5px">Publishers must enter this to unlock the exam before building sets.</p></div>
-    <div class="field"><label class="fl">Review levels</label><select id="m_plevels"><option value="1">1 — single review</option><option value="2">2 — two-stage</option><option value="3">3 — three-stage</option></select><p class="tiny muted" style="margin-top:5px">Sequential approvals a question needs before it is verified.</p></div><div class="field"><label class="fl">Marks per difficulty</label><div class="flex gap8 wrap center"><span class="diff-easy">Easy</span><input type="number" id="m_measy" value="1" min="0" style="width:74px"><span class="diff-medium">Medium</span><input type="number" id="m_mmed" value="2" min="0" style="width:74px"><span class="diff-hard">Hard</span><input type="number" id="m_mhard" value="4" min="0" style="width:74px"></div><p class="tiny muted" style="margin-top:5px">Each question in this exam is priced from these by its difficulty.</p></div></div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addProject()"><i class="ti ti-check"></i> Create exam</button></div>`);}
+    <div class="field"><label class="fl">Review Levels</label><select id="m_plevels"><option value="1">1 — single review</option><option value="2">2 — two-stage</option><option value="3">3 — three-stage</option></select><p class="tiny muted" style="margin-top:5px">Sequential approvals a question needs before it is verified.</p></div><div class="field"><label class="fl">Marks per Difficulty</label><div class="flex gap8 wrap center"><span class="diff-easy">Easy</span><input type="number" id="m_measy" value="1" min="0" style="width:74px"><span class="diff-medium">Medium</span><input type="number" id="m_mmed" value="2" min="0" style="width:74px"><span class="diff-hard">Hard</span><input type="number" id="m_mhard" value="4" min="0" style="width:74px"></div><p class="tiny muted" style="margin-top:5px">Each question in this exam is priced from these by its difficulty.</p></div></div>
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addProject()"><i class="ti ti-check"></i> Create Exam</button></div>`);}
 async function addProject(){if(!guard('project.create'))return;const n=$('#m_pname').value.trim();if(!n)return toast('Exam name required','warn');
   const pw=$('#m_cpw').value;if(pw.length<6)return toast('Exam password must be at least 6 characters','warn');
   const cur=currentUser(); const inst=cur&&cur.institute_id?cur.institute_id:'';
@@ -1928,10 +1934,10 @@ RENDER.users=()=>{const creating=session.role==='sysadmin'?'Institute Admin':'Pr
     ${list.length?list.map(u=>`<tr><td class="flex center gap8"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">${initials(u.name)}</div>${u.name}</td><td><span class="badge bg-sky">${ROLES[u.role].name}</span></td><td class="muted">${u.email}</td><td><span class="badge bg-green"><i class="ti ti-check"></i> Active</span></td><td><button class="btn sm danger" onclick="deleteUser('${u.id}')"><i class="ti ti-trash"></i></button></td></tr>`).join(''):`<tr><td colspan="5"><div class="empty" style="padding:26px"><i class="ti ti-users"></i>No ${creating}s yet — create one.</div></td></tr>`}
   </tbody></table></div>`;};
 function modalUser(role){modal(`<div class="modal-h"><h3>Create ${role}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
-  <div class="modal-b"><div class="field"><label class="fl">Full name</label><input id="m_uname" placeholder="Full name"></div>
+  <div class="modal-b"><div class="field"><label class="fl">Full Name</label><input id="m_uname" placeholder="Full name"></div>
     <div class="field"><label class="fl">Email</label><input id="m_uemail" type="email" placeholder="name@org.edu"></div>
     <p class="tiny muted"><i class="ti ti-shield-lock"></i> A login account is created with temp password <b>demo1234</b> (hashed). They can sign in immediately and explore their role.</p></div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addUser('${role}')"><i class="ti ti-check"></i> Create account</button></div>`);}
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addUser('${role}')"><i class="ti ti-check"></i> Create Account</button></div>`);}
 async function addUser(role){if(!guard('user.create'))return;const n=$('#m_uname').value.trim(),em=$('#m_uemail').value.trim();if(!n)return toast('Name required','warn');
   const cur=currentUser(); const r=role==='Institute Admin'?'instadmin':'projadmin'; let extra={};
   if(role==='Institute Admin'){const ii=uid('i');state.institutes.push({id:ii,name:n+"'s Institute",admin:n,since:'Jun 2026',status:'active'});extra={institute_id:ii};}
@@ -1946,12 +1952,12 @@ function deleteUser(id){if(!guard('user.create'))return;const u=DB.users.find(x=
 function teamDaysLeft(due){if(!due)return null;const d=new Date(due+'T00:00:00');const n=new Date();const today=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((d-today)/86400000);}
 function teamTimeChip(t){const due=t.dueDate;if(!due)return '<span class="tiny muted">\u2014</span>';const d=teamDaysLeft(due);let ds='';try{ds=new Date(due+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short'});}catch(e){ds=due;}
   let chip;if(d<0)chip=`<span class="badge bg-coral"><i class="ti ti-alarm"></i> Overdue ${-d}d</span>`;
-  else if(d===0)chip=`<span class="badge bg-amber"><i class="ti ti-clock"></i> Due today</span>`;
+  else if(d===0)chip=`<span class="badge bg-amber"><i class="ti ti-clock"></i> Due Today</span>`;
   else chip=`<span class="badge ${d<=7?'bg-amber':'bg-green'}"><i class="ti ti-calendar"></i> ${d}d left</span>`;
   return `${chip}<div class="tiny muted" style="margin-top:3px">${ds}</div>`;}
 RENDER.team=()=>{$('#content').innerHTML=`
   <div class="actionrow"><div class="searchbar"><i class="ti ti-search"></i><input placeholder="Search team..."></div>
-    <button class="btn pri" onclick="modalTeam()"><i class="ti ti-user-plus"></i> Add team member</button></div>
+    <button class="btn pri" onclick="modalTeam()"><i class="ti ti-user-plus"></i> Add Team Member</button></div>
   <div class="card" style="padding:0;overflow:hidden"><table><thead><tr><th style="padding-left:20px">Member</th><th>Role</th><th>Username</th><th>Mobile</th><th>Assigned Subjects</th><th>Timeline</th><th></th></tr></thead><tbody>
     ${state.team.length?state.team.map(u=>{const r=ROLES[u.role]||ROLES.creator;return `<tr><td style="padding-left:20px"><div class="flex center gap8"><div class="avatar" style="width:32px;height:32px;font-size:11px;background:${r.color}22;color:${r.color}">${initials(u.name)}</div><div><div class="fw6">${escAttr(u.name)}</div><div class="tiny muted">${escAttr(u.email)}</div></div></div></td>
       <td><span class="badge" style="background:${r.color}1a;color:${r.color}"><i class="ti ${r.icon}"></i> ${r.name}</span></td>
@@ -1986,15 +1992,15 @@ function modalTeam(editId){
     <div class="row"><div class="field" style="flex:1"><label class="fl">Full name <span style="color:var(--coral)">*</span></label><input id="m_tname" value="${t?escAttr(t.name):''}" placeholder="e.g. Priya Sharma"></div>
       <div class="field" style="flex:1"><label class="fl">Role <span style="color:var(--coral)">*</span></label><select id="m_trole" onchange="teamRoleChanged()">${roleOpts}</select></div></div>
     <div class="row"><div class="field" style="flex:1"><label class="fl">Email ID <span style="color:var(--coral)">*</span></label><input id="m_temail" type="email" value="${t?escAttr(t.email):''}" placeholder="name@org.edu"></div>
-      <div class="field" style="flex:1"><label class="fl">Mobile number</label><input id="m_tmobile" value="${t&&t.mobile?escAttr(t.mobile):''}" placeholder="+91 90000 00000"></div></div>
+      <div class="field" style="flex:1"><label class="fl">Mobile Number</label><input id="m_tmobile" value="${t&&t.mobile?escAttr(t.mobile):''}" placeholder="+91 90000 00000"></div></div>
     <div class="divider"></div>
     <div class="sec-label" style="margin-bottom:10px"><i class="ti ti-lock"></i> Login credentials</div>
     <div class="row"><div class="field" style="flex:1"><label class="fl">Username <span style="color:var(--coral)">*</span></label><input id="m_tuser" value="${u&&u.username?escAttr(u.username):''}" placeholder="priya.sharma" style="background:var(--violet-soft);border-color:#d8d2ff"></div>
       <div class="field" style="flex:1"><label class="fl">Password ${editing?'':'<span style=\"color:var(--coral)\">*</span>'}</label><input id="m_tpw" type="password" placeholder="${editing?'•••••••• (use Reset)':'At least 6 characters'}" style="background:var(--violet-soft);border-color:#d8d2ff" ${editing?'disabled':''}>${editing?'<p class="tiny muted" style="margin-top:5px">Use the Reset button to change the password</p>':''}</div></div>
     <p class="tiny muted"><i class="ti ti-info-circle"></i> Member signs in with their <b>username or email</b> plus this password.</p>
     <div class="sec-label" style="margin:18px 0 10px"><i class="ti ti-calendar-clock"></i> Target timeline</div>
-    <div class="row"><div class="field" style="flex:1"><label class="fl">Start date</label><input id="m_tstart" type="date" value="${t&&t.startDate?t.startDate:''}"></div>
-      <div class="field" style="flex:1"><label class="fl">Target due date</label><input id="m_tdue" type="date" value="${t&&t.dueDate?t.dueDate:''}"></div></div>
+    <div class="row"><div class="field" style="flex:1"><label class="fl">Start Date</label><input id="m_tstart" type="date" value="${t&&t.startDate?t.startDate:''}"></div>
+      <div class="field" style="flex:1"><label class="fl">Target Due Date</label><input id="m_tdue" type="date" value="${t&&t.dueDate?t.dueDate:''}"></div></div>
     <p class="tiny muted"><i class="ti ti-info-circle"></i> Used to monitor pace — work done is tracked against time elapsed in the dashboard.</p>
     <div class="divider"></div>
     <div id="m_assignSec" style="${(t&&instWideRole(t.role))?'display:none':''}">
@@ -2065,14 +2071,14 @@ RENDER.work=()=>{
     const c=(DB.projects||[]).find(p=>p.id===WORK.course);
     if(!c){WORK.course=null;return RENDER.work();}
     const cb=banks.filter(b=>b.project===c.id);
-    let h=`<div class="actionrow"><button class="btn" onclick="workToCourses()"><i class="ti ti-arrow-left"></i> Exams</button><div style="flex:1"><div class="fw6">${escAttr(c.name)}</div><div class="tiny muted">Pick a subject to ${actionWord}</div></div>${role==='creator'?`<button class="btn" onclick="go(\'reviewedit\')"><i class="ti ti-edit"></i> Review &amp; edit</button>`:''}</div><div class="cgrid">`;
+    let h=`<div class="actionrow"><button class="btn" onclick="workToCourses()"><i class="ti ti-arrow-left"></i> Exams</button><div style="flex:1"><div class="fw6">${escAttr(c.name)}</div><div class="tiny muted">Pick a subject to ${actionWord}</div></div>${role==='creator'?`<button class="btn" onclick="go(\'reviewedit\')"><i class="ti ti-edit"></i> Review &amp; Edit</button>`:''}</div><div class="cgrid">`;
     cb.forEach(b=>{const m=subMetric(b);
       h+=`<div class="ccard" onclick="workOpenSubject('${b.id}')"><div class="flex between center" style="gap:6px"><div class="ccnm">${escAttr(b.name)}</div><i class="ti ti-arrow-right" style="color:var(--ink-3);font-size:14px"></i></div><div class="ccmeta">${m.a}</div><div class="flex center gap8"><div class="cbar"><div style="width:${m.pct}%"></div></div><span class="badge ${m.badge}" style="font-size:10px;padding:2px 7px">${m.btext}</span></div></div>`;});
     h+='</div>'+(cb.length?'':'<div class="empty"><i class="ti ti-database-off"></i>No subjects in this exam assigned to you.</div>');
     $('#content').innerHTML=h;return;
   }
   if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams assigned to you yet.</div>';return;}
-  let h=(role==='creator'?`<div class="actionrow" style="justify-content:flex-end"><button class="btn" onclick="go('reviewedit')"><i class="ti ti-edit"></i> Review &amp; edit my questions</button></div>`:'')+'<div class="cgrid">';
+  let h=(role==='creator'?`<div class="actionrow" style="justify-content:flex-end"><button class="btn" onclick="go('reviewedit')"><i class="ti ti-edit"></i> Review &amp; Edit Questions</button></div>`:'')+'<div class="cgrid">';
   courses.forEach(c=>{const cb=banks.filter(b=>b.project===c.id);
     const total=cb.reduce((s,b)=>s+qCount(b.id),0),ver=cb.reduce((s,b)=>s+verifiedCount(b.id),0),tgt=cb.reduce((s,b)=>s+(b.target||0),0);
     const pct=tgt?Math.min(100,Math.round((role==='reviewer'?ver:total)/tgt*100)):0;
@@ -2104,12 +2110,12 @@ function modalQB(){const courses=state.projects;if(!courses.length){toast('Creat
   const preCourse=courses.find(c=>c.id===pre)||courses[0];const T=(preCourse&&preCourse.qTarget)?preCourse.qTarget:300;const de=Math.round(T*0.3),dm=Math.round(T*0.5),dh=Math.max(0,T-de-dm);
   modal(`<div class="modal-h"><h3>New Subject</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><div class="row"><div class="field" style="flex:2"><label class="fl">Exam</label><select id="m_qbcourse" onchange="qbCourseChanged()" ${locked?'disabled style="opacity:.75;cursor:not-allowed"':''}>${courses.map(c=>`<option value="${c.id}" ${c.id===pre?'selected':''}>${escAttr(c.name)}</option>`).join('')}</select></div><div class="field" style="flex:1"><label class="fl">Grade</label><input id="m_qbgrade" placeholder="Grade 11"></div></div>
-    <div class="row"><div class="field" style="flex:2"><label class="fl">Subject name</label><input id="m_qbname" placeholder="e.g. Chemistry"></div><div class="field" style="flex:1"><label class="fl">Theme color</label><select id="m_qbcolor"><option value="#6C5CE7">Violet</option><option value="#00B894">Teal</option><option value="#FF6B57">Coral</option><option value="#2D9CDB">Sky</option><option value="#E84393">Pink</option></select></div></div>
+    <div class="row"><div class="field" style="flex:2"><label class="fl">Subject Name</label><input id="m_qbname" placeholder="e.g. Chemistry"></div><div class="field" style="flex:1"><label class="fl">Theme Color</label><select id="m_qbcolor"><option value="#6C5CE7">Violet</option><option value="#00B894">Teal</option><option value="#FF6B57">Coral</option><option value="#2D9CDB">Sky</option><option value="#E84393">Pink</option></select></div></div>
     <div class="field"><label class="fl">Topics <span class="tiny muted">(comma separated)</span></label><input id="m_qbtopics" placeholder="Topic 1, Topic 2"></div>
     
     <label class="fl">Question targets by difficulty <span class="tiny muted">(count of questions)</span></label><div class="row"><span class="diff-easy">Easy</span><input type="number" id="m_de" value="${de}" style="width:90px" oninput="qbSum('m')"><span class="diff-medium">Medium</span><input type="number" id="m_dm" value="${dm}" style="width:90px" oninput="qbSum('m')"><span class="diff-hard">Hard</span><input type="number" id="m_dh" value="${dh}" style="width:90px" oninput="qbSum('m')"></div>
     <p class="tiny muted mt8">Total target: <b id="m_qtotal">${de+dm+dh}</b> questions <span class="muted">(easy + medium + hard — editable)</span></p></div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addQB()"><i class="ti ti-check"></i> Create subject</button></div>`);}
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addQB()"><i class="ti ti-check"></i> Create Subject</button></div>`);}
 function addQB(){if(!guard('bank.create'))return;const n=$('#m_qbname').value.trim();if(!n)return toast('Subject name required','warn');
   const course=$('#m_qbcourse').value;if(!course)return toast('Pick an exam','warn');
   const e=+$('#m_de').value||0,m=+$('#m_dm').value||0,h=+$('#m_dh').value||0;const target=e+m+h;if(target<=0)return toast('Set at least one difficulty count','warn');
@@ -2118,7 +2124,7 @@ function addQB(){if(!guard('bank.create'))return;const n=$('#m_qbname').value.tr
 function modalQBConfig(bid){const b=bankById(bid);modal(`<div class="modal-h"><h3>Configure — ${b.name}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><div class="grid g2"><div><label class="fl">Topics</label><div>${b.topics.map((t,i)=>`<span class="tag">${t}<i class="ti ti-x" onclick="rmCfg('${bid}','topics',${i})"></i></span>`).join('')}<span class="tag add" onclick="addCfg('${bid}','topics')"><i class="ti ti-plus"></i> Add</span></div></div>
     </div>
-    <div class="divider"></div><label class="fl">Question targets by difficulty (counts)</label><div class="row" style="margin-bottom:8px">
+    <div class="divider"></div><label class="fl">Question Targets by Difficulty (Counts)</label><div class="row" style="margin-bottom:8px">
       <div style="flex:1"><span class="diff-easy">Easy</span><input type="number" id="c_e" value="${b.dist.easy}" class="mt8" oninput="qbSum('c')"></div><div style="flex:1"><span class="diff-medium">Medium</span><input type="number" id="c_m" value="${b.dist.medium}" class="mt8" oninput="qbSum('c')"></div><div style="flex:1"><span class="diff-hard">Hard</span><input type="number" id="c_h" value="${b.dist.hard}" class="mt8" oninput="qbSum('c')"></div></div>
       <p class="tiny muted" style="margin:-2px 0 8px">Total target: <b id="c_qtotal">${b.target}</b> questions <span class="muted">(editable per subject)</span></p>
     <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> Export access is protected by the <b>exam password</b> (set on the exam), not per subject.</p></div>
@@ -2135,7 +2141,7 @@ let CREATE={method:'manual',qtype:'mcq',correct:1,bank:'qb1',optCount:4,subs:1,d
 let USER_SEARCH='',BANKVIEW=null,BV_FILTER={q:'',diff:'all',status:'all',usage:'all'};
 RENDER.create=()=>{if(!state.banks.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-database-off"></i>No question banks available yet.</div>';return;}if(!state.banks.find(b=>b.id===CREATE.bank))CREATE.bank=state.banks[0].id;$('#content').innerHTML=`
   <div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="fw6" style="flex:1">${(bankById(CREATE.bank)||{}).name||''}</div></div>
-  <div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-pencil-plus"></i> Creation method</span>
+  <div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-pencil-plus"></i> Creation Method</span>
     </div>
     <div class="flex gap8 mrow"><button class="mbtn ${CREATE.method==='manual'?'on':''}" data-tip="Manual entry — add questions one by one" aria-label="Manual entry" onclick="setMethod('manual')"><i class="ti ti-pencil"></i></button><button class="mbtn ${CREATE.method==='excel'?'on':''}" data-tip="Upload Excel / CSV — bulk import" aria-label="Upload Excel" onclick="setMethod('excel')"><i class="ti ti-file-spreadsheet"></i></button><button class="mbtn ${CREATE.method==='ai'?'on':''}" data-tip="AI generate — prompt-based" aria-label="AI generate" onclick="setMethod('ai')"><i class="ti ti-sparkles"></i></button></div></div>
   <div id="createBody"></div>`;renderCreate();};
@@ -2145,8 +2151,8 @@ function renderCreate(){ckDestroy('q_text');ckDestroy('q_explain');const b=bankB
   else if(CREATE.method==='excel')body=`<div class="card" style="text-align:center;border:2px dashed var(--line-2);background:var(--surface-2);padding:38px">
     <input type="file" id="xlfile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFile(event)">
     <i class="ti ti-file-upload" style="font-size:44px;color:var(--teal);display:block;margin-bottom:14px"></i><div class="fw7" style="font-size:16px;margin-bottom:6px">Upload a CSV or Excel file</div>
-    <div class="small muted" style="margin-bottom:16px">Columns: type, topic, section, difficulty, question, optionA–D, correct, explanation</div>
-    <button class="btn teal" onclick="document.getElementById('xlfile').click()"><i class="ti ti-upload"></i> Choose file</button>
+    <div class="small muted" style="margin-bottom:16px">Columns: Type, Topic, Section, Difficulty, Question, OptionA–D, Correct, Explanation</div>
+    <button class="btn teal" onclick="document.getElementById('xlfile').click()"><i class="ti ti-upload"></i> Choose File</button>
     <div class="mt16 small"><a href="#" onclick="downloadTemplate();return false">↓ Download template</a> &nbsp;·&nbsp; <a href="#" onclick="loadSample();return false">load sample rows</a></div></div>
     <div class="card" style="text-align:center;border:2px dashed var(--line-2);background:var(--surface-2);padding:30px;margin-top:14px">
     <input type="file" id="zipfile" accept=".zip,application/zip" style="display:none" onchange="handleZip(event)">
@@ -2155,7 +2161,7 @@ function renderCreate(){ckDestroy('q_text');ckDestroy('q_explain');const b=bankB
     <button class="btn" onclick="document.getElementById('zipfile').click()"><i class="ti ti-upload"></i> Choose ZIP</button>
     <div class="mt16 small"><a href="#" onclick="downloadZipTemplate();return false">↓ Download ZIP template</a></div></div>
     <div id="xlPreview"></div>`;
-  else body=`<div class="card" style="background:linear-gradient(150deg,#efedff55,#fdf1dc55);border-color:#d8d2ff"><div class="card-h"><span class="ttl" style="color:var(--amber-ink)"><i class="ti ti-sparkles"></i> AI Question Generator</span><span class="badge bg-amber"><i class="ti ti-user-check"></i> Human-in-the-loop</span></div><div class="flex gap12 wrap center"><div class="field" style="margin:0"><label class="fl">Topic</label><select id="ai_topic" style="width:auto"><option value="__any">Any topic</option>${b.topics.map(t=>`<option>${escAttr(t)}</option>`).join('')}</select></div></div><label class="fl" style="margin-top:14px">Questions by difficulty <span class="tiny muted">(set how many of each to generate)</span></label><div class="flex gap12 wrap center"><span class="diff-easy">Easy</span><input type="number" id="ai_easy" value="3" min="0" style="width:80px" oninput="aiTotal()"><span class="diff-medium">Medium</span><input type="number" id="ai_medium" value="3" min="0" style="width:80px" oninput="aiTotal()"><span class="diff-hard">Hard</span><input type="number" id="ai_hard" value="2" min="0" style="width:80px" oninput="aiTotal()"><span class="tiny muted">Total <b id="ai_total">8</b></span><button class="btn pri" style="margin-left:auto" onclick="aiGenerate()"><i class="ti ti-sparkles"></i> Generate</button></div><div class="field" style="margin-top:14px"><label class="fl">Prompt <span class="tiny muted">(optional — refine the instructions)</span></label><textarea id="ai_prompt" rows="3" placeholder="e.g. focus on application-level questions...">Generate questions on ${b.topics[0]} for ${b.grade}, with detailed explanations.</textarea></div><p class="tiny muted mt8"><i class="ti ti-info-circle"></i> AI output is tagged with provenance and always enters as <b>pending</b> — a human reviewer must verify before it can be exported.</p><div id="aiResults"></div></div>`;
+  else body=`<div class="card" style="background:linear-gradient(150deg,#efedff55,#fdf1dc55);border-color:#d8d2ff"><div class="card-h"><span class="ttl" style="color:var(--amber-ink)"><i class="ti ti-sparkles"></i> AI Question Generator</span><span class="badge bg-amber"><i class="ti ti-user-check"></i> Human-in-the-Loop</span></div><div class="flex gap12 wrap center"><div class="field" style="margin:0"><label class="fl">Topic</label><select id="ai_topic" style="width:auto"><option value="__any">Any topic</option>${b.topics.map(t=>`<option>${escAttr(t)}</option>`).join('')}</select></div></div><label class="fl" style="margin-top:14px">Questions by difficulty <span class="tiny muted">(set how many of each to generate)</span></label><div class="flex gap12 wrap center"><span class="diff-easy">Easy</span><input type="number" id="ai_easy" value="3" min="0" style="width:80px" oninput="aiTotal()"><span class="diff-medium">Medium</span><input type="number" id="ai_medium" value="3" min="0" style="width:80px" oninput="aiTotal()"><span class="diff-hard">Hard</span><input type="number" id="ai_hard" value="2" min="0" style="width:80px" oninput="aiTotal()"><span class="tiny muted">Total <b id="ai_total">8</b></span><button class="btn pri" style="margin-left:auto" onclick="aiGenerate()"><i class="ti ti-sparkles"></i> Generate</button></div><div class="field" style="margin-top:14px"><label class="fl">Prompt <span class="tiny muted">(optional — refine the instructions)</span></label><textarea id="ai_prompt" rows="3" placeholder="e.g. focus on application-level questions...">Generate questions on ${b.topics[0]} for ${b.grade}, with detailed explanations.</textarea></div><p class="tiny muted mt8"><i class="ti ti-info-circle"></i> AI output is tagged with provenance and always enters as <b>pending</b> — a human reviewer must verify before it can be exported.</p><div id="aiResults"></div></div>`;
   $('#createBody').innerHTML=body;if(CREATE.method==='ai'&&(window._aiReview||[]).length)renderAiReview();ckMountAll();}
 function resetDraft(){CREATE.draft={};CREATE.optCount=4;CREATE.subs=1;}
 function captureDraft(){const _prev=CREATE.draft||{};const d=CREATE.draft={};if(_prev.image)d.image=_prev.image;if(_prev.explainImage)d.explainImage=_prev.explainImage;if(_prev.optImgs)d.optImgs=_prev.optImgs.slice();const t=$('#q_text');if(t)d.text=ckGet('q_text');const ex=$('#q_explain');if(ex)d.explain=ckGet('q_explain');const m=$('#q_model');if(m)d.model=m.value;
@@ -2167,15 +2173,15 @@ function rmOption(){captureDraft();if(CREATE.optCount>2)CREATE.optCount--;if(CRE
 function addSub(){captureDraft();CREATE.subs++;renderCreate();}
 function setCorrect(i){captureDraft();CREATE.correct=i;renderCreate();}
 function manualEditor(b){const d=CREATE.draft||{};const isMCQ=CREATE.qtype==='mcq',isTF=CREATE.qtype==='truefalse',isDesc=CREATE.qtype==='descriptive',isGroup=CREATE.qtype==='group';let opts='';
-  if(isMCQ)opts='<div class="opt-grid">'+Array.from({length:CREATE.optCount},(_,i)=>`<div class="opt-row"><div class="opt-radio ${CREATE.correct===i?'on':''}" onclick="setCorrect(${i})" title="Mark correct"></div><input id="opt${i}" placeholder="Option ${String.fromCharCode(65+i)}" value="${(d.opts&&d.opts[i])||''}">${(d.optImgs&&d.optImgs[i])?`<img src="${d.optImgs[i]}" alt="" style="height:34px;border-radius:6px;border:1px solid var(--line)"><button class="btn sm ghost" onclick="rmOptImage(${i})" title="Remove image"><i class="ti ti-x"></i></button>`:`<button class="btn sm ghost" onclick="pickOptImage(${i})" title="Add option image"><i class="ti ti-photo-plus"></i></button>`}${CREATE.optCount>2?`<button class="btn sm ghost" onclick="rmOption()" tabindex="-1"><i class="ti ti-x"></i></button>`:''}</div>`).join('')+'</div>'+`<button class="btn sm ghost mt8" onclick="addOption()"><i class="ti ti-plus"></i> Add option</button>`;
+  if(isMCQ)opts='<div class="opt-grid">'+Array.from({length:CREATE.optCount},(_,i)=>`<div class="opt-row"><div class="opt-radio ${CREATE.correct===i?'on':''}" onclick="setCorrect(${i})" title="Mark correct"></div><input id="opt${i}" placeholder="Option ${String.fromCharCode(65+i)}" value="${(d.opts&&d.opts[i])||''}">${(d.optImgs&&d.optImgs[i])?`<img src="${d.optImgs[i]}" alt="" style="height:34px;border-radius:6px;border:1px solid var(--line)"><button class="btn sm ghost" onclick="rmOptImage(${i})" title="Remove image"><i class="ti ti-x"></i></button>`:`<button class="btn sm ghost" onclick="pickOptImage(${i})" title="Add option image"><i class="ti ti-photo-plus"></i></button>`}${CREATE.optCount>2?`<button class="btn sm ghost" onclick="rmOption()" tabindex="-1"><i class="ti ti-x"></i></button>`:''}</div>`).join('')+'</div>'+`<button class="btn sm ghost mt8" onclick="addOption()"><i class="ti ti-plus"></i> Add Option</button>`;
   else if(isTF)opts=['True','False'].map((t,i)=>`<div class="opt-row"><div class="opt-radio ${CREATE.correct===i?'on':''}" onclick="setCorrect(${i})"></div><input value="${t}" readonly style="background:var(--surface-2)"></div>`).join('');
-  else if(isGroup)opts=`<div class="field"><label class="fl">Shared passage / context</label><textarea id="g_passage" rows="3" placeholder="Reading passage...">${d.passage||''}</textarea></div><label class="fl">Sub-questions</label>${Array.from({length:CREATE.subs},(_,i)=>{const s=(d.subs&&d.subs[i])||{opts:[]};return `<div class="card" style="background:var(--surface-2);padding:12px;margin-bottom:8px"><input id="g_sub${i}" placeholder="Sub-question ${i+1}" style="margin-bottom:8px" value="${s.text||''}"><div class="flex gap8 wrap">${[0,1,2,3].map(j=>`<input id="g_sub${i}_o${j}" placeholder="Opt ${String.fromCharCode(65+j)}" style="flex:1;min-width:120px" value="${(s.opts&&s.opts[j])||''}">`).join('')}</div></div>`;}).join('')}<button class="btn sm" onclick="addSub()"><i class="ti ti-plus"></i> Add sub-question</button>`;
+  else if(isGroup)opts=`<div class="field"><label class="fl">Shared Passage / Context</label><textarea id="g_passage" rows="3" placeholder="Reading passage...">${d.passage||''}</textarea></div><label class="fl">Sub-Questions</label>${Array.from({length:CREATE.subs},(_,i)=>{const s=(d.subs&&d.subs[i])||{opts:[]};return `<div class="card" style="background:var(--surface-2);padding:12px;margin-bottom:8px"><input id="g_sub${i}" placeholder="Sub-question ${i+1}" style="margin-bottom:8px" value="${s.text||''}"><div class="flex gap8 wrap">${[0,1,2,3].map(j=>`<input id="g_sub${i}_o${j}" placeholder="Opt ${String.fromCharCode(65+j)}" style="flex:1;min-width:120px" value="${(s.opts&&s.opts[j])||''}">`).join('')}</div></div>`;}).join('')}<button class="btn sm" onclick="addSub()"><i class="ti ti-plus"></i> Add Sub-Question</button>`;
   return `<div class="card"><div class="flex between center wrap gap12" style="margin-bottom:16px"><div class="qtabs">${['mcq','descriptive','group'].map(t=>`<button class="qtab ${CREATE.qtype===t?'on':''}" onclick="setType('${t}')"><i class="ti ${({mcq:'ti-list-check',descriptive:'ti-align-left',group:'ti-layers-subtract',truefalse:'ti-toggle-left'})[t]}"></i> ${({mcq:'MCQ',descriptive:'Descriptive',group:'Group',truefalse:'True/False'})[t]}</button>`).join('')}</div>
     <div class="flex gap8 wrap"><select id="q_topic" style="width:auto">${b.topics.map(t=>`<option>${t}</option>`).join('')}</select><select id="q_diff" style="width:auto"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></div></div>
-    <div class="field"><label class="fl">Question text</label><textarea id="q_text" class="ck" rows="3" placeholder="Type your question...">${d.text||''}</textarea><div class="flex center gap8 mt8">${d.image?`<img src="${d.image}" alt="" style="max-height:60px;border-radius:8px;border:1px solid var(--line)"><button class="btn sm danger" onclick="rmStemImage()" title="Remove image"><i class="ti ti-x"></i></button>`:`<button class="btn sm ghost" onclick="pickStemImage()"><i class="ti ti-photo-plus"></i> Add image</button>`}</div></div>
-    ${isDesc?`<div class="field"><label class="fl">Model answer / rubric</label><textarea id="q_model" rows="3" placeholder="Expected answer...">${d.model||''}</textarea></div>`:`<div class="field"><label class="fl">Options <span class="tiny muted">(click circle to mark correct)</span></label>${opts}</div>`}
-    <div class="field"><label class="fl">Explanation <span class="tiny muted">(optional)</span></label><textarea id="q_explain" class="ck" rows="2" placeholder="Why is this correct?">${d.explain||''}</textarea><div class="flex center gap8 mt8">${d.explainImage?`<img src="${d.explainImage}" alt="" style="max-height:60px;border-radius:8px;border:1px solid var(--line)"><button class="btn sm danger" onclick="rmExplainImage()" title="Remove image"><i class="ti ti-x"></i></button>`:`<button class="btn sm ghost" onclick="pickExplainImage()"><i class="ti ti-photo-plus"></i> Add image</button>`}</div></div>
-    <div class="flex gap8 between wrap"><span class="tiny muted"><i class="ti ti-database"></i> Saving to <b>${b.name}</b> · ${qCount(b.id)} so far</span><div class="flex gap8"><button class="btn ok" onclick="saveManual()"><i class="ti ti-check"></i> Save & next</button></div></div></div>`;}
+    <div class="field"><label class="fl">Question Text</label><textarea id="q_text" class="ck" rows="3" placeholder="Type your question...">${d.text||''}</textarea><div class="flex center gap8 mt8">${d.image?`<img src="${d.image}" alt="" style="max-height:60px;border-radius:8px;border:1px solid var(--line)"><button class="btn sm danger" onclick="rmStemImage()" title="Remove image"><i class="ti ti-x"></i></button>`:`<button class="btn sm ghost" onclick="pickStemImage()"><i class="ti ti-photo-plus"></i> Add Image</button>`}</div></div>
+    ${isDesc?`<div class="field"><label class="fl">Model Answer / Rubric</label><textarea id="q_model" rows="3" placeholder="Expected answer...">${d.model||''}</textarea></div>`:`<div class="field"><label class="fl">Options <span class="tiny muted">(click circle to mark correct)</span></label>${opts}</div>`}
+    <div class="field"><label class="fl">Explanation <span class="tiny muted">(optional)</span></label><textarea id="q_explain" class="ck" rows="2" placeholder="Why is this correct?">${d.explain||''}</textarea><div class="flex center gap8 mt8">${d.explainImage?`<img src="${d.explainImage}" alt="" style="max-height:60px;border-radius:8px;border:1px solid var(--line)"><button class="btn sm danger" onclick="rmExplainImage()" title="Remove image"><i class="ti ti-x"></i></button>`:`<button class="btn sm ghost" onclick="pickExplainImage()"><i class="ti ti-photo-plus"></i> Add Image</button>`}</div></div>
+    <div class="flex gap8 between wrap"><span class="tiny muted"><i class="ti ti-database"></i> Saving to <b>${b.name}</b> · ${qCount(b.id)} so far</span><div class="flex gap8"><button class="btn ok" onclick="saveManual()"><i class="ti ti-check"></i> Save & Next</button></div></div></div>`;}
 function saveManual(){if(!guard('question.create'))return;const b=bankById(CREATE.bank);const text=ckGet('q_text');const _d=CREATE.draft||{};if(!stripHTML(text).trim())return toast('Question text required','warn');
   let options=[],correct=null,extra={};
   if(CREATE.qtype==='mcq'){options=Array.from({length:CREATE.optCount},(_,i)=>($('#opt'+i)?$('#opt'+i).value.trim():'')).filter(Boolean);correct=Math.min(CREATE.correct,options.length-1);if(options.length<2)return toast('Add at least 2 options','warn');}
@@ -2209,7 +2215,7 @@ function rowsToQuestions(rows,imgMap){const b=bankById(CREATE.bank);const out=[]
   return out;}
 function importPreview(rows){return showImportPreview(rowsToQuestions(rows||[]),false);}
 function _importPreviewOld(rows){const gen=rowsToQuestions(rows||[]);if(!gen.length)return toast('No valid rows found in file','warn');window._importGen=gen;
-  $('#xlPreview').innerHTML=`<div class="flex between center mt16" style="margin-bottom:10px"><span class="fw6 small"><i class="ti ti-file-check" style="color:var(--teal)"></i> ${gen.length} rows parsed from ${CREATE._fileName||'file'} — review & import</span><button class="btn teal sm" onclick="acceptImport()"><i class="ti ti-check"></i> Import all (as pending)</button></div>
+  $('#xlPreview').innerHTML=`<div class="flex between center mt16" style="margin-bottom:10px"><span class="fw6 small"><i class="ti ti-file-check" style="color:var(--teal)"></i> ${gen.length} rows parsed from ${CREATE._fileName||'file'} — review & import</span><button class="btn teal sm" onclick="acceptImport()"><i class="ti ti-check"></i> Import All (as Pending)</button></div>
     ${gen.slice(0,40).map(q=>`<div class="card" style="margin-bottom:8px;padding:13px"><div class="flex gap8 wrap" style="margin-bottom:7px">${diffBadge(q.diff)}${typeBadge(q.type)}<span class="chip">${q.topic}</span><span class="badge bg-teal"><i class="ti ti-file-spreadsheet"></i> Excel</span></div>
       <div class="fw6 small" style="margin-bottom:7px">${q.text}</div>${q.options.length?`<div class="flex gap8 wrap">${q.options.map((o,j)=>`<span class="chip" style="${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}. ${o}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' ✓':''}</span>`).join('')}</div>`:''}</div>`).join('')}
     ${gen.length>40?`<p class="tiny muted">…and ${gen.length-40} more</p>`:''}`;}
@@ -2238,7 +2244,7 @@ function aiGenerate(){if(!guard('question.create'))return;const b=bankById(CREAT
 function renderAiReview(){const list=window._aiReview||[];const acc=window._aiAccepted||0;const el=$('#aiResults');if(!el)return;
   if(!list.length){el.innerHTML=acc?`<div class="card mt16" style="text-align:center;padding:24px"><i class="ti ti-checks" style="font-size:30px;color:var(--teal)"></i><div class="fw6 mt8">${acc} question(s) accepted into ${escAttr((bankById(CREATE.bank)||{name:''}).name)}</div><div class="tiny muted mt8">They entered as pending — a reviewer must verify before export.</div></div>`:'';return;}
   el.innerHTML=`<div class="flex between center mt16 wrap gap8" style="margin-bottom:10px"><span class="fw6 small"><i class="ti ti-sparkles" style="color:var(--amber)"></i> ${list.length} to review${acc?` · <span style="color:var(--teal-ink)">${acc} accepted</span>`:''}</span>
-    <div class="flex gap8"><button class="btn ok sm" onclick="aiAcceptAll()"><i class="ti ti-checks"></i> Accept all</button><button class="btn danger sm" onclick="aiRejectAll()"><i class="ti ti-x"></i> Reject all</button></div></div>
+    <div class="flex gap8"><button class="btn ok sm" onclick="aiAcceptAll()"><i class="ti ti-checks"></i> Accept All</button><button class="btn danger sm" onclick="aiRejectAll()"><i class="ti ti-x"></i> Reject All</button></div></div>
     <div class="grid g2">${list.map(q=>aiCard(q)).join('')}</div>`;}
 function aiCard(q){return `<div class="card" id="aic_${q.id}" style="padding:13px;display:flex;flex-direction:column">
     <div class="flex gap8 wrap" style="margin-bottom:7px">${diffBadge(q.diff)}${typeBadge(q.type)}<span class="chip">${escAttr(q.topic)}</span><span class="badge bg-amber"><i class="ti ti-sparkles"></i> AI</span></div>
@@ -2281,17 +2287,17 @@ function canEditQuestion(){return can('question.edit')||can('question.create')||
 function afterQChange(){if(document.getElementById('bvList'))renderBankView();else if(SCREEN==='review')RENDER.review();else if(SCREEN==='reviewedit')RENDER.reviewedit();}
 function editQ(id){const q=state.questions.find(x=>x.id===id);const verifier=can('question.verify');window._editImg={image:q.image||null,explainImage:q.explainImage||null,optImgs:(q.optionImages||[]).slice()};modal(`<div class="modal-h"><h3>Edit question ${codeBadge(q)} <span class="badge bg-gray">v${q.version||1}</span></h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><div class="flex gap8 wrap" style="margin-bottom:14px">${diffBadge(q.diff)}${typeBadge(q.type)}<span class="chip">${q.topic}</span>${statusBadge(q.status)}${srcBadge(q.source)}</div>
-    <div class="field"><label class="fl">Question text</label><textarea id="e_text" class="ck" rows="3">${q.text}</textarea><div class="mt8" id="eimg_stem">${editImgCtl('stem')}</div></div>
-    ${q.options&&q.options.length?`<label class="fl">Options (click to set correct)</label>${q.options.map((o,i)=>`<div class="opt-row"><div class="opt-radio ${q.correct===i?'on':''}" onclick="window._editCorrect=${i};document.querySelectorAll('#modal .opt-radio').forEach((r,j)=>r.classList.toggle('on',j===${i}))"></div><input id="e_opt${i}" value="${o.replace(/"/g,'&quot;')}"><span id="eimg_opt${i}" style="margin-left:6px">${editImgCtl('opt',i)}</span></div>`).join('')}`:''}
-    ${q.model!==undefined?`<div class="field"><label class="fl">Model answer</label><textarea id="e_model" rows="3">${q.model||''}</textarea></div>`:''}
+    <div class="field"><label class="fl">Question Text</label><textarea id="e_text" class="ck" rows="3">${q.text}</textarea><div class="mt8" id="eimg_stem">${editImgCtl('stem')}</div></div>
+    ${q.options&&q.options.length?`<label class="fl">Options (Click to Set Correct)</label>${q.options.map((o,i)=>`<div class="opt-row"><div class="opt-radio ${q.correct===i?'on':''}" onclick="window._editCorrect=${i};document.querySelectorAll('#modal .opt-radio').forEach((r,j)=>r.classList.toggle('on',j===${i}))"></div><input id="e_opt${i}" value="${o.replace(/"/g,'&quot;')}"><span id="eimg_opt${i}" style="margin-left:6px">${editImgCtl('opt',i)}</span></div>`).join('')}`:''}
+    ${q.model!==undefined?`<div class="field"><label class="fl">Model Answer</label><textarea id="e_model" rows="3">${q.model||''}</textarea></div>`:''}
     <div class="field"><label class="fl">Explanation</label><textarea id="e_explain" class="ck" rows="2">${q.explain||''}</textarea><div class="mt8" id="eimg_explain">${editImgCtl('explain')}</div></div>
     ${q.status==='verified'?'<p class="tiny muted"><i class="ti ti-info-circle"></i> Verified content — saving creates a new immutable version and keeps the prior one in history.</p>':''}</div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn ok" onclick="saveEdit('${id}')"><i class="ti ti-check"></i> Save changes</button></div>`,true);window._editCorrect=q.correct;}
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn ok" onclick="saveEdit('${id}')"><i class="ti ti-check"></i> Save Changes</button></div>`,true);window._editCorrect=q.correct;}
 function saveEdit(id){if(!canEditQuestion())return toast('Permission denied','err');const q=state.questions.find(x=>x.id===id);
   {q.history=q.history||[];q.history.push({version:q.version||1,action:'edit',text:q.text,options:[...(q.options||[])],correct:q.correct,explain:q.explain,diff:q.diff,status:q.status,image:q.image,explainImage:q.explainImage,optionImages:(q.optionImages||[]).slice(),ts:Date.now(),by:currentUser().name});q.version=(q.version||1)+1;}
   q.text=ckGet('e_text');q.explain=ckGet('e_explain');if($('#e_model'))q.model=$('#e_model').value;
   if(q.options&&q.options.length){q.options=q.options.map((_,i)=>$('#e_opt'+i).value);q.correct=window._editCorrect;}q.image=(window._editImg&&_editImg.image)||null;q.explainImage=(window._editImg&&_editImg.explainImage)||null;if(q.options&&q.options.length)q.optionImages=((window._editImg&&_editImg.optImgs)||[]).slice(0,q.options.length);
-  audit('question.edit',{id,version:q.version});save();buildNav();closeModal();toast('Saved'+(q.version>1?' (v'+q.version+')':''),'ok');afterQChange();}
+  audit('question.edit',{id,version:q.version});save();buildNav();closeModal();toast('Saved'+(q.version>1?' (V'+q.version+')':''),'ok');afterQChange();}
 function deleteQ(id){if(!canEditQuestion())return toast('Permission denied','err');const q=state.questions.find(x=>x.id===id);if(!q)return;if(!confirm('Delete this question permanently?'))return;
   state.questions=state.questions.filter(x=>x.id!==id);DB.questions=DB.questions.filter(x=>x.id!==id);audit('question.delete',{id,bank:(bankById(q.bank)||{name:'?'}).name});save();buildNav();afterQChange();toast('Question deleted','warn');}
 async function viewBank(bid){const _vb=state.banks.find(b=>b.id===bid);if(!_vb)return toast('Bank not available','warn');if(!await requireCourseAccess(_vb.project))return;BANKVIEW=bid;BV_FILTER={q:'',diff:'all',status:'all',usage:'all'};const b=bankById(bid);
@@ -2330,7 +2336,7 @@ function reScope(){
   return mine.length?mine:state.questions.slice();
 }
 function reHome(){var r=session.role;return r==='transverifier'?'transverify':r==='qpverifier'?'qpverify':r==='translator'?'translate':'work';}
-function reTitle(){var r=session.role;return r==='reviewer'?'Review content':r==='transverifier'?'Verify translations':r==='qpverifier'?'Review paper questions':r==='translator'?'Translate content':'Review & edit my questions';}
+function reTitle(){var r=session.role;return r==='reviewer'?'Review content':r==='transverifier'?'Verify translations':r==='qpverifier'?'Review paper questions':r==='translator'?'Translate content':'Review & Edit Questions';}
 function reActions(q,compact){
   var r=session.role;
   var hist=(q.version>1||(q.history&&q.history.length))?`<button class="btn sm ghost" onclick="event.stopPropagation();viewHistory('${q.id}')" title="History"><i class="ti ti-history"></i></button>`:'';
@@ -2381,7 +2387,7 @@ RENDER.reviewedit=()=>{
 function logEvent(q,action,note){if(!q)return;q.history=q.history||[];q.history.push({version:q.version||1,action:action,note:note||'',event:true,status:q.status,ts:Date.now(),by:(currentUser()&&currentUser().name)||'system'});}
 function viewHistory(id){const q=state.questions.find(x=>x.id===id);modal(`<div class="modal-h"><h3>Version history ${q.code?'· '+q.code:''}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><div class="card" style="background:var(--teal-soft);border-color:#bce8dc;margin-bottom:10px"><div class="flex between"><span class="badge bg-green">v${q.version} · current</span></div><div class="fw6 small mt8">${q.text}</div></div>
-    ${(q.history||[]).slice().reverse().map(h=>{const isEdit=h.action==='edit'||(!h.action&&h.text!=null&&!h.event);const icon=(h.action&&h.action.indexOf('translat')>=0)?'ti-language':(h.action==='verified'?'ti-rosette-discount-check':((h.action&&h.action.indexOf('approved')>=0)?'ti-check':(h.action==='rejected'?'ti-flag':(isEdit?'ti-edit':'ti-point'))));const label=h.action?(h.action.charAt(0).toUpperCase()+h.action.slice(1)):('Version v'+h.version);return `<div class="card" style="background:var(--surface-2);margin-bottom:8px"><div class="flex between center"><span class="small fw6"><i class="ti ${icon}" style="color:var(--violet);margin-right:6px"></i>${label}${isEdit?` <span class="badge bg-gray">v${h.version}</span>`:''}</span><span class="tiny muted">${escAttr(h.by||'—')} · ${timeAgo(h.ts)}</span></div>${(isEdit&&h.text)?`<div class="small mt8">${escAttr(h.text)}</div>`:''}${h.note?`<div class="tiny muted mt8"><i class="ti ti-message"></i> ${escAttr(h.note)}</div>`:''}</div>`;}).join('')||'<p class="muted small">No history yet.</p>'}</div>
+    ${(q.history||[]).slice().reverse().map(h=>{const isEdit=h.action==='edit'||(!h.action&&h.text!=null&&!h.event);const icon=(h.action&&h.action.indexOf('translat')>=0)?'ti-language':(h.action==='verified'?'ti-rosette-discount-check':((h.action&&h.action.indexOf('approved')>=0)?'ti-check':(h.action==='rejected'?'ti-flag':(isEdit?'ti-edit':'ti-point'))));const label=h.action?(h.action.charAt(0).toUpperCase()+h.action.slice(1)):('Version V'+h.version);return `<div class="card" style="background:var(--surface-2);margin-bottom:8px"><div class="flex between center"><span class="small fw6"><i class="ti ${icon}" style="color:var(--violet);margin-right:6px"></i>${label}${isEdit?` <span class="badge bg-gray">v${h.version}</span>`:''}</span><span class="tiny muted">${escAttr(h.by||'—')} · ${timeAgo(h.ts)}</span></div>${(isEdit&&h.text)?`<div class="small mt8">${escAttr(h.text)}</div>`:''}${h.note?`<div class="tiny muted mt8"><i class="ti ti-message"></i> ${escAttr(h.note)}</div>`:''}</div>`;}).join('')||'<p class="muted small">No history yet.</p>'}</div>
   <div class="modal-f"><button class="btn" onclick="closeModal()">Close</button></div>`,true);}
 
 /* TRANSLATE */
@@ -2393,17 +2399,17 @@ const MOCK_TR={'Which organelle is known as the powerhouse of the cell?':'कि
 RENDER.translate=()=>{ckDestroy('tr_text');if(!state.banks.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No banks assigned to you yet.</div>';return;}if(!state.banks.find(b=>b.id===TR.bank))TR.bank=state.banks[0].id;const qsAll=state.questions.filter(q=>q.bank===TR.bank);const trTopics=[...new Set(qsAll.map(q=>q.topic).filter(Boolean))].sort();if(TR.topic!=='all'&&!trTopics.includes(TR.topic))TR.topic='all';const qs=(TR.topic==='all')?qsAll:qsAll.filter(q=>q.topic===TR.topic);if(TR.idx>=qs.length)TR.idx=0;const q=qs[TR.idx]||qs[0];if(!q){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No questions in this bank yet.</div>';return;}
   const done=qs.filter(x=>x.translations&&x.translations[TR.lang]).length;const rtl=RTL.includes(TR.lang);
   $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="fw6" style="flex:1">${(bankById(TR.bank)||{}).name||''}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><select onchange="TR.bank=this.value;TR.idx=0;RENDER.translate()" style="width:auto">${state.banks.map(b=>`<option value="${b.id}" ${TR.bank===b.id?'selected':''}>${b.name}</option>`).join('')}</select>
-    <select onchange="TR.topic=this.value;TR.idx=0;RENDER.translate()" style="width:auto"><option value="all">All topics</option>${trTopics.map(t=>`<option value="${escAttr(t)}" ${TR.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select><div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate()"><i class="ti ti-bolt"></i> Auto-translate all</button></div></div>
+    <select onchange="TR.topic=this.value;TR.idx=0;RENDER.translate()" style="width:auto"><option value="all">All topics</option>${trTopics.map(t=>`<option value="${escAttr(t)}" ${TR.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select><div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate()"><i class="ti ti-bolt"></i> Auto-Translate All</button></div></div>
     <div class="flex center gap12 wrap" style="margin-bottom:14px"><span class="chip"><i class="ti ti-language" style="color:var(--violet)"></i> <b>English</b> (source)</span><i class="ti ti-arrows-right-left muted"></i>
       <select onchange="TR.lang=this.value;RENDER.translate()" style="width:auto;color:var(--violet-ink);font-weight:600">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${TR.lang===k?'selected':''}>${v}</option>`).join('')}</select>
       <span class="badge bg-sky" style="margin-left:auto">${done}/${qs.length} translated</span></div>
     <div class="translator" style="margin-bottom:14px"><div class="tpanel l"><div class="ph"><span class="small fw6 muted">English (source)</span><div class="flex gap8">${diffBadge(q.diff)}<span class="chip">${q.topic}</span></div></div>
       <div class="fw6" style="font-size:15px;line-height:1.5;margin-bottom:12px">${q.text}</div>
       ${q.options.map((o,i)=>`<div class="small" style="padding:8px 11px;border-radius:8px;margin-bottom:5px;${i===q.correct?'background:var(--teal-soft)':'background:var(--surface-2)'}">${String.fromCharCode(65+i)}. ${o}${i===q.correct?' ✓':''}</div>`).join('')}</div>
-      <div class="tpanel"><div class="ph"><span class="small fw6" style="color:var(--violet-ink)">${LANGS[TR.lang]}${rtl?' · RTL':''}</span><button class="btn sm" onclick="autoFillOne()"><i class="ti ti-bolt"></i> Auto-fill</button></div>
+      <div class="tpanel"><div class="ph"><span class="small fw6" style="color:var(--violet-ink)">${LANGS[TR.lang]}${rtl?' · RTL':''}</span><button class="btn sm" onclick="autoFillOne()"><i class="ti ti-bolt"></i> Auto-Fill</button></div>
         <textarea id="tr_text" class="ck" rows="2" dir="${rtl?'rtl':'ltr'}" style="font-size:15px;font-weight:600;margin-bottom:12px" placeholder="Translate the question...">${(q.translations[TR.lang]&&q.translations[TR.lang].text)||''}</textarea>
         ${q.options.map((o,i)=>`<input id="tr_opt${i}" dir="${rtl?'rtl':'ltr'}" style="margin-bottom:5px;${i===q.correct?'background:var(--teal-soft);border-color:#bce8dc':''}" placeholder="${String.fromCharCode(65+i)}. translation" value="${(q.translations[TR.lang]&&q.translations[TR.lang].options&&q.translations[TR.lang].options[i])||''}">`).join('')}
-        <div class="flex between mt12"><span class="tiny muted">${q.translations[TR.lang]?'<i class="ti ti-check"></i> Saved':'Not yet translated'}</span><button class="btn ok sm" onclick="saveTranslation('${q.id}')"><i class="ti ti-check"></i> Mark done</button></div></div></div>
+        <div class="flex between mt12"><span class="tiny muted">${q.translations[TR.lang]?'<i class="ti ti-check"></i> Saved':'Not yet translated'}</span><button class="btn ok sm" onclick="saveTranslation('${q.id}')"><i class="ti ti-check"></i> Mark Done</button></div></div></div>
     <div class="flex between center" style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)"><button class="btn sm" onclick="TR.idx=Math.max(0,TR.idx-1);RENDER.translate()" ${TR.idx===0?'disabled':''}><i class="ti ti-arrow-left"></i> Previous</button><span class="small muted">Question ${TR.idx+1} of ${qs.length}</span><button class="btn pri sm" onclick="TR.idx=Math.min(${qs.length-1},TR.idx+1);RENDER.translate()" ${TR.idx>=qs.length-1?'disabled':''}>Next <i class="ti ti-arrow-right"></i></button></div>`;ckMountAll();};
 function autoFillOne(){const qs=state.questions.filter(q=>q.bank===TR.bank);const q=qs[TR.idx];const pre=LANGS[TR.lang].split(' ')[0];
   if(TR.lang==='hi'){ckSet('tr_text',MOCK_TR[q.text]||('['+pre+'] '+q.text));q.options.forEach((o,i)=>{const el=$('#tr_opt'+i);if(el)el.value=MOCK_TR[o]||o;});}
@@ -2425,17 +2431,17 @@ RENDER.export=()=>{
   const course=projectById(EXPORT.course);const unlocked=isCourseUnlocked(course.id);
   const subs=state.banks.filter(b=>b.project===course.id);const sets=state.sets.filter(s=>s.course===course.id);
   $('#content').innerHTML=`<div class="grid" style="grid-template-columns:300px 1fr;gap:18px"><div>
-    <div class="card" style="margin-bottom:14px"><div class="card-h"><span class="ttl"><i class="ti ti-adjustments"></i> Build configuration</span></div>
+    <div class="card" style="margin-bottom:14px"><div class="card-h"><span class="ttl"><i class="ti ti-adjustments"></i> Build Configuration</span></div>
       <div class="field"><label class="fl">Exam</label><select onchange="EXPORT.course=this.value;RENDER.export()">${courses.map(c=>`<option value="${c.id}" ${EXPORT.course===c.id?'selected':''}>${escAttr(c.name)}</option>`).join('')}</select></div>
-      <div class="field"><label class="fl">Number of sets</label><input type="number" id="ex_num" value="${EXPORT.numSets}" min="1"></div>
+      <div class="field"><label class="fl">Number of Sets</label><input type="number" id="ex_num" value="${EXPORT.numSets}" min="1"></div>
       <p class="tiny muted"><i class="ti ti-info-circle"></i> For each subject, enter how many <b>fresh</b> (never-used) and <b>used</b> questions to pull per difficulty.</p></div>
     <div class="card" style="background:linear-gradient(150deg,#efedff66,#e3f2fc66);border-color:#d8d2ff">
       <div class="flex center gap12"><div style="width:44px;height:44px;border-radius:12px;background:var(--violet-soft);display:grid;place-items:center;color:var(--violet-ink);flex-shrink:0"><i class="ti ti-${unlocked?'lock-open-2':((course&&course.pwHash)?'lock':'lock-x')}" style="font-size:21px"></i></div>
         <div style="flex:1"><div class="fw6 small" style="margin-bottom:3px">Exam access ${unlocked?'<span class="badge bg-green">Unlocked</span>':''}</div><div class="tiny muted">${escAttr(course.name)}</div></div></div>
-      ${(!course.pwHash)?`<p class="tiny muted mt8"><i class="ti ti-alert-triangle"></i> No password set on this exam — ask an admin to set one.</p>`:(unlocked?`<button class="btn sm" style="width:100%;justify-content:center;margin-top:10px" onclick="lockCourse('${course.id}')"><i class="ti ti-lock"></i> Lock exam</button>`:`<input type="password" id="ex_cpw" placeholder="Enter exam password" style="margin-top:10px"><button class="btn pri sm" style="width:100%;justify-content:center;margin-top:8px" onclick="unlockCourse('${course.id}')"><i class="ti ti-key"></i> Unlock to build sets</button>`)}
+      ${(!course.pwHash)?`<p class="tiny muted mt8"><i class="ti ti-alert-triangle"></i> No password set on this exam — ask an admin to set one.</p>`:(unlocked?`<button class="btn sm" style="width:100%;justify-content:center;margin-top:10px" onclick="lockCourse('${course.id}')"><i class="ti ti-lock"></i> Lock Exam</button>`:`<input type="password" id="ex_cpw" placeholder="Enter exam password" style="margin-top:10px"><button class="btn pri sm" style="width:100%;justify-content:center;margin-top:8px" onclick="unlockCourse('${course.id}')"><i class="ti ti-key"></i> Unlock to Build Sets</button>`)}
     </div></div>
   <div>
-    <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Subjects, difficulty & pool mix</span></div>
+    <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Subjects, Difficulty & Pool Mix</span></div>
       ${!unlocked?`<div class="empty" style="padding:26px"><i class="ti ti-lock"></i>Unlock this exam with its password to pick subjects and build sets.</div>`:(!subs.length?`<div class="empty"><i class="ti ti-database-off"></i>No subjects in this exam yet.</div>`:`
       <p class="small muted" style="margin:0 0 10px">Tick a subject, then set fresh + used counts per difficulty. Subtotal updates live.</p>
       <div id="ex_subjects">${subs.map(b=>{const fe=verifiedByDiff(b.id,'easy','fresh'),fm=verifiedByDiff(b.id,'medium','fresh'),fh=verifiedByDiff(b.id,'hard','fresh'),ue=verifiedByDiff(b.id,'easy','used'),um=verifiedByDiff(b.id,'medium','used'),uh=verifiedByDiff(b.id,'hard','used');return `<div class="subj-row" data-bid="${b.id}" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px">
@@ -2448,7 +2454,7 @@ RENDER.export=()=>{
     </div>
     <div class="card" style="margin-top:14px"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Sets — ${escAttr(course.name)}</span><span class="badge bg-gray">${sets.length} set(s)</span></div>
       <div id="setsContainer">${sets.length?sets.map(setCard).join(''):`<div class="empty"><i class="ti ti-stack-2"></i>No sets yet. Configure subjects above and build.</div>`}</div>
-      ${sets.length?`<div class="divider"></div><div class="flex gap8 between center"><span class="tiny muted"><i class="ti ti-info-circle"></i> ${sets.filter(s=>s.status==='pushed').length} of ${sets.length} pushed</span><div class="flex gap8">${can('assesspro.push')?`<button class="btn" style="background:#8E44AD;color:#fff;border-color:#8E44AD" onclick="pushAssessPro()"><i class="ti ti-rocket"></i> Push to AssessPro</button>`:''}<button class="btn pri" onclick="exportFile('excel')"><i class="ti ti-file-spreadsheet"></i> Export all (Excel)</button></div></div>`:''}
+      ${sets.length?`<div class="divider"></div><div class="flex gap8 between center"><span class="tiny muted"><i class="ti ti-info-circle"></i> ${sets.filter(s=>s.status==='pushed').length} of ${sets.length} pushed</span><div class="flex gap8">${can('assesspro.push')?`<button class="btn" style="background:#8E44AD;color:#fff;border-color:#8E44AD" onclick="pushAssessPro()"><i class="ti ti-rocket"></i> Push to AssessPro</button>`:''}<button class="btn pri" onclick="exportFile('excel')"><i class="ti ti-file-spreadsheet"></i> Export All (Excel)</button></div></div>`:''}
     </div>
   </div></div>`;};
 function setCard(s){return `<div class="set-card"><div class="set-num">S${(s.name.match(/\d+/)||[''])[0]||''}</div><div style="flex:1"><div class="fw6 small">${s.name}</div><div class="tiny muted">${s.count} questions · ${setTotalMarks(s)} marks · ${escAttr(s.filters||'')}</div></div>${s.status==='pushed'?'<span class="badge" style="background:#efe3fa;color:#7d3ca8"><i class="ti ti-rocket"></i> Pushed</span>':statusBadge(s.status)}<button class="btn sm" onclick="exportSet('${s.id}')" title="Export this set"><i class="ti ti-download"></i></button><button class="btn sm ghost" onclick="rmSet('${s.id}')"><i class="ti ti-trash"></i></button></div>`;}
@@ -2465,19 +2471,19 @@ function modalSetMeta(){if(!guard('set.build'))return;const course=projectById(E
   if(!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
   if(!setSpecsFromDOM().length)return toast('Select subjects and enter fresh/used counts first','warn');
   const num=Math.max(1,+($('#ex_num')||{}).value||1);const total=setSpecsFromDOM().reduce((s,sp)=>s+sp.fresh.easy+sp.fresh.medium+sp.fresh.hard+sp.used.easy+sp.used.medium+sp.used.hard,0);
-  modal(`<div class="modal-h"><h3>Set metadata &amp; tags</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+  modal(`<div class="modal-h"><h3>Set Metadata &amp; Tags</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b">
     <p class="small muted" style="margin:0 0 12px">${total} questions per set · ${escAttr(course.name)}</p>
     <div class="row"><div class="field" style="flex:1"><label class="fl">Session / Year <span style="color:var(--coral)">*</span></label><input id="sm_session" placeholder="2026"></div>
       <div class="field" style="flex:1"><label class="fl">Number of sets <span style="color:var(--coral)">*</span></label><input id="sm_num" type="number" min="1" value="${num}"></div></div>
     <div class="field"><label class="fl">Exam name <span style="color:var(--coral)">*</span></label><input id="sm_exam" placeholder="MHCET MBA"></div>
     <div class="divider"></div>
-    <div class="flex between center" style="margin-bottom:8px"><div class="sec-label"><i class="ti ti-tags"></i> Additional tags <span class="tiny muted">(optional · add as many as needed)</span></div><button class="btn sm" onclick="addMetaTag()"><i class="ti ti-plus"></i> Add tag</button></div>
+    <div class="flex between center" style="margin-bottom:8px"><div class="sec-label"><i class="ti ti-tags"></i> Additional tags <span class="tiny muted">(optional · add as many as needed)</span></div><button class="btn sm" onclick="addMetaTag()"><i class="ti ti-plus"></i> Add Tag</button></div>
     <div id="sm_tags"></div>
     <div class="card" style="background:var(--violet-soft);border-color:#d8d2ff;margin-top:12px"><div class="tiny muted">Set name / file name preview</div><div class="fw7" id="sm_preview" style="font-size:15px;color:var(--violet-ink)">YEAR_EXAM_SET 1</div></div>
     <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> These tags travel with the set and with every pulled question on export.</p>
   </div>
-  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="confirmBuild()"><i class="ti ti-stack-2"></i> Build sets</button></div>`,true);
+  <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="confirmBuild()"><i class="ti ti-stack-2"></i> Build Sets</button></div>`,true);
   const ss=$('#sm_session'),se=$('#sm_exam');if(ss)ss.oninput=updateSetPreview;if(se)se.oninput=updateSetPreview;updateSetPreview();
 }
 function confirmBuild(){const session=($('#sm_session').value||'').trim(),exam=($('#sm_exam').value||'').trim();
@@ -2527,12 +2533,12 @@ function exportFile(kind){if(!guard('export.run'))return;const course=projectByI
 /* MARKS CONFIG (IT Admin) */
 RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only Management Executive can configure marks.</div>';return;}
   var ms=marksScheme();
-  $('#content').innerHTML=`<div class="card" style="max-width:560px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks configuration</span><span class="badge bg-gray">Per difficulty</span></div>
+  $('#content').innerHTML=`<div class="card" style="max-width:560px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks Configuration</span><span class="badge bg-gray">Per difficulty</span></div>
     <p class="small muted" style="margin:0 0 14px">Marks awarded per question by difficulty. Each question inherits marks from its difficulty; the question-paper total is computed from the mix.</p>
     <div class="field"><label class="fl"><span class="diff-easy">Easy</span></label><input id="mk_easy" type="number" min="0" step="0.5" value="${ms.easy}" style="max-width:140px"></div>
     <div class="field"><label class="fl"><span class="diff-medium">Medium</span></label><input id="mk_medium" type="number" min="0" step="0.5" value="${ms.medium}" style="max-width:140px"></div>
     <div class="field"><label class="fl"><span class="diff-hard">Hard</span></label><input id="mk_hard" type="number" min="0" step="0.5" value="${ms.hard}" style="max-width:140px"></div>
-    <div style="margin-top:6px"><button class="btn pri" onclick="saveMarks()"><i class="ti ti-check"></i> Save marks scheme</button></div>
+    <div style="margin-top:6px"><button class="btn pri" onclick="saveMarks()"><i class="ti ti-check"></i> Save Marks Scheme</button></div>
     <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> Applies to every question and to the total marks shown when a question paper is built.</p></div>`;};
 function saveMarks(){if(session.role!=='itadmin')return;var e=Math.max(0,+($('#mk_easy')||{}).value||0),m=Math.max(0,+($('#mk_medium')||{}).value||0),h=Math.max(0,+($('#mk_hard')||{}).value||0);setMarksScheme(e,m,h);audit('marks.configure',{easy:e,medium:m,hard:h});toast('Marks scheme saved \u00b7 Easy '+e+' / Medium '+m+' / Hard '+h,'ok');}
 
@@ -2546,8 +2552,8 @@ RENDER.devices=()=>{if(session.role!=='instadmin'){$('#content').innerHTML='<div
     if(d.status==='pending')act='<button class="btn ok sm" onclick="approveDevice(\''+x.id+'\')"><i class="ti ti-check"></i> Approve</button><button class="btn danger sm" onclick="rejectDevice(\''+x.id+'\')"><i class="ti ti-x"></i> Reject</button>';
     else if(d.status==='approved')act='<span class="badge bg-green"><i class="ti ti-circle-check"></i> Approved</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Revoke device"><i class="ti ti-rotate-2"></i></button>';
     else act='<span class="badge bg-coral"><i class="ti ti-shield-x"></i> Rejected</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Reset"><i class="ti ti-rotate-2"></i></button>';
-    return '<div style="padding:11px 0;border-bottom:1px solid var(--line)"><div class="flex between center" style="gap:12px"><div class="flex center gap8" style="flex:1;min-width:0"><span class="avatar" style="width:34px;height:34px;font-size:12px;background:'+r.color+'">'+initials(x.name)+'</span><div style="min-width:0"><div class="small fw6">'+escAttr(x.name)+' '+(d.verified?'<span class="badge bg-teal" style="font-size:10px"><i class="ti ti-discount-check"></i> Desktop verified</span>':'<span class="badge bg-amber" style="font-size:10px"><i class="ti ti-browser"></i> Browser only</span>')+'</div><div class="tiny muted">'+escAttr(r.name)+' \u00b7 '+((d.verified&&d.machine)?(escAttr(d.machine.system||'?')+' \u00b7 '+escAttr(d.machine.os||'')):((d.browser||'?')+' \u00b7 '+(d.os||'?')))+(d.ts?(' \u00b7 '+timeAgo(d.ts)):'')+'</div></div></div><span class="tiny gate-mono" style="color:var(--ink-3)">'+(d.fp||'')+'</span><div class="flex gap8" style="flex-shrink:0">'+act+'</div></div>'+((d.verified&&d.machine)?machineChips(d.machine):'')+'</div>';}
-  $('#content').innerHTML='<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-devices"></i> Device approvals</span><span class="badge bg-amber">'+pending.length+' pending</span></div>'
+    return '<div style="padding:11px 0;border-bottom:1px solid var(--line)"><div class="flex between center" style="gap:12px"><div class="flex center gap8" style="flex:1;min-width:0"><span class="avatar" style="width:34px;height:34px;font-size:12px;background:'+r.color+'">'+initials(x.name)+'</span><div style="min-width:0"><div class="small fw6">'+escAttr(x.name)+' '+(d.verified?'<span class="badge bg-teal" style="font-size:10px"><i class="ti ti-discount-check"></i> Desktop Verified</span>':'<span class="badge bg-amber" style="font-size:10px"><i class="ti ti-browser"></i> Browser Only</span>')+'</div><div class="tiny muted">'+escAttr(r.name)+' \u00b7 '+((d.verified&&d.machine)?(escAttr(d.machine.system||'?')+' \u00b7 '+escAttr(d.machine.os||'')):((d.browser||'?')+' \u00b7 '+(d.os||'?')))+(d.ts?(' \u00b7 '+timeAgo(d.ts)):'')+'</div></div></div><span class="tiny gate-mono" style="color:var(--ink-3)">'+(d.fp||'')+'</span><div class="flex gap8" style="flex-shrink:0">'+act+'</div></div>'+((d.verified&&d.machine)?machineChips(d.machine):'')+'</div>';}
+  $('#content').innerHTML='<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-devices"></i> Device Approvals</span><span class="badge bg-amber">'+pending.length+' pending</span></div>'
     +(pending.length?pending.map(row).join(''):'<div class="empty" style="padding:22px"><i class="ti ti-device-desktop-check"></i>No pending device requests.</div>')
     +(done.length?'<div class="sec-label" style="margin:14px 0 4px"><i class="ti ti-history"></i> Reviewed</div>'+done.map(row).join(''):'')+'</div>';};
 function approveDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;x.device.status='approved';x.device.approvedTs=Date.now();delete x.device.rejectReason;persist();audit('device.approve',{user:x.name});toast('Device approved for '+x.name,'ok');RENDER.devices();buildNav();}
@@ -2556,7 +2562,7 @@ function revokeDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||
 
 /* AUDIT LOG */
 RENDER.audit=()=>{if(!can('audit.view')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>You don\'t have permission to view the audit log.</div>';return;}
-  $('#content').innerHTML=`<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-history"></i> Audit trail</span><span class="badge bg-gray">${state.audit.length} events · append-only</span></div>
+  $('#content').innerHTML=`<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-history"></i> Audit Trail</span><span class="badge bg-gray">${state.audit.length} events · append-only</span></div>
     ${state.audit.length?state.audit.slice(0,120).map(a=>`<div class="audit-row"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">${initials(a.actor)}</div>
       <div style="flex:1"><div class="small"><b>${a.actor}</b> <span class="muted">(${a.role})</span></div><div class="tiny muted">${Object.keys(a.detail).length?JSON.stringify(a.detail):'—'}</div></div>
       <span class="audit-act ${a.action.includes('denied')||a.action.includes('fail')?'':''}" style="${a.action.includes('denied')||a.action.includes('fail')?'color:var(--coral-ink);background:var(--coral-soft);border-color:#f3c9c2':''}">${a.action}</span>
@@ -2564,14 +2570,14 @@ RENDER.audit=()=>{if(!can('audit.view')){$('#content').innerHTML='<div class="em
 
 /* SETTINGS / SECURITY */
 RENDER.settings=()=>{$('#content').innerHTML=`<div class="grid g2">
-  <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-shield-lock"></i> Security posture</span><span class="badge bg-green">Demo</span></div>
+  <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-shield-lock"></i> Security Posture</span><span class="badge bg-green">Demo</span></div>
     ${posture('ti-key','var(--teal)','Password hashing','PBKDF2 · 100k iterations · per-user salt',true)}
     ${posture('ti-shield-lock','var(--sky)','Multi-factor auth','Enabled for admin roles (TOTP)',true)}
     ${posture('ti-clock-shield','var(--violet)','Session expiry','8-hour signed tokens',true)}
     ${posture('ti-lock-square','var(--amber)','Account lockout','5 failed attempts → 30s cooldown',true)}
     ${posture('ti-database-cog','var(--pink)','Tenant isolation','Row-level security (enforced server-side in prod)',true)}
     ${posture('ti-history','var(--coral)','Audit logging','Append-only, every mutation recorded',true)}</div>
-  <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-certificate"></i> Compliance roadmap</span></div>
+  <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-certificate"></i> Compliance Roadmap</span></div>
     ${posture('ti-flag','var(--teal)','India DPDP Act','Consent + data residency',false,'Planned')}
     ${posture('ti-shield-check','var(--sky)','GDPR','DSAR + deletion workflows',false,'Planned')}
     ${posture('ti-school','var(--violet)','FERPA','Student-data handling',false,'Planned')}
@@ -2579,7 +2585,7 @@ RENDER.settings=()=>{$('#content').innerHTML=`<div class="grid g2">
     ${posture('ti-rosette','var(--pink)','SOC 2 Type II','Controls + audit','false','Planned')}</div>
   <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-settings"></i> Preferences</span></div>
     ${['Auto-save drafts','Email notifications','Require reviewer approval','Allow AI generation'].map((t,i)=>`<div class="kv"><span>${t}</span><label class="tgl"><input type="checkbox" ${i<3?'checked':''}><span class="sl"></span></label></div>`).join('')}</div>
-  <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-language"></i> Translation engines</span></div>
+  <div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-language"></i> Translation Engines</span></div>
     <div class="kv"><div><div class="fw6 small">Google Translate</div><div class="tiny muted">Connected</div></div>${statusBadge('active')}</div>
     <div class="kv"><div><div class="fw6 small">DeepL</div><div class="tiny muted">Not configured</div></div><button class="btn sm">Connect</button></div>
     <div class="kv"><div><div class="fw6 small">Microsoft / Amazon</div><div class="tiny muted">Not configured</div></div><button class="btn sm">Connect</button></div>
@@ -2658,6 +2664,49 @@ async function seedDemo(){
       _tm2[bk.id]=_tm2[bk.id]||{};if(r.topic)_tm2[bk.id][r.topic]=1;_cm2[bk.id]=(_cm2[bk.id]||0)+1;});
     Object.keys(_tm2).forEach(function(bid){var b=DB.banks.find(function(x){return x.id===bid;});if(b){b.topics=b.topics||[];Object.keys(_tm2[bid]).forEach(function(t){if(b.topics.indexOf(t)<0)b.topics.push(t);});b.target=(b.target||0)+(_cm2[bid]||0);}});
   }catch(e){if(typeof console!=='undefined')console.warn('seedImg',e);}
+  // ===== Move EVERY question through the full pipeline (full capacity), then keep a small demo queue =====
+  try{
+    var _trName=(tr&&tr.name)||'Tara Singh', _tvName=(tv&&tv.name)||'Tanvi Iyer', _rvName=(rv&&rv.name)||'Vinay Rao';
+    var MR='[\u092e\u0930\u093e\u0920\u0940] ';
+    DB.questions.forEach(function(q){
+      q.status='verified'; q.verifiedBy={by:_rvName,ts:today};
+      q.translations={ mr:{ text:MR+q.text, options:(q.options||[]).map(function(o){return MR+o;}), by:_trName } };
+      q.transVerified=true; q.transVerifiedBy={by:_tvName,ts:today};
+    });
+    // carve a small demo queue for the early roles from the largest subject
+    var counts={}; DB.questions.forEach(function(q){counts[q.bank]=(counts[q.bank]||0)+1;});
+    var bigBank=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];})[0];
+    var bq=DB.questions.filter(function(q){return q.bank===bigBank;});
+    bq.slice(0,3).forEach(function(q){ q.status='pending'; q.reviewLevel=0; delete q.verifiedBy; q.translations={}; delete q.transVerified; delete q.transVerifiedBy; });   // Content Verifier
+    bq.slice(3,6).forEach(function(q){ q.translations={}; delete q.transVerified; delete q.transVerifiedBy; });   // Translator
+    bq.slice(6,9).forEach(function(q){ delete q.transVerified; delete q.transVerifiedBy; });   // Translation Verifier
+  }catch(e){if(typeof console!=='undefined')console.warn('seed-advance',e);}
+  // ===== Build QP papers covering the FULL verified pool (full capacity) =====
+  try{
+    [pcmId,mbaId].forEach(function(pid){
+      var bankIds=DB.banks.filter(function(b){return b.project===pid;}).map(function(b){return b.id;});
+      var poolV=DB.questions.filter(function(q){return bankIds.indexOf(q.bank)>=0 && q.status==='verified';});
+      if(!poolV.length) return;
+      var courseName=(DB.projects.find(function(p){return p.id===pid;})||{}).name||'Exam';
+      var chunk=Math.ceil(poolV.length/3);
+      var statuses=['published','qp_verified','draft'];    // draft -> QP Verifier work; qp_verified -> QP Publisher work
+      for(var s=0;s<3;s++){
+        var pick=poolV.slice(s*chunk,(s+1)*chunk); if(!pick.length) continue;
+        var ids=pick.map(function(q){return q.id;});
+        var dc={easy:0,medium:0,hard:0}; pick.forEach(function(q){dc[q.diff]=(dc[q.diff]||0)+1;});
+        var st=statuses[s];
+        DB.sets.push({
+          id:uid('s'), course:pid, bank:bankIds[0], name:courseName+' Mock Test '+(s+1),
+          session:'', exam:courseName, tags:[], count:ids.length, questionIds:ids, freshIds:ids.slice(),
+          shuffled:false, usage:'mixed',
+          filters:ids.length+' Qs \u00b7 '+dc.easy+' easy \u00b7 '+dc.medium+' medium \u00b7 '+dc.hard+' hard',
+          status:st, createdBy:(qc&&qc.name)||'QP Creator', ts:today,
+          verifiedBy:(st==='qp_verified'||st==='published')?{by:(qv&&qv.name)||'QP Verifier',ts:today}:undefined,
+          publishedBy:(st==='published')?{by:(pb&&pb.name)||'Publisher',ts:today}:undefined
+        });
+      }
+    });
+  }catch(e){if(typeof console!=='undefined')console.warn('seed-sets',e);}
   persist();
 }
 async function quickLogin(){
@@ -2669,7 +2718,7 @@ async function quickLogin(){
 }
 (async function boot(){
   await initDB();
-  var SEED_VERSION='pcm-mba-v4';
+  var APP_VERSION='v1.0-final',APP_BUILD='gyansetu-v1.0-final-2026-06-07';var SEED_VERSION='pcm-mba-v9';
   if(localStorage.getItem('hub_seed')!==SEED_VERSION){
     try{TABLES.forEach(function(t){if(Array.isArray(DB[t]))DB[t]=[];});}catch(e){}
     try{localStorage.removeItem('hubble_db');localStorage.removeItem('hub_session');}catch(e){}
