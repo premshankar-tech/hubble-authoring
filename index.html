@@ -547,7 +547,7 @@ tbody tr:hover td{background:color-mix(in srgb,var(--violet) 4%,var(--surface-2)
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(166px,1fr));gap:10px}
 .ccard{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:10px 11px;cursor:pointer;transition:border-color .15s,transform .1s}
 .ccard:hover{border-color:var(--violet);transform:translateY(-1px)}
-.ccard .ccnm{font-size:12px;font-weight:600;line-height:1.25;display:flex;align-items:center;gap:6px;color:var(--ink)}
+.ccard .ccnm{font-size:12px;font-weight:600;line-height:1.3;display:flex;align-items:flex-start;gap:6px;color:var(--ink);flex:1;min-width:0;overflow-wrap:anywhere;word-break:break-word}
 .ccard .ccmeta{font-size:11px;color:var(--ink-3);margin:6px 0 8px}
 .ccard .cbar{flex:1;height:5px;border-radius:4px;background:var(--surface-2);overflow:hidden}
 .ccard .cbar>div{height:100%;background:var(--violet)}
@@ -683,7 +683,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
         </div>
         <div class="lg2-div">Select a Role</div>
         <div class="rl-list" id="roleList"></div>
-        <select id="lg_quickrole" style="display:none"><option value="admin@hubble.io">System Admin</option><option value="admin@mhcet.edu">Admin (view only)</option><option value="itadmin@mhcet.edu">IT Admin</option><option value="proj@mhcet.edu">Project Admin</option><option value="creator@mhcet.edu">Content Creator</option><option value="verifier@mhcet.edu">Content Verifier</option><option value="translator@mhcet.edu">Content Translator</option><option value="transverifier@mhcet.edu">Translation Verifier</option><option value="qpcreator@mhcet.edu">QP Creator</option><option value="qpverifier@mhcet.edu">QP Verifier</option><option value="publisher@mhcet.edu">Publisher</option></select>
+        <select id="lg_quickrole" style="display:none"><option value="admin@hubble.io">System Admin</option><option value="admin@mhcet.edu">Admin (view only)</option><option value="itadmin@mhcet.edu">Management Executive</option><option value="proj@mhcet.edu">Project Admin</option><option value="creator@mhcet.edu">Content Creator</option><option value="verifier@mhcet.edu">Content Verifier</option><option value="translator@mhcet.edu">Content Translator</option><option value="transverifier@mhcet.edu">Translation Verifier</option><option value="qpcreator@mhcet.edu">QP Creator</option><option value="qpverifier@mhcet.edu">QP Verifier</option><option value="publisher@mhcet.edu">Publisher</option></select>
       </div>
 
       <div id="lg2-otpstep" style="display:none">
@@ -1003,7 +1003,7 @@ function audit(action,detail){
 ========================================================= */
 const ROLES={
   sysadmin:{name:'System Admin',icon:'ti-shield-cog',color:'#6C5CE7',desc:'Top-level. Creates client admins.'},
-  itadmin:{name:'IT Admin',icon:'ti-server-cog',color:'#0F9D8C',desc:'Operates a client: exams, subjects, team & review.'},
+  itadmin:{name:'Management Executive',icon:'ti-server-cog',color:'#0F9D8C',desc:'Operates a client: exams, subjects, team & review.'},
   instadmin:{name:'Admin',icon:'ti-eye-check',color:'#2D9CDB',desc:'Views overall project progress (read-only).'},
   projadmin:{name:'Project Admin',icon:'ti-folder-cog',color:'#00B894',desc:'Manages exams & team for the client.'},
   creator:{name:'Content Creator',icon:'ti-pencil-plus',color:'#F5A623',desc:'Authors content (manual / Excel / AI).'},
@@ -1055,7 +1055,7 @@ $('#overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeModal
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#overlay').classList.contains('open'))closeModal();});
 function diffBadge(d){return `<span class="diff-${d}">${d[0].toUpperCase()+d.slice(1)}</span>`;}
 function typeBadge(t){const m={mcq:['MCQ','bg-violet'],descriptive:['Descriptive','bg-sky'],group:['Group','bg-pink'],truefalse:['True/False','bg-teal']};const[l,c]=m[t]||['?','bg-gray'];return `<span class="badge ${c}">${l}</span>`;}
-function statusBadge(s){const m={verified:['Verified','bg-green','ti-rosette-discount-check'],pending:['Pending','bg-amber','ti-clock'],rejected:['Needs edit','bg-coral','ti-edit'],published:['Published','bg-violet','ti-send'],active:['Active','bg-green',''],review:['In review','bg-amber',''],draft:['Draft','bg-gray','']};const[l,c,i]=m[s]||[s,'bg-gray',''];return `<span class="badge ${c}">${i?`<i class="ti ${i}"></i>`:''}${l}</span>`;}
+function statusBadge(s){const m={verified:['Verified','bg-green','ti-rosette-discount-check'],pending:['Pending','bg-amber','ti-clock'],rejected:['Needs Rework','bg-coral','ti-edit'],published:['Published','bg-violet','ti-send'],active:['Active','bg-green',''],review:['In review','bg-amber',''],draft:['Draft','bg-gray','']};const[l,c,i]=m[s]||[s,'bg-gray',''];return `<span class="badge ${c}">${i?`<i class="ti ${i}"></i>`:''}${l}</span>`;}
 function srcBadge(src){if(!src)return'';if(src.type==='ai')return `<span class="badge bg-amber" title="AI-generated · model ${src.model||'claude'}"><i class="ti ti-sparkles"></i> AI</span>`;if(src.type==='excel')return `<span class="badge bg-teal" title="Imported from Excel"><i class="ti ti-file-spreadsheet"></i> Excel</span>`;return '';}
 function verBadge(q){var v=q.version||1;return `<span class="badge bg-gray" title="${v>1?(v-1)+' prior version(s)':'original'}">v${v}</span>`;}
 function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
@@ -1076,7 +1076,7 @@ if(typeof MutationObserver!=='undefined'){try{var _iconMO=new MutationObserver(f
 function toggleFs(){try{if(!document.fullscreenElement){document.documentElement.requestFullscreen();}else{document.exitFullscreen();}}catch(e){}}
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('fullscreenchange',function(){var i=document.getElementById('fsIcon');if(i)i.className='ti '+(document.fullscreenElement?'ti-minimize':'ti-maximize');});
 function renderLogin(){
-  const order=['admin@hubble.io','admin@mhcet.edu','itadmin@mhcet.edu','proj@mhcet.edu','creator@mhcet.edu','verifier@mhcet.edu','translator@mhcet.edu','transverifier@mhcet.edu','qpcreator@mhcet.edu','qpverifier@mhcet.edu','publisher@mhcet.edu'];
+  const order=['admin@hubble.io','admin@mhcet.edu','itadmin@mhcet.edu','creator@mhcet.edu','verifier@mhcet.edu','translator@mhcet.edu','transverifier@mhcet.edu','qpcreator@mhcet.edu','qpverifier@mhcet.edu','publisher@mhcet.edu'];
   var _st=document.getElementById('lg2-otpstep'); if(_st)_st.style.display='none'; var _ch=document.getElementById('lg2-chooser'); if(_ch)_ch.style.display=''; mobilePending=null;
   const rl=document.getElementById('roleList'); if(!rl)return;
   rl.innerHTML=order.map(em=>{const u=DB.users.find(x=>x.email.toLowerCase()===em.toLowerCase());if(!u)return '';const r=ROLES[u.role]||{name:u.role,color:'#6C5CE7'};const inst=DB.institutes.find(i=>i.id===u.institute_id);const org=inst?inst.name:'Hubble Platform';
@@ -1159,13 +1159,13 @@ function showDeviceGate(u){ensureDeviceRec(u);var d=u.device;var info=uaInfo();v
   if(d.status==='rejected'){
     showGate('<div class="gate-ic" style="background:#fde7e1;color:#b23a23"><i class="ti ti-shield-x"></i></div>'
       +'<h3>Device rejected</h3><div class="muted small" style="margin-bottom:10px">Your Admin rejected this device'+(d.rejectReason?(': '+escAttr(d.rejectReason)):'')+'. You can send a new request.</div>'
-      +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Send registration request</button>'
+      +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register your device</button>'
       +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>');return;}
   showGate('<div class="gate-ic" style="background:#efeafe;color:#5b46d6"><i class="ti ti-shield-lock"></i></div>'
     +'<h3>Register this device</h3><div class="muted small" style="margin-bottom:10px">For security, this device must be registered and approved by your Admin before you can access the workspace.</div>'
     +'<div style="text-align:center;margin-bottom:10px">'+(bridge?'<span class="badge bg-teal"><i class="ti ti-discount-check"></i> Verified desktop app</span>':'<span class="badge bg-amber"><i class="ti ti-browser"></i> Browser \u2014 limited identity</span>')+'</div>'
     +'<div class="gate-box" id="dgFields">'+(bridge?'<div class="gate-row"><span class="muted">Reading device\u2026</span><span class="gate-mono">\u2022\u2022\u2022</span></div>':('<div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">User</span><span>'+escAttr(u.name)+'</span></div>'))+'</div>'
-    +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Send registration request</button>'
+    +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register your device</button>'
     +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to sign in</button>'
     +'<div class="tiny muted" style="text-align:center;margin-top:8px">No close \u2014 registration is mandatory</div>');if(bridge)previewDevice(u);}
 async function sendDeviceRequest(){var u=currentUser();if(!u)return;ensureDeviceRec(u);var m=_devPreview||await collectMachine();var dev;if(m){var fp=await hwFingerprint(m)||browserFp();dev={status:'pending',verified:true,machine:m,fp:fp,browser:m.os||'Desktop',os:m.os||'',reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}else{var info=uaInfo();dev={status:'pending',verified:false,fp:browserFp(),browser:info.browser,os:info.os,reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}u.device=dev;_devPreview=null;persist();audit('device.request',{device:(dev.verified?('desktop/'+(m.system||'')):('browser/'+dev.browser)),fp:dev.fp});toast('Registration request sent to Admin','ok');showDeviceGate(u);}
@@ -1224,7 +1224,7 @@ const RENDER={};
 function stat(lb,vl,ic,col,sb,link){const clk=!!link;return `<div class="stat${clk?' clk':''}" style="--accent:${col}"${clk?` role="button" tabindex="0" onclick="${link}" onkeypress="if(event.key==='Enter'||event.key===' '){${link}}"`:''}><div class="ic" style="background:${col}1a;color:${col}"><i class="ti ${ic}"></i></div><div class="lb">${lb}</div><div class="vl">${vl}</div><div class="sb">${sb||'&nbsp;'}</div>${clk?'<div class="go"><i class="ti ti-arrow-right"></i> View details</div>':''}</div>`;}
 
 /* ===== ROLE DASHBOARD ENGINE ===== */
-function barRow(label,pct,val,col){col=col||'var(--violet)';pct=Math.max(0,Math.min(100,pct||0));return '<div class="flex center gap12" style="margin-bottom:9px"><span class="small" style="min-width:130px;flex-shrink:0">'+label+'</span><div style="flex:1;height:8px;border-radius:6px;background:var(--surface-2);overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:6px"></div></div><span class="small fw6" style="min-width:56px;text-align:right">'+val+'</span></div>';}
+function barRow(label,pct,val,col){col=col||'var(--violet)';pct=Math.max(0,Math.min(100,pct||0));return '<div class="flex center gap12" style="margin-bottom:9px"><span class="small" style="width:130px;flex-shrink:0;overflow-wrap:anywhere;line-height:1.3">'+label+'</span><div style="flex:1;height:8px;border-radius:6px;background:var(--surface-2);overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:6px"></div></div><span class="small fw6" style="min-width:56px;text-align:right">'+val+'</span></div>';}
 function statusChip(st,color){var m={success:'bg-teal',warning:'bg-amber',danger:'bg-coral',secondary:'bg-gray'};return '<span class="badge '+(m[color]||'bg-gray')+'">'+st+'</span>';}
 function expectedPct(t){if(!t||!t.startDate||!t.dueDate)return null;var s=new Date(t.startDate+'T00:00:00'),d=new Date(t.dueDate+'T23:59:59'),n=new Date();var tot=d-s;if(tot<=0)return null;return Math.max(0,Math.min(100,Math.round((n-s)/tot*100)));}
 function myTeam(){var u=currentUser();if(!u)return null;return (DB.team||[]).find(function(t){return t.user_id===u.id||(t.email||'').toLowerCase()===((u.email||'').toLowerCase());});}
@@ -1338,14 +1338,14 @@ function renderCreatorDash(){
   var ep=mt?expectedPct(mt):null;
   var subRows=subjects.map(function(b){var got=mine.filter(function(q){return q.bank===b.id;}).length;var pct=b.target>0?Math.min(100,Math.round(got/b.target*100)):0;var _ex=(DB.projects||[]).find(function(p){return p.id===b.project;});return barRow(escAttr(b.name)+(_ex?'<br><span class="tiny muted">'+escAttr(_ex.name)+'</span>':''),pct,got+'/'+(b.target||0),pct<40?'var(--amber)':'var(--violet)');}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-database-off"></i>No subjects assigned</div>';
   var diffMine=function(d,label,c){var tgt=subjects.reduce(function(s,b){return s+Math.round((b.target||0)*(((b.dist&&b.dist[d])||0)/100));},0);var got=mine.filter(function(q){return q.diff===d;}).length;var pct=tgt>0?Math.min(100,Math.round(got/tgt*100)):0;return barRow(label,pct,pct+'%',c);};
-  var fixRows=tofix.slice(0,6).map(function(q){var b=bankById(q.bank);return '<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div style="flex:1"><div class="small fw6">'+(b?escAttr(b.name):'?')+' · '+escAttr((q.text||'').slice(0,56))+'</div>'+(q.rejectReason?'<div class="tiny muted">'+escAttr(q.rejectReason)+'</div>':'')+'</div>'+(session.role==='instadmin'?'':'<button class="btn sm" onclick="editQ(\''+q.id+'\')"><i class="ti ti-edit"></i> Fix</button>')+'</div>';}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-circle-check"></i>Nothing to fix.</div>';
+  var fixRows=tofix.slice(0,6).map(function(q){var b=bankById(q.bank);return '<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div style="flex:1"><div class="small fw6">'+(b?escAttr(b.name):'?')+' · '+escAttr((q.text||'').slice(0,56))+'</div>'+(q.rejectReason?'<div class="tiny muted">'+escAttr(q.rejectReason)+'</div>':'')+'</div>'+(session.role==='instadmin'?'':'<button class="btn sm" onclick="editQ(\''+q.id+'\')"><i class="ti ti-edit"></i> Rework</button>')+'</div>';}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-circle-check"></i>Nothing to rework.</div>';
   var pace=(mt&&mt.dueDate)?(barRow('Time elapsed',ep||0,(ep||0)+'%','var(--ink-3)')+barRow('Work done',donePct,donePct+'%','var(--green)')+'<div class="small" style="margin-top:6px;color:'+(donePct>=(ep||0)?'var(--teal-ink)':'var(--coral-ink)')+'"><i class="ti ti-'+(donePct>=(ep||0)?'trending-up':'trending-down')+'"></i> '+(donePct>=(ep||0)?((donePct-(ep||0))+'% ahead of schedule'):(((ep||0)-donePct)+'% behind schedule'))+'</div>'):'<div class="empty" style="padding:16px"><i class="ti ti-calendar-off"></i>No deadline set by your admin.</div>';
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to keep your work moving.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
     +stat('Created',authored,'ti-pencil','#6C5CE7','by me',"go('work')")
     +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','verified',"go('work')")
-    +stat('To fix',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"go('work')")
+    +stat('Needs Rework',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Progress by subject</span></div>'+subRows+'</div>'
@@ -1353,7 +1353,7 @@ function renderCreatorDash(){
     +'</div>'
     +'<div class="grid g2">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs timeline</span></div>'+pace+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rotate-clockwise"></i> Fixed</span></div>'+fixRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rotate-clockwise"></i> Needs Rework</span></div>'+fixRows+'</div>'
     +'</div>';
 }
 function renderReviewerDash(){
@@ -1437,8 +1437,8 @@ function renderPublisherDash(){
 function instWideRole(r){return r==='publisher'||r==='qpverifier'||r==='qppublisher'||r==='instadmin'||r==='itadmin';}
 function qpStatusBadge(st){var m={draft:['Draft','bg-amber','ti-pencil'],qp_verified:['QP verified','bg-green','ti-clipboard-check'],published:['Published','bg-violet','ti-rocket'],pushed:['Pushed','bg-violet','ti-rocket']};var x=m[st]||['Draft','bg-gray','ti-circle'];return '<span class="badge '+x[1]+'"><i class="ti '+x[2]+'"></i> '+x[0]+'</span>';}
 
-function verifyTranslation(id){if(!guard('translation.verify'))return;var q=state.questions.find(function(x){return x.id===id;});if(!q)return;var me=currentUser();q.transVerified=true;q.transVerifiedBy={by:me.name,ts:Date.now()};logEvent(q,'translation verified');audit('translation.verify',{id:id});save();toast('Translation verified \u2713','ok');if(SCREEN==='transverify')RENDER.transverify();}
-function flagTranslation(id){if(!guard('translation.verify'))return;var q=state.questions.find(function(x){return x.id===id;});if(!q)return;var r=(typeof prompt==='function'?(prompt('Reason for rejecting the translation:')||''):'');var me=currentUser();q.transVerified=false;q.transFlag={by:me.name,reason:r,ts:Date.now()};logEvent(q,'translation rejected',r);audit('translation.flag',{id:id});save();toast('Translation rejected for rework','warn');if(SCREEN==='transverify')RENDER.transverify();}
+function verifyTranslation(id){if(!guard('translation.verify'))return;var q=state.questions.find(function(x){return x.id===id;});if(!q)return;var me=currentUser();q.transVerified=true;q.transVerifiedBy={by:me.name,ts:Date.now()};logEvent(q,'translation verified');audit('translation.verify',{id:id});save();toast('Translation verified \u2713','ok');if(SCREEN==='transverify')RENDER.transverify();else if(SCREEN==='reviewedit')RENDER.reviewedit();}
+function flagTranslation(id){if(!guard('translation.verify'))return;var q=state.questions.find(function(x){return x.id===id;});if(!q)return;var r=(typeof prompt==='function'?(prompt('Reason for rejecting the translation:')||''):'');var me=currentUser();q.transVerified=false;q.transFlag={by:me.name,reason:r,ts:Date.now()};logEvent(q,'translation rejected',r);audit('translation.flag',{id:id});save();toast('Translation rejected for rework','warn');if(SCREEN==='transverify')RENDER.transverify();else if(SCREEN==='reviewedit')RENDER.reviewedit();}
 function verifySet(id){if(!guard('set.verify'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var me=currentUser();s.status='qp_verified';s.verifiedBy={by:me.name,ts:Date.now()};audit('set.verify',{set:s.name});save();toast('QP set verified \u2713','ok');if(SCREEN==='qpverify')RENDER.qpverify();}
 function flagSet(id){if(!guard('set.verify'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var r=(typeof prompt==='function'?(prompt('Reason for rejecting this set:')||''):'');var me=currentUser();s.status='draft';s.qpFlag={by:me.name,reason:r,ts:Date.now()};audit('set.flag',{set:s.name});save();toast('Set rejected back to QP Creator','warn');if(SCREEN==='qpverify')RENDER.qpverify();}
 function publishSet(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;if((s.status||'draft')!=='qp_verified')return toast('Only QP-verified sets can be published','warn');var me=currentUser();s.status='published';s.publishedBy={by:me.name,ts:Date.now()};audit('qp.publish',{set:s.name});save();toast('Question paper published \ud83c\udf89','ok');if(SCREEN==='publish')RENDER.publish();}
@@ -1480,7 +1480,7 @@ RENDER.transverify=()=>{
     html+='</div>';
   }
   if(!html)html='<div class="empty"><i class="ti ti-database-off"></i>No subjects assigned to you yet.</div>';
-  $('#content').innerHTML=html;
+  $('#content').innerHTML=`<div class="actionrow"><div class="fw6" style="flex:1">Verify translations</div><button class="btn" onclick="go('reviewedit')"><i class="ti ti-layout-grid"></i> Focus / Cards</button></div>`+html;
 };
 function transVerifyCard(q){const langs=Object.keys(q.translations||{});const b=bankById(q.bank);
   return `<div class="card" style="margin-bottom:12px"><div class="flex between" style="gap:12px"><div style="flex:1">
@@ -1521,7 +1521,7 @@ RENDER.qpverify=()=>{const sets=state.sets||[];
   }
   const courses=[...new Set(sets.map(s=>s.course))].map(id=>(DB.projects||[]).find(p=>p.id===id)).filter(Boolean);
   if(!courses.length){$('#content').innerHTML=`<div class="empty"><i class="ti ti-stack-2"></i>No QP sets built yet.</div>`;return;}
-  $('#content').innerHTML='<div class="cgrid">'+courses.map(c=>{const cs=sets.filter(s=>s.course===c.id);const d=cs.filter(s=>(s.status||'draft')==='draft').length;const v=cs.filter(s=>s.status==='qp_verified').length;const p=cs.filter(s=>s.status==='published').length;return qpCourseCard(c,'qpvOpenCourse',[{val:d,label:'to verify',cls:'bg-amber'},{val:v,label:'verified',cls:'bg-green'},{val:p,label:'published',cls:'bg-violet'}]);}).join('')+'</div>';
+  $('#content').innerHTML=`<div class="actionrow"><div class="fw6" style="flex:1">Verify QP sets</div><button class="btn" onclick="go('reviewedit')"><i class="ti ti-layout-grid"></i> Focus / Cards</button></div>`+'<div class="cgrid">'+courses.map(c=>{const cs=sets.filter(s=>s.course===c.id);const d=cs.filter(s=>(s.status||'draft')==='draft').length;const v=cs.filter(s=>s.status==='qp_verified').length;const p=cs.filter(s=>s.status==='published').length;return qpCourseCard(c,'qpvOpenCourse',[{val:d,label:'to verify',cls:'bg-amber'},{val:v,label:'verified',cls:'bg-green'},{val:p,label:'published',cls:'bg-violet'}]);}).join('')+'</div>';
 };
 function qpVerifyCard(s){const st=s.status||'draft';
   return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · ${setTotalMarks(s)} marks${s.qpFlag&&st==='draft'?' · rejected: '+escAttr(s.qpFlag.reason||'rework'):''}</div></div>${qpStatusBadge(st)}<button class="btn sm" onclick="qpReview('${s.id}')"><i class="ti ti-eye"></i> Review</button>${st==='draft'?`<button class="btn ok sm" onclick="verifySet('${s.id}')"><i class="ti ti-check"></i> Verify</button>`:''}${st!=='published'?`<button class="btn danger sm" onclick="flagSet('${s.id}')"><i class="ti ti-flag"></i> Reject</button>`:''}</div>`;}
@@ -2255,13 +2255,14 @@ const AI_BANK={'Cell Biology':[{type:'mcq',text:'Which organelle contains DNA an
   default:[{type:'mcq',text:'Which best describes the core concept?',options:['Option A','Option B','Option C','Option D'],correct:0,explain:'Generated explanation.'},{type:'truefalse',text:'This statement about the topic is accurate.',options:['True','False'],correct:0,explain:'Generated rationale.'}]};
 
 /* REVIEW */
-let REVIEW_FILTER={bank:'all',diff:'all'};
+let REVIEW_FILTER={bank:'all',diff:'all',topic:'all'};
 RENDER.review=()=>{let qs=state.questions.filter(q=>q.status!=='verified'&&q.status!=='published');
-  if(REVIEW_FILTER.bank!=='all')qs=qs.filter(q=>q.bank===REVIEW_FILTER.bank);if(REVIEW_FILTER.diff!=='all')qs=qs.filter(q=>q.diff===REVIEW_FILTER.diff);
+  if(REVIEW_FILTER.bank!=='all')qs=qs.filter(q=>q.bank===REVIEW_FILTER.bank);const rvTopics=[...new Set(qs.map(q=>q.topic).filter(Boolean))].sort();if(REVIEW_FILTER.topic!=='all'&&!rvTopics.includes(REVIEW_FILTER.topic))REVIEW_FILTER.topic='all';if(REVIEW_FILTER.topic!=='all')qs=qs.filter(q=>q.topic===REVIEW_FILTER.topic);if(REVIEW_FILTER.diff!=='all')qs=qs.filter(q=>q.diff===REVIEW_FILTER.diff);
   $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="searchbar"><i class="ti ti-search"></i><input placeholder="Search questions..."></div>
     <select onchange="REVIEW_FILTER.bank=this.value;RENDER.review()" style="width:auto"><option value="all">All banks</option>${state.banks.map(b=>`<option value="${b.id}" ${REVIEW_FILTER.bank===b.id?'selected':''}>${b.name}</option>`).join('')}</select>
+    <select onchange="REVIEW_FILTER.topic=this.value;RENDER.review()" style="width:auto"><option value="all">All topics</option>${rvTopics.map(t=>`<option value="${escAttr(t)}" ${REVIEW_FILTER.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select>
     <select onchange="REVIEW_FILTER.diff=this.value;RENDER.review()" style="width:auto"><option value="all">All difficulty</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select>
-    <span class="badge bg-amber" style="padding:7px 12px">${qs.length} pending</span></div>
+    <button class="btn" onclick="go('reviewedit')"><i class="ti ti-layout-grid"></i> Focus / Cards</button><span class="badge bg-amber" style="padding:7px 12px">${qs.length} pending</span></div>
     ${qs.length?qs.map(reviewCard).join(''):`<div class="empty"><i class="ti ti-checks"></i>All caught up — nothing to review.</div>`}`;};
 function reviewCard(q){return `<div class="card" style="margin-bottom:12px"><div class="flex between" style="margin-bottom:12px;gap:12px"><div style="flex:1">
     <div class="flex gap8 wrap" style="margin-bottom:8px">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${typeBadge(q.type)}<span class="chip">${q.topic}</span><span class="chip">${q.section}</span><span class="chip"><i class="ti ti-stairs-up"></i> L${(q.reviewLevel||0)}/${courseLevelsFor(q)}</span>${srcBadge(q.source)}${verBadge(q)}${mediaBadge(q)}${q.status==='rejected'?statusBadge('rejected'):''}</div>
@@ -2315,40 +2316,59 @@ function qRow(q,edit){return `<div class="card" style="margin-bottom:10px"><div 
     ${q.options&&q.options.length?`<div class="flex gap8 wrap">${q.options.map((o,j)=>`<span class="chip" style="${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}. ${o}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' ✓':''}</span>`).join('')}</div>`:''}
     ${q.model?`<div class="small muted mt8"><b>Model answer:</b> ${q.model}</div>`:''}
     ${q.group?`<div class="small muted mt8"><b>Group passage</b> · ${q.group.subs.length} sub-question(s)</div>`:''}</div>`;}
-let RE={mode:'cards',bank:'__all',idx:0,focusId:null};
+let RE={mode:'cards',bank:'__all',idx:0,focusId:null,topic:'__all'};
 function reMode(m){RE.mode=m;RENDER.reviewedit();}
 function reStep(d){RE.idx+=d;RENDER.reviewedit();}
 function reFocus(id){RE.mode='focus';RE.focusId=id;RENDER.reviewedit();}
+function reScope(){
+  var me=currentUser();var r=session.role;
+  if(r==='reviewer')return state.questions.filter(function(q){return q.status!=='verified'&&q.status!=='published';});
+  if(r==='transverifier')return state.questions.filter(function(q){return Object.keys(q.translations||{}).length>0&&!q.transVerified;});
+  if(r==='qpverifier'){var ids={};(state.sets||[]).forEach(function(s){(s.questionIds||[]).forEach(function(id){ids[id]=1;});});return state.questions.filter(function(q){return ids[q.id];});}
+  if(r==='translator')return state.questions.filter(function(q){return q.status==='verified'||q.status==='published';});
+  var mine=state.questions.filter(function(q){return q.author===me.name;});
+  return mine.length?mine:state.questions.slice();
+}
+function reHome(){var r=session.role;return r==='transverifier'?'transverify':r==='qpverifier'?'qpverify':r==='translator'?'translate':'work';}
+function reTitle(){var r=session.role;return r==='reviewer'?'Review content':r==='transverifier'?'Verify translations':r==='qpverifier'?'Review paper questions':r==='translator'?'Translate content':'Review & edit my questions';}
+function reActions(q,compact){
+  var r=session.role;
+  var hist=(q.version>1||(q.history&&q.history.length))?`<button class="btn sm ghost" onclick="event.stopPropagation();viewHistory('${q.id}')" title="History"><i class="ti ti-history"></i></button>`:'';
+  function b(cls,fn,ic,lbl){return `<button class="${cls} sm" onclick="event.stopPropagation();${fn}('${q.id}')" title="${lbl}"><i class="ti ${ic}"></i>${compact?'':' '+lbl}</button>`;}
+  if(r==='reviewer')return hist+b('btn ok','verifyQ','ti-check','Approve')+b('btn','editQ','ti-edit','Edit')+b('btn danger','rejectQ','ti-x','Reject');
+  if(r==='transverifier')return hist+b('btn ok','verifyTranslation','ti-check','Approve')+b('btn danger','flagTranslation','ti-x','Reject');
+  if(r==='creator')return hist+b('btn','editQ','ti-edit','Edit')+b('btn danger','deleteQ','ti-trash','Delete');
+  return hist;
+}
 function reCard(q){const opts=(q.options&&q.options.length)?q.options.map((o,j)=>`<span class="chip" style="font-size:11px;${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}${o?'. '+o:''}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' \u2713':''}</span>`).join(''):'';
   return `<div class="card" style="height:300px;display:flex;flex-direction:column;overflow:hidden;margin:0;cursor:pointer" onclick="reFocus('${q.id}')" title="Open in Focus">
     <div class="flex between center gap8" style="margin-bottom:8px"><div class="flex gap8 wrap center" style="min-width:0">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${statusBadge(q.status)}</div>
-      <button class="btn sm" onclick="event.stopPropagation();editQ('${q.id}')" title="Edit"><i class="ti ti-edit"></i></button></div>
+      <div class="flex gap6" style="flex-shrink:0">${reActions(q,true)}</div></div>
     <span class="chip" style="align-self:flex-start;margin-bottom:6px">${escAttr(q.topic)}</span>
     <div class="fw6 small" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px">${q.text}</div>
-    ${q.image?`<div style="text-align:center;margin-bottom:8px"><img src="${q.image}" alt="" style="max-height:64px;max-width:100%;border-radius:6px;border:1px solid var(--line)"></div>`:''}
+    ${q.image?`<div style="text-align:left;margin-bottom:8px"><img src="${q.image}" alt="" style="max-height:64px;max-width:100%;border-radius:6px;border:1px solid var(--line)"></div>`:''}
     <div class="flex gap6 wrap" style="overflow:hidden;flex:1;align-content:flex-start">${opts}</div></div>`;}
 function reFocusView(q){
   const opts=(q.options&&q.options.length)?q.options.map((o,j)=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 15px;border:1px solid ${j===q.correct?'var(--teal)':'var(--line)'};${j===q.correct?'background:var(--teal-soft);':''}border-radius:10px"><span style="width:24px;height:24px;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:12px;border:1.5px solid ${j===q.correct?'var(--teal)':'var(--line-2)'};${j===q.correct?'color:var(--teal-ink);font-weight:600':'color:var(--ink-3)'}">${j===q.correct?'\u2713':String.fromCharCode(65+j)}</span><span style="flex:1;font-size:14.5px">${o||''}</span>${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}</div>`).join(''):'';
   return `<div class="card" style="padding:24px 28px">
     <div class="flex between center gap8 wrap" style="margin-bottom:16px"><div class="flex gap8 wrap center">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${typeBadge(q.type)}<span class="chip">${escAttr(q.topic)}</span><span class="chip">${escAttr(q.section||'')}</span>${statusBadge(q.status)}${srcBadge(q.source)}${verBadge(q)}</div>
-      <div class="flex gap8">${(q.version>1||(q.history&&q.history.length))?`<button class="btn sm ghost" onclick="viewHistory('${q.id}')" title="History"><i class="ti ti-history"></i></button>`:''}<button class="btn sm" onclick="editQ('${q.id}')"><i class="ti ti-edit"></i> Edit</button><button class="btn danger sm" onclick="deleteQ('${q.id}')" title="Delete"><i class="ti ti-trash"></i></button></div></div>
+      <div class="flex gap8">${reActions(q,false)}</div></div>
     <div style="font-size:18px;font-weight:600;line-height:1.55;margin-bottom:18px">${q.text}</div>
-    ${q.image?`<div style="text-align:center;margin-bottom:20px"><img src="${q.image}" alt="" style="max-height:220px;max-width:100%;border-radius:10px;border:1px solid var(--line)"></div>`:''}
+    ${q.image?`<div style="text-align:left;margin-bottom:20px"><img src="${q.image}" alt="" style="max-height:220px;max-width:100%;border-radius:10px;border:1px solid var(--line)"></div>`:''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start">${opts}</div>
     ${q.explain?`<div class="small muted" style="margin-top:14px;padding:13px 15px;background:var(--surface-2);border-radius:10px"><b style="color:var(--ink)">Explanation:</b> ${q.explain}</div>`:''}
   </div>`;}
 RENDER.reviewedit=()=>{
   const me=currentUser();
-  let mine=state.questions.filter(q=>q.author===me.name);
-  if(!mine.length)mine=state.questions.slice();
+  let mine=reScope();
   const sbanks=state.banks.filter(b=>mine.some(q=>q.bank===b.id));
   if(RE.bank!=='__all'&&!sbanks.find(b=>b.id===RE.bank))RE.bank='__all';
-  const qs=RE.bank==='__all'?mine:mine.filter(q=>q.bank===RE.bank);
+  const qs0=RE.bank==='__all'?mine:mine.filter(q=>q.bank===RE.bank);const reTopics=[...new Set(qs0.map(q=>q.topic).filter(Boolean))].sort();if(RE.topic!=='__all'&&!reTopics.includes(RE.topic))RE.topic='__all';const qs=(RE.topic==='__all')?qs0:qs0.filter(q=>q.topic===RE.topic);
   const segBtn=(m,ic,lbl)=>`<button onclick="reMode('${m}')" style="border:none;background:${RE.mode===m?'var(--violet)':'transparent'};color:${RE.mode===m?'#fff':'var(--ink-2)'};padding:7px 14px;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer"><i class="ti ${ic}"></i> ${lbl}</button>`;
   const seg=`<div style="display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface)">${segBtn('focus','ti-focus-2','Focus')}${segBtn('cards','ti-layout-grid','Cards')}</div>`;
   const subjSel=`<select style="width:auto" onchange="RE.bank=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.bank==='__all'?'selected':''}>All subjects (${mine.length})</option>${sbanks.map(b=>`<option value="${b.id}" ${RE.bank===b.id?'selected':''}>${escAttr(b.name)} (${mine.filter(q=>q.bank===b.id).length})</option>`).join('')}</select>`;
   let body;
-  if(!qs.length){body=`<div class="empty"><i class="ti ti-pencil"></i>Nothing to review yet. Questions you create show up here to review and edit.</div>`;}
+  if(!qs.length){body=`<div class="empty"><i class="ti ti-pencil"></i>Nothing here to review right now.</div>`;}
   else if(RE.mode==='focus'){
     if(RE.focusId){const fi=qs.findIndex(x=>x.id===RE.focusId);RE.focusId=null;if(fi>=0)RE.idx=fi;}if(RE.idx>=qs.length)RE.idx=0;if(RE.idx<0)RE.idx=qs.length-1;
     const q=qs[RE.idx];
@@ -2356,7 +2376,7 @@ RENDER.reviewedit=()=>{
   } else {
     body=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">${qs.map(q=>reCard(q)).join('')}</div>`;
   }
-  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="go(\'work\')"><i class="ti ti-arrow-left"></i> Exams</button><div class="fw6" style="flex:1">Review &amp; edit my questions</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><div class="flex center gap8">${subjSel}<span class="badge bg-gray" style="padding:7px 12px">${qs.length} question${qs.length===1?'':'s'}</span></div>${seg}</div>${body}`;
+  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="go(reHome())"><i class="ti ti-arrow-left"></i> Back</button><div class="fw6" style="flex:1">${reTitle()}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><div class="flex center gap8">${subjSel}${reTopics.length?`<select style="width:auto" onchange="RE.topic=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.topic==='__all'?'selected':''}>All topics</option>${reTopics.map(t=>`<option value="${escAttr(t)}" ${RE.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select>`:''}<span class="badge bg-gray" style="padding:7px 12px">${qs.length} question${qs.length===1?'':'s'}</span></div>${seg}</div>${body}`;
 };
 function logEvent(q,action,note){if(!q)return;q.history=q.history||[];q.history.push({version:q.version||1,action:action,note:note||'',event:true,status:q.status,ts:Date.now(),by:(currentUser()&&currentUser().name)||'system'});}
 function viewHistory(id){const q=state.questions.find(x=>x.id===id);modal(`<div class="modal-h"><h3>Version history ${q.code?'· '+q.code:''}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
@@ -2365,15 +2385,15 @@ function viewHistory(id){const q=state.questions.find(x=>x.id===id);modal(`<div 
   <div class="modal-f"><button class="btn" onclick="closeModal()">Close</button></div>`,true);}
 
 /* TRANSLATE */
-let TR={bank:'qb1',lang:'hi',idx:0};
+let TR={bank:'qb1',lang:'hi',idx:0,topic:'all'};
 const LANGS={hi:'हिन्दी (Hindi)',bn:'বাংলা (Bengali)',ta:'தமிழ் (Tamil)',te:'తెలుగు (Telugu)',mr:'मराठी (Marathi)',ur:'اردو (Urdu)',fr:'Français (French)',es:'Español (Spanish)'};
 const RTL=['ur','ar'];
 const ENGINES=['Google Translate','DeepL','Microsoft Translator','Amazon Translate','Manual only'];
 const MOCK_TR={'Which organelle is known as the powerhouse of the cell?':'किस कोशिकांग को कोशिका का पावरहाउस कहा जाता है?','Nucleus':'केन्द्रक','Mitochondria':'माइटोकॉन्ड्रिया','Ribosome':'राइबोसोम','Chloroplast':'क्लोरोप्लास्ट'};
-RENDER.translate=()=>{ckDestroy('tr_text');if(!state.banks.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No banks assigned to you yet.</div>';return;}if(!state.banks.find(b=>b.id===TR.bank))TR.bank=state.banks[0].id;const qs=state.questions.filter(q=>q.bank===TR.bank);if(TR.idx>=qs.length)TR.idx=0;const q=qs[TR.idx]||qs[0];if(!q){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No questions in this bank yet.</div>';return;}
+RENDER.translate=()=>{ckDestroy('tr_text');if(!state.banks.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No banks assigned to you yet.</div>';return;}if(!state.banks.find(b=>b.id===TR.bank))TR.bank=state.banks[0].id;const qsAll=state.questions.filter(q=>q.bank===TR.bank);const trTopics=[...new Set(qsAll.map(q=>q.topic).filter(Boolean))].sort();if(TR.topic!=='all'&&!trTopics.includes(TR.topic))TR.topic='all';const qs=(TR.topic==='all')?qsAll:qsAll.filter(q=>q.topic===TR.topic);if(TR.idx>=qs.length)TR.idx=0;const q=qs[TR.idx]||qs[0];if(!q){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No questions in this bank yet.</div>';return;}
   const done=qs.filter(x=>x.translations&&x.translations[TR.lang]).length;const rtl=RTL.includes(TR.lang);
   $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="fw6" style="flex:1">${(bankById(TR.bank)||{}).name||''}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><select onchange="TR.bank=this.value;TR.idx=0;RENDER.translate()" style="width:auto">${state.banks.map(b=>`<option value="${b.id}" ${TR.bank===b.id?'selected':''}>${b.name}</option>`).join('')}</select>
-    <div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate()"><i class="ti ti-bolt"></i> Auto-translate all</button></div></div>
+    <select onchange="TR.topic=this.value;TR.idx=0;RENDER.translate()" style="width:auto"><option value="all">All topics</option>${trTopics.map(t=>`<option value="${escAttr(t)}" ${TR.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select><div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate()"><i class="ti ti-bolt"></i> Auto-translate all</button></div></div>
     <div class="flex center gap12 wrap" style="margin-bottom:14px"><span class="chip"><i class="ti ti-language" style="color:var(--violet)"></i> <b>English</b> (source)</span><i class="ti ti-arrows-right-left muted"></i>
       <select onchange="TR.lang=this.value;RENDER.translate()" style="width:auto;color:var(--violet-ink);font-weight:600">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${TR.lang===k?'selected':''}>${v}</option>`).join('')}</select>
       <span class="badge bg-sky" style="margin-left:auto">${done}/${qs.length} translated</span></div>
@@ -2505,7 +2525,7 @@ function exportFile(kind){if(!guard('export.run'))return;const course=projectByI
   audit('export.run',{course:course.name,sets:sets.length,count:rows.length});toast('Exported '+rows.length+' questions across '+sets.length+' set(s)','ok');}
 
 /* MARKS CONFIG (IT Admin) */
-RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only IT Admin can configure marks.</div>';return;}
+RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only Management Executive can configure marks.</div>';return;}
   var ms=marksScheme();
   $('#content').innerHTML=`<div class="card" style="max-width:560px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks configuration</span><span class="badge bg-gray">Per difficulty</span></div>
     <p class="small muted" style="margin:0 0 14px">Marks awarded per question by difficulty. Each question inherits marks from its difficulty; the question-paper total is computed from the mix.</p>
