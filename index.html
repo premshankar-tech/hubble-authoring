@@ -232,6 +232,24 @@ else if (typeof exports === 'object'){
   --shadow-lg:0 18px 50px rgba(40,35,25,.16);
   --sidebar-w:248px;
 }
+:root.dark{
+  --bg:#141310; --surface:#1e1c17; --surface-2:#26241d; --surface-3:#2f2c23;
+  --line:#36322a; --line-2:#423d33;
+  --ink:#f3f0e8; --ink-2:#bcb7aa; --ink-3:#8b8678;
+  --violet-soft:color-mix(in srgb,var(--violet) 28%,#1e1c17); --violet-ink:color-mix(in srgb,var(--violet) 46%,#ffffff);
+  --teal-soft:color-mix(in srgb,var(--teal) 26%,#1e1c17); --teal-ink:color-mix(in srgb,var(--teal) 50%,#ffffff);
+  --coral-soft:color-mix(in srgb,var(--coral) 28%,#1e1c17); --coral-ink:color-mix(in srgb,var(--coral) 54%,#ffffff);
+  --amber-soft:color-mix(in srgb,var(--amber) 28%,#1e1c17); --amber-ink:color-mix(in srgb,var(--amber) 58%,#ffffff);
+  --sky-soft:color-mix(in srgb,var(--sky) 26%,#1e1c17); --sky-ink:color-mix(in srgb,var(--sky) 52%,#ffffff);
+  --pink-soft:color-mix(in srgb,var(--pink) 28%,#1e1c17); --pink-ink:color-mix(in srgb,var(--pink) 54%,#ffffff);
+  --green-soft:color-mix(in srgb,var(--green) 26%,#1e1c17); --green-ink:color-mix(in srgb,var(--green) 52%,#ffffff);
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 5px 18px rgba(0,0,0,.45);
+  --shadow-md:0 4px 14px rgba(0,0,0,.55),0 12px 30px rgba(0,0,0,.5);
+  --shadow-lg:0 18px 50px rgba(0,0,0,.62);
+}
+html.dark body{background:radial-gradient(900px 500px at 100% -5%,color-mix(in srgb,var(--violet) 16%,transparent) 0%,transparent 60%),radial-gradient(700px 500px at -5% 110%,color-mix(in srgb,var(--teal) 14%,transparent) 0%,transparent 55%),var(--bg)}
+html.dark .card::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent)}
+html.dark .tb-search{background:var(--surface-2)}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;margin:0}
 body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;
@@ -413,7 +431,7 @@ label.fl{display:block;font-size:12px;font-weight:700;color:var(--ink-2);margin-
 .opt-row{display:flex;align-items:center;gap:11px;margin-bottom:9px}
 .opt-radio{width:21px;height:21px;border-radius:50%;border:2px solid var(--line-2);flex-shrink:0;transition:.14s;display:grid;place-items:center;cursor:pointer}
 .opt-radio.on{border-color:var(--teal);background:var(--teal)}.opt-radio.on::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
-.translator{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.translator{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}.content.content-translate{overflow:hidden;display:flex;flex-direction:column}.tr-fit{flex:1;min-height:0;display:flex;flex-direction:column}.tr-top{flex:0 0 auto}.tr-scroll{flex:1;min-height:0;overflow-y:auto;padding-right:2px}.tr-nav{flex:0 0 auto;margin-top:12px}.content.content-translate{padding:14px 22px}.content-translate .actionrow{margin-bottom:9px}.content-translate .tr-top>.flex{margin-bottom:8px!important}.content-translate .ph{margin-bottom:8px}.content-translate .tpanel{padding:13px 16px}.content-translate .tpanel.l>.fw6{font-size:14px!important;line-height:1.4!important;margin-bottom:8px!important}.content-translate .tpanel.l .small:not(.fw6){padding:6px 10px!important;margin-bottom:4px!important}.content-translate .tpanel input{margin-bottom:4px!important;padding:7px 10px!important}.content-translate .translator{margin-bottom:0!important}.content-translate .tr-nav{margin-top:8px}.content-translate .tr-nav>.flex{padding:9px 14px!important}
 .tpanel{padding:20px}.tpanel.l{border-right:1px solid var(--line);background:var(--surface-2)}
 .tpanel .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
 .set-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;gap:13px;transition:.14s}
@@ -640,6 +658,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
 </style>
 </head>
 <body>
+<script>try{var _t=localStorage.getItem('hub_theme');if(!_t)_t=(window.matchMedia&&matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light';if(_t==='dark')document.documentElement.classList.add('dark');}catch(e){}</script>
 
 <!-- LOGIN -->
 <div class="lg2" id="login">
@@ -742,9 +761,9 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
     <div class="topbar">
       <button class="tb-icon menu-btn" onclick="toggleNav()" aria-label="Open menu"><i class="ti ti-menu-2"></i></button>
       <div class="pt" id="pageTitle">Dashboard<small id="pageSub"></small></div>
-      <div class="tb-search"><i class="ti ti-search"></i><input placeholder="Search..." aria-label="Search"></div>
-      <button class="tb-icon" id="homeBtn" title="Home" aria-label="Home" onclick="goHome()"><i class="ti ti-home"></i></button>
+      <button class="tb-icon" id="homeBtn" title="Home" aria-label="Home" onclick="goHome()" style="margin-left:auto"><i class="ti ti-home"></i></button>
       <button class="tb-icon" id="fsBtn" title="Toggle full screen" aria-label="Toggle full screen" onclick="toggleFs()"><i class="ti ti-maximize" id="fsIcon"></i></button>
+      <button class="tb-icon" id="themeBtn" title="Switch to dark mode" aria-label="Toggle dark mode" onclick="toggleTheme()"><i class="ti ti-moon" id="themeIcon"></i></button>
       <button class="tb-icon" title="Notifications" aria-label="Notifications"><i class="ti ti-bell"></i><span class="tb-dot"></span></button>
       <button class="tb-icon" title="Help" aria-label="Help"><i class="ti ti-help"></i></button>
       <div class="topuser"><div class="tu-meta"><span class="tu-name" id="topName">&mdash;</span><span class="tu-role" id="topRole"></span></div><div class="avatar" id="topAvatar">PA</div></div>
@@ -1096,6 +1115,10 @@ function iconifyActionBtns(root){var scope=(root&&root.querySelectorAll)?root:do
 var _iconRaf=null;function scheduleIconify(){if(_iconRaf)return;var raf=window.requestAnimationFrame||function(f){return setTimeout(f,16);};_iconRaf=raf(function(){_iconRaf=null;iconifyActionBtns(document);});}
 if(typeof MutationObserver!=='undefined'){try{var _iconMO=new MutationObserver(function(){scheduleIconify();});_iconMO.observe(document.documentElement,{childList:true,subtree:true});}catch(e){}}
 function toggleFs(){try{if(!document.fullscreenElement){document.documentElement.requestFullscreen();}else{document.exitFullscreen();}}catch(e){}}
+function applyTheme(t){var dark=t==='dark';document.documentElement.classList.toggle('dark',dark);try{localStorage.setItem('hub_theme',dark?'dark':'light');}catch(e){}updateThemeIcon();}
+function toggleTheme(){applyTheme(document.documentElement.classList.contains('dark')?'light':'dark');}
+function updateThemeIcon(){var dark=document.documentElement.classList.contains('dark');var i=document.getElementById('themeIcon');if(i)i.className='ti '+(dark?'ti-sun':'ti-moon');var b=document.getElementById('themeBtn');if(b)b.title=dark?'Switch to light mode':'Switch to dark mode';}
+if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('DOMContentLoaded',function(){try{updateThemeIcon();}catch(e){}});
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('fullscreenchange',function(){var i=document.getElementById('fsIcon');if(i)i.className='ti '+(document.fullscreenElement?'ti-minimize':'ti-maximize');});
 function renderLogin(){
   const order=['admin@hubble.io','admin@mhcet.edu','itadmin@mhcet.edu','creator@mhcet.edu','verifier@mhcet.edu','translator@mhcet.edu','transverifier@mhcet.edu','qpcreator@mhcet.edu','qpverifier@mhcet.edu','publisher@mhcet.edu'];
@@ -1252,7 +1275,7 @@ function go(screen){ckDestroyAll();
   if(screen!=='projects')_courseView=null;
   rescope();
   SCREEN=screen;
-  try{var _cd=document.getElementById('content');if(_cd)_cd.classList.remove('content-dash');}catch(e){}
+  try{var _cd=document.getElementById('content');if(_cd){_cd.classList.remove('content-dash');_cd.classList.remove('content-translate');}}catch(e){}
   if(screen==='work'){ if(!WORK._keep)WORK.course=null; WORK._keep=false; }
   document.querySelectorAll('.nav-item[data-screen]').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen||(screen==='reviewedit'&&n.dataset.screen==='work')));
   const titles={dashboard:['Dashboard',''],work:['Exams','Pick an exam, then a subject'],institutes:['Clients','Manage client institutes & their admin logins'],projects:['Exams','Exams for this client'],
@@ -1355,7 +1378,7 @@ function renderAdminDash(){
   var atRisk=alerts.length;
   $('#content').innerHTML=
     '<div class="grid g3" style="margin-bottom:14px">'
-    +stat('Examination',courses.length,'ti-folders','#2D9CDB','tap for list',"adminDetail('courses')")
+    +stat('Created Examination',courses.length,'ti-folders','#2D9CDB','tap for list',"adminDetail('courses')")
     +stat('Completed',courseDone,'ti-circle-check','#27AE60','100% verified',"adminDetail('courses_done')")
     +stat('Pending',coursePending,'ti-clock','#F5A623','in progress',"adminDetail('courses_pending')")
     +'</div>'
@@ -1484,10 +1507,10 @@ function renderPublisherDash(){
   var setRows=sets.slice(-6).reverse().map(function(s){return '<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div class="small fw6">'+escAttr(s.name||'Set')+' <span class="muted">· '+(s.count||(s.questionIds||[]).length)+' Q</span></div>'+(s.status==='pushed'?'<span class="badge bg-green">Pushed</span>':'<span class="badge bg-gray">Draft</span>')+'</div>';}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-stack-2"></i>No sets built yet</div>';
   $('#content').innerHTML=
     '<div class="grid g4" style="margin-bottom:16px">'
-    +stat('Verified pool',verifiedPool,'ti-rosette-discount-check','#27AE60','available',"go('export')")
-    +stat('Fresh available',fresh,'ti-sparkles','#6C5CE7',used+' used',"go('export')")
-    +stat('Sets built',sets.length,'ti-stack-2','#2D9CDB','',"go('export')")
-    +stat('Pushed',pushed,'ti-rocket','#8E44AD','to AssessPro',"go('export')")
+    +stat('Verified pool',verifiedPool,'ti-rosette-discount-check','#27AE60','available',"cardOpen('verified','Verified pool')")
+    +stat('Fresh available',fresh,'ti-sparkles','#6C5CE7',used+' used',"cardOpen('fresh','Fresh available')")
+    +stat('Sets built',sets.length,'ti-stack-2','#2D9CDB','',"exportCardOpen('all','Sets built')")
+    +stat('Pushed',pushed,'ti-rocket','#8E44AD','to AssessPro',"exportCardOpen('pushed','Pushed')")
     +'</div>'
     +'<div class="card" style="margin-bottom:16px"><div class="card-h"><span class="ttl"><i class="ti ti-database"></i> Pool Availability by Subject</span><span class="small muted"><span style="color:var(--green)">■</span> fresh <span style="color:var(--ink-3)">■</span> used</span></div>'+poolRows+'</div>'
     +'<div class="grid g2">'
@@ -1553,8 +1576,11 @@ function transVerifyCard(q){const langs=Object.keys(q.translations||{});const b=
 
 let QPV_SET=null;
 let QPV_COURSE=null;
+let QPV_FILTER=null,QPV_FILTER_LBL='';
 async function qpvOpenCourse(cid){if(!await requireCourseAccess(cid))return;QPV_COURSE=cid;QPV_SET=null;RENDER.qpverify();window.scrollTo&&window.scrollTo(0,0);}
 function qpvCourses(){QPV_COURSE=null;QPV_SET=null;RENDER.qpverify();}
+function qpvCardOpen(key,label){QPV_FILTER=key;QPV_FILTER_LBL=label;QPV_SET=null;QPV_COURSE=null;go('qpverify');}
+function qpvFilterClear(){QPV_FILTER=null;QPV_FILTER_LBL='';RENDER.qpverify();}
 function qpCourseCard(c,onOpen,stats){return '<div class="ccard" onclick="'+onOpen+'(\''+c.id+'\')"><div class="ccnm"><i class="ti ti-folder" style="color:var(--violet)"></i> '+escAttr(c.name)+'</div><div class="flex gap8 wrap" style="margin-top:8px">'+stats.map(function(s){return '<span class="badge '+s.cls+'" style="font-size:10px;padding:2px 7px">'+s.val+' '+s.label+'</span>';}).join('')+'</div></div>';}
 async function qpReview(id){const _qs=(state.sets||[]).find(x=>x.id===id);if(_qs&&!await requireCourseAccess(_qs.course))return;QPV_SET=id;RENDER.qpverify();window.scrollTo&&window.scrollTo(0,0);}
 function qpBack(){QPV_SET=null;RENDER.qpverify();}
@@ -1581,6 +1607,12 @@ RENDER.qpverify=()=>{const sets=state.sets||[];
       +(cs.length?cs.map(qpVerifyCard).join(''):`<div class="empty"><i class="ti ti-stack-2"></i>No QP sets in this exam yet.</div>`);
     return;
   }
+  if(QPV_FILTER){
+    var meqf=currentUser();
+    var list=sets.filter(function(s){var st=s.status||'draft';if(QPV_FILTER==='draft')return st==='draft';if(QPV_FILTER==='mine')return s.verifiedBy&&s.verifiedBy.by===meqf.name;if(QPV_FILTER==='published')return st==='published';return true;});
+    $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="qpvFilterClear()"><i class="ti ti-arrow-left"></i> All sets</button><div class="fw6" style="flex:1">Verify QP sets</div><span class="chip" style="background:var(--violet-soft);color:var(--violet-ink);border-color:#d9d5f5;font-weight:600"><i class="ti ti-filter"></i> ${escAttr(QPV_FILTER_LBL)} (${list.length}) <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="qpvFilterClear()" title="Clear filter"></i></span></div>`+(list.length?list.map(qpVerifyCard).join(''):`<div class="empty"><i class="ti ti-stack-2"></i>No sets match this filter.</div>`);
+    return;
+  }
   const courses=[...new Set(sets.map(s=>s.course))].map(id=>(DB.projects||[]).find(p=>p.id===id)).filter(Boolean);
   if(!courses.length){$('#content').innerHTML=`<div class="empty"><i class="ti ti-stack-2"></i>No QP sets built yet.</div>`;return;}
   $('#content').innerHTML=`<div class="actionrow"><div class="fw6" style="flex:1">Verify QP sets</div><button class="btn" onclick="go('reviewedit')"><i class="ti ti-layout-grid"></i> Focus / Cards</button></div>`+'<div class="cgrid">'+courses.map(c=>{const cs=sets.filter(s=>s.course===c.id);const d=cs.filter(s=>(s.status||'draft')==='draft').length;const v=cs.filter(s=>s.status==='qp_verified').length;const p=cs.filter(s=>s.status==='published').length;return qpCourseCard(c,'qpvOpenCourse',[{val:d,label:'to verify',cls:'bg-amber'},{val:v,label:'verified',cls:'bg-green'},{val:p,label:'published',cls:'bg-violet'}]);}).join('')+'</div>';
@@ -1589,8 +1621,12 @@ function qpVerifyCard(s){const st=s.status||'draft';
   return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · ${setTotalMarks(s)} marks${s.qpFlag&&st==='draft'?' · rejected: '+escAttr(s.qpFlag.reason||'rework'):''}</div></div>${qpStatusBadge(st)}<button class="btn sm" onclick="qpReview('${s.id}')"><i class="ti ti-eye"></i> Review</button>${st==='draft'?`<button class="btn ok sm" onclick="verifySet('${s.id}')"><i class="ti ti-check"></i> Verify</button>`:''}${st!=='published'?`<button class="btn danger sm" onclick="flagSet('${s.id}')"><i class="ti ti-flag"></i> Reject</button>`:''}</div>`;}
 
 let PUB_COURSE=null;
+let PUB_FILTER=null,PUB_FILTER_LBL='';
 async function pubOpenCourse(cid){if(!await requireCourseAccess(cid))return;PUB_COURSE=cid;RENDER.publish();window.scrollTo&&window.scrollTo(0,0);}
 function pubCourses(){PUB_COURSE=null;RENDER.publish();}
+function pubCardOpen(key,label){PUB_FILTER=key;PUB_FILTER_LBL=label;PUB_COURSE=null;go('publish');}
+function pubFilterClear(){PUB_FILTER=null;PUB_COURSE=null;RENDER.publish();}
+function pubExamsOpen(){PUB_FILTER=null;PUB_COURSE=null;go('publish');}
 function shuffleArr(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function shufPool(){const cbs=[...document.querySelectorAll('.shuf-cb:checked')];const ids=new Set();cbs.forEach(cb=>{const s=(state.sets||[]).find(x=>x.id===cb.value);((s&&s.questionIds)||[]).forEach(id=>ids.add(id));});const by={easy:[],medium:[],hard:[]};ids.forEach(id=>{const q=state.questions.find(x=>x.id===id);if(q&&by[q.diff])by[q.diff].push(id);});return {ids:[...ids],by:by,sets:cbs.length};}
 function shufCount(){const p=shufPool();const setv=(id,n)=>{const e=$(id);if(e)e.value=n;};const av=(id,n)=>{const e=$(id);if(e)e.textContent='/ '+n+' available';};av('#shuf_ea',p.by.easy.length);av('#shuf_ma',p.by.medium.length);av('#shuf_ha',p.by.hard.length);setv('#shuf_e',p.by.easy.length);setv('#shuf_m',p.by.medium.length);setv('#shuf_h',p.by.hard.length);const cl=$('#shuf_count');if(cl)cl.textContent=p.sets+' sets · '+p.ids.length+' unique questions in pool';shufTotal();}
@@ -1635,6 +1671,13 @@ RENDER.publish=()=>{const sets=state.sets||[];
       +(pub.length?`<div class="card mt16"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Published</span></div>${pub.map(s=>`<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div><div class="small fw6">${escAttr(s.name)}</div>${s.assesspro?`<div class="tiny muted">AssessPro · ${escAttr(s.assesspro.batch||'')}</div>`:(s.publishedBy&&s.publishedBy.via==='export'?'<div class="tiny muted">Exported file</div>':'')}</div>${qpStatusBadge('published')}</div>`).join('')}</div>`:'');
     return;
   }
+  if(PUB_FILTER){
+    var allsets=state.sets||[];
+    var list=allsets.filter(function(s){var st=s.status||'draft';if(PUB_FILTER==='ready')return st==='qp_verified';if(PUB_FILTER==='published')return st==='published';return true;});
+    var rowsp=list.map(function(s){var st=s.status||'draft';if(st==='qp_verified')return publishCard(s);return '<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">'+escAttr(s.name||'Set')+'</div><div class="tiny muted">'+(s.count||(s.questionIds||[]).length)+' questions \u00b7 '+escAttr((projectById(s.course)||{}).name||'')+'</div></div>'+qpStatusBadge(st)+'</div>';}).join('')||'<div class="empty"><i class="ti ti-rocket"></i>No sets match this filter.</div>';
+    $('#content').innerHTML='<div class="actionrow"><button class="btn" onclick="pubFilterClear()"><i class="ti ti-arrow-left"></i> Exams</button><div class="fw6" style="flex:1">Publish QP sets</div><span class="chip" style="background:var(--violet-soft);color:var(--violet-ink);border-color:#d9d5f5;font-weight:600"><i class="ti ti-filter"></i> '+escAttr(PUB_FILTER_LBL)+' ('+list.length+') <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="pubFilterClear()" title="Clear filter"></i></span></div>'+rowsp;
+    return;
+  }
   const courses=[...new Set(sets.map(s=>s.course))].map(id=>(DB.projects||[]).find(p=>p.id===id)).filter(Boolean);
   if(!courses.length){$('#content').innerHTML=`<div class="empty"><i class="ti ti-rocket"></i>No QP sets yet.</div>`;return;}
   $('#content').innerHTML='<div class="cgrid">'+courses.map(c=>{const cs=sets.filter(s=>s.course===c.id);const r=cs.filter(s=>(s.status||'draft')==='qp_verified').length;const p=cs.filter(s=>s.status==='published').length;return qpCourseCard(c,'pubOpenCourse',[{val:r,label:'ready',cls:'bg-green'},{val:p,label:'published',cls:'bg-violet'}]);}).join('')+'</div>';
@@ -1670,10 +1713,10 @@ function renderQpVerifierDash(){
   var rows=sets.slice(-6).reverse().map(function(s){return '<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div class="small fw6">'+escAttr(s.name||'Set')+' <span class="muted">· '+(s.count||(s.questionIds||[]).length)+' Q</span></div>'+qpStatusBadge(s.status||'draft')+'</div>';}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-stack-2"></i>No sets yet</div>';
   $('#content').innerHTML=
     '<div class="grid g4" style="margin-bottom:16px">'
-    +stat('To verify',draft,'ti-clipboard-list','#F5A623','draft sets',"go('qpverify')")
-    +stat('Verified by me',vById,'ti-clipboard-check','#27AE60','',"go('qpverify')")
-    +stat('Published',published,'ti-rocket','#8E44AD','',"go('qpverify')")
-    +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"go('qpverify')")
+    +stat('To verify',draft,'ti-clipboard-list','#F5A623','draft sets',"qpvCardOpen('draft','To verify · draft sets')")
+    +stat('Verified by me',vById,'ti-clipboard-check','#27AE60','',"qpvCardOpen('mine','Verified by me')")
+    +stat('Published',published,'ti-rocket','#8E44AD','',"qpvCardOpen('published','Published')")
+    +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"qpvCardOpen('all','All sets')")
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Recent QP Sets</span></div>'+rows+'</div>';
 }
@@ -1685,10 +1728,10 @@ function renderPublisherFinalDash(){
   var rows=sets.filter(function(s){return s.status==='published';}).slice(-6).reverse().map(function(s){return '<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div class="small fw6">'+escAttr(s.name||'Set')+'</div>'+qpStatusBadge('published')+'</div>';}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-rocket"></i>Nothing published yet</div>';
   $('#content').innerHTML=
     '<div class="grid g4" style="margin-bottom:16px">'
-    +stat('Ready to publish',ready,'ti-clipboard-check','#27AE60','QP verified',"go('publish')")
-    +stat('Published',published,'ti-rocket','#00B894','total',"go('publish')")
-    +stat('Total exams',(state.projects||[]).length,'ti-folders','#6C5CE7','',"go('publish')")
-    +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"go('publish')")
+    +stat('Ready to publish',ready,'ti-clipboard-check','#27AE60','QP verified',"pubCardOpen('ready','Ready to publish')")
+    +stat('Published',published,'ti-rocket','#00B894','total',"pubCardOpen('published','Published')")
+    +stat('Total exams',(state.projects||[]).length,'ti-folders','#6C5CE7','',"pubExamsOpen()")
+    +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"pubCardOpen('all','Total sets')")
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Recently Published</span></div>'+rows+'</div>';
 }
@@ -2431,7 +2474,7 @@ function reScope(){
   var mine=state.questions.filter(function(q){return q.author===me.name;});
   return mine.length?mine:state.questions.slice();
 }
-function reHome(){var r=session.role;return r==='transverifier'?'transverify':r==='qpverifier'?'qpverify':r==='translator'?'translate':'work';}
+function reHome(){var r=session.role;return r==='transverifier'?'transverify':r==='qpverifier'?'qpverify':r==='translator'?'translate':r==='publisher'?'export':'work';}
 function reTitle(){var r=session.role;return r==='reviewer'?'Review content':r==='transverifier'?'Verify translations':r==='qpverifier'?'Review paper questions':r==='translator'?'Translate content':'Review & Edit Questions';}
 function reActions(q,compact){
   var r=session.role;
@@ -2449,6 +2492,7 @@ function reCardScope(key){
   var base=(r==='creator')?all.filter(function(q){return q.author===me.name;}):all;
   if(key==='mine')return base.slice();
   if(key==='verified')return base.filter(function(q){return q.status==='verified';});
+  if(key==='fresh')return base.filter(function(q){return q.status==='verified'&&!q.used;});
   if(key==='rejected')return base.filter(function(q){return q.status==='rejected';});
   if(key==='pending')return base.filter(function(q){return q.status==='pending';});
   if(key==='translated')return all.filter(function(q){return (q.status==='verified'||q.status==='published')&&q.translations&&Object.keys(q.translations).length>0;});
@@ -2513,19 +2557,18 @@ const ENGINES=['Google Translate','DeepL','Microsoft Translator','Amazon Transla
 const MOCK_TR={'Which organelle is known as the powerhouse of the cell?':'किस कोशिकांग को कोशिका का पावरहाउस कहा जाता है?','Nucleus':'केन्द्रक','Mitochondria':'माइटोकॉन्ड्रिया','Ribosome':'राइबोसोम','Chloroplast':'क्लोरोप्लास्ट'};
 RENDER.translate=()=>{ckDestroy('tr_text');if(!state.banks.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No banks assigned to you yet.</div>';return;}if(!state.banks.find(b=>b.id===TR.bank))TR.bank=state.banks[0].id;const qsAll=state.questions.filter(q=>q.bank===TR.bank);const trTopics=[...new Set(qsAll.map(q=>q.topic).filter(Boolean))].sort();if(TR.topic!=='all'&&!trTopics.includes(TR.topic))TR.topic='all';const qs=(TR.topic==='all')?qsAll:qsAll.filter(q=>q.topic===TR.topic);if(TR.idx>=qs.length)TR.idx=0;const q=qs[TR.idx]||qs[0];if(!q){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No questions in this bank yet.</div>';return;}
   const done=qs.filter(x=>x.translations&&x.translations[TR.lang]).length;const rtl=RTL.includes(TR.lang);
-  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="fw6" style="flex:1">${(bankById(TR.bank)||{}).name||''}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><select onchange="TR.bank=this.value;TR.idx=0;RENDER.translate()" style="width:auto">${state.banks.map(b=>`<option value="${b.id}" ${TR.bank===b.id?'selected':''}>${b.name}</option>`).join('')}</select>
+  $('#content').innerHTML=`<div class="tr-fit"><div class="tr-top"><div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="fw6" style="flex:1">${(bankById(TR.bank)||{}).name||''}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><select onchange="TR.bank=this.value;TR.idx=0;RENDER.translate()" style="width:auto">${state.banks.map(b=>`<option value="${b.id}" ${TR.bank===b.id?'selected':''}>${b.name}</option>`).join('')}</select>
     <select onchange="TR.topic=this.value;TR.idx=0;RENDER.translate()" style="width:auto"><option value="all">All topics</option>${trTopics.map(t=>`<option value="${escAttr(t)}" ${TR.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select><div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate(this)"><i class="ti ti-bolt"></i> Auto-Translate All</button></div></div>
     <div class="flex center gap12 wrap" style="margin-bottom:14px"><span class="chip"><i class="ti ti-language" style="color:var(--violet)"></i> <b>English</b> (source)</span><i class="ti ti-arrows-right-left muted"></i>
       <select onchange="TR.lang=this.value;RENDER.translate()" style="width:auto;color:var(--violet-ink);font-weight:600">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${TR.lang===k?'selected':''}>${v}</option>`).join('')}</select>
-      <span class="badge bg-sky" style="margin-left:auto">${done}/${qs.length} translated</span></div>
-    <div class="translator" style="margin-bottom:14px"><div class="tpanel l"><div class="ph"><span class="small fw6 muted">English (source)</span><div class="flex gap8">${diffBadge(q.diff)}<span class="chip">${q.topic}</span></div></div>
+      <span class="badge bg-sky" style="margin-left:auto">${done}/${qs.length} translated</span></div></div><div class="tr-scroll"><div class="translator" style="margin-bottom:14px"><div class="tpanel l"><div class="ph"><span class="small fw6 muted">English (source)</span><div class="flex gap8">${diffBadge(q.diff)}<span class="chip">${q.topic}</span></div></div>
       <div class="fw6" style="font-size:15px;line-height:1.5;margin-bottom:12px">${q.text}</div>
       ${q.options.map((o,i)=>`<div class="small" style="padding:8px 11px;border-radius:8px;margin-bottom:5px;${i===q.correct?'background:var(--teal-soft)':'background:var(--surface-2)'}">${String.fromCharCode(65+i)}. ${o}${i===q.correct?' ✓':''}</div>`).join('')}</div>
       <div class="tpanel"><div class="ph"><span class="small fw6" style="color:var(--violet-ink)">${LANGS[TR.lang]}${rtl?' · RTL':''}</span><button class="btn sm" onclick="autoFillOne(this)"><i class="ti ti-bolt"></i> Auto-Fill</button></div>
         <textarea id="tr_text" class="ck" rows="2" dir="${rtl?'rtl':'ltr'}" style="font-size:15px;font-weight:600;margin-bottom:12px" placeholder="Translate the question...">${(q.translations[TR.lang]&&q.translations[TR.lang].text)||''}</textarea>
         ${q.options.map((o,i)=>`<input id="tr_opt${i}" dir="${rtl?'rtl':'ltr'}" style="margin-bottom:5px;${i===q.correct?'background:var(--teal-soft);border-color:#bce8dc':''}" placeholder="${String.fromCharCode(65+i)}. translation" value="${(q.translations[TR.lang]&&q.translations[TR.lang].options&&q.translations[TR.lang].options[i])||''}">`).join('')}
         <div class="flex between mt12"><span class="tiny muted">${q.translations[TR.lang]?'<i class="ti ti-check"></i> Saved':'Not yet translated'}</span><button class="btn ok sm" onclick="saveTranslation('${q.id}')"><i class="ti ti-check"></i> Mark Done</button></div></div></div>
-    <div class="flex between center" style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)"><button class="btn sm" onclick="TR.idx=Math.max(0,TR.idx-1);RENDER.translate()" ${TR.idx===0?'disabled':''}><i class="ti ti-arrow-left"></i> Previous</button><span class="small muted">Question ${TR.idx+1} of ${qs.length}</span><button class="btn pri sm" onclick="TR.idx=Math.min(${qs.length-1},TR.idx+1);RENDER.translate()" ${TR.idx>=qs.length-1?'disabled':''}>Next <i class="ti ti-arrow-right"></i></button></div>`;ckMountAll();};
+    </div><div class="tr-nav"><div class="flex between center" style="padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)"><button class="btn sm" onclick="TR.idx=Math.max(0,TR.idx-1);RENDER.translate()" ${TR.idx===0?'disabled':''}><i class="ti ti-arrow-left"></i> Previous</button><span class="small muted">Question ${TR.idx+1} of ${qs.length}</span><button class="btn pri sm" onclick="TR.idx=Math.min(${qs.length-1},TR.idx+1);RENDER.translate()" ${TR.idx>=qs.length-1?'disabled':''}>Next <i class="ti ti-arrow-right"></i></button></div></div></div>`;ckMountAll();$('#content').classList.add('content-translate');};
 function mtLangOk(l){return ['hi','bn','ta','te','mr','ur','fr','es'].indexOf(l)>=0;}
 async function mtTranslate(text,lang){
   if(!text||!String(text).trim())return '';
@@ -2585,9 +2628,19 @@ async function _autoTranslate(btn){
 
 /* EXPORT */
 let EXPORT={course:'',numSets:2};
+let EXPORT_FILTER=null,EXPORT_FILTER_LBL='';
+function exportCardOpen(key,label){EXPORT_FILTER=key;EXPORT_FILTER_LBL=label;go('export');}
+function exportFilterClear(){EXPORT_FILTER=null;EXPORT_FILTER_LBL='';RENDER.export();}
 RENDER.export=()=>{
   const courses=(state.projects||[]);
   if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams available yet.</div>';return;}
+  if(EXPORT_FILTER){
+    var allsets=state.sets||[];
+    var list=allsets.filter(function(s){if(EXPORT_FILTER==='pushed')return s.status==='pushed';return true;});
+    var rowsx=list.map(function(s){var st=s.status||'draft';return '<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">'+escAttr(s.name||'Set')+'</div><div class="tiny muted">'+(s.count||(s.questionIds||[]).length)+' questions \u00b7 '+setTotalMarks(s)+' marks \u00b7 '+escAttr((projectById(s.course)||{}).name||'')+'</div></div>'+qpStatusBadge(st)+'</div>';}).join('')||'<div class="empty"><i class="ti ti-stack-2"></i>No sets match this filter.</div>';
+    $('#content').innerHTML='<div class="actionrow"><button class="btn" onclick="exportFilterClear()"><i class="ti ti-arrow-left"></i> Build sets</button><div class="fw6" style="flex:1">QP sets</div><span class="chip" style="background:var(--violet-soft);color:var(--violet-ink);border-color:#d9d5f5;font-weight:600"><i class="ti ti-filter"></i> '+escAttr(EXPORT_FILTER_LBL)+' ('+list.length+') <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="exportFilterClear()" title="Clear filter"></i></span></div>'+rowsx;
+    return;
+  }
   if(!courses.find(c=>c.id===EXPORT.course))EXPORT.course=courses[0].id;
   const course=projectById(EXPORT.course);const unlocked=isCourseUnlocked(course.id);
   const subs=state.banks.filter(b=>b.project===course.id);const sets=state.sets.filter(s=>s.course===course.id);
