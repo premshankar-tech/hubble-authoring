@@ -689,6 +689,7 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
         </div>
         <div class="lg2-div">Select a Role</div>
         <div class="rl-list" id="roleList"></div>
+        <div style="text-align:center;margin-top:10px"><a href="#" onclick="simNewDevice();return false" class="tiny muted" style="text-decoration:underline"><i class="ti ti-device-desktop-cog"></i> Simulate new device (demo)</a></div>
         <select id="lg_quickrole" style="display:none"><option value="admin@hubble.io">System Admin</option><option value="admin@mhcet.edu">Admin (view only)</option><option value="itadmin@mhcet.edu">Management Executive</option><option value="proj@mhcet.edu">Project Admin</option><option value="creator@mhcet.edu">Content Creator</option><option value="verifier@mhcet.edu">Content Verifier</option><option value="translator@mhcet.edu">Content Translator</option><option value="transverifier@mhcet.edu">Translation Verifier</option><option value="qpcreator@mhcet.edu">QP Creator</option><option value="qpverifier@mhcet.edu">QP Verifier</option><option value="publisher@mhcet.edu">Publisher</option></select>
       </div>
 
@@ -892,7 +893,7 @@ async function _inflateRaw(bytes){var ds=new DecompressionStream('deflate-raw');
 async function unzip(buf){var u8=new Uint8Array(buf);var dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);var eo=-1;for(var i=u8.length-22;i>=0;i--){if(dv.getUint32(i,true)===0x06054b50){eo=i;break;}}if(eo<0)throw new Error('Not a valid ZIP');var n=dv.getUint16(eo+10,true);var cd=dv.getUint32(eo+16,true);var out={};var p=cd;for(var k=0;k<n;k++){if(dv.getUint32(p,true)!==0x02014b50)break;var method=dv.getUint16(p+10,true);var csize=dv.getUint32(p+20,true);var fnl=dv.getUint16(p+28,true);var exl=dv.getUint16(p+30,true);var cml=dv.getUint16(p+32,true);var lho=dv.getUint32(p+42,true);var name='';for(var c=0;c<fnl;c++)name+=String.fromCharCode(u8[p+46+c]);var lfnl=dv.getUint16(lho+26,true);var lexl=dv.getUint16(lho+28,true);var dofs=lho+30+lfnl+lexl;var data=u8.subarray(dofs,dofs+csize);if(method===0)out[name]=data.slice();else if(method===8)out[name]=await _inflateRaw(data);p+=46+fnl+exl+cml;}return out;}
 function _crc32(u8){var crc=0xFFFFFFFF;for(var i=0;i<u8.length;i++){crc^=u8[i];for(var j=0;j<8;j++)crc=(crc>>>1)^(0xEDB88320&-(crc&1));}return (crc^0xFFFFFFFF)>>>0;}
 function makeZip(files){var enc=(typeof TextEncoder!=='undefined')?new TextEncoder():null;function bytesOf(d){if(typeof d!=='string')return d;if(enc)return enc.encode(d);var u=new Uint8Array(d.length);for(var i=0;i<d.length;i++)u[i]=d.charCodeAt(i)&255;return u;}var out=[],central=[],offset=0;function w16(a,n){a.push(n&255,(n>>8)&255);}function w32(a,n){a.push(n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255);}function wb(a,u8){for(var i=0;i<u8.length;i++)a.push(u8[i]);}files.forEach(function(f){var nameB=bytesOf(f.name),data=bytesOf(f.data),crc=_crc32(data),local=offset;out.push(0x50,0x4b,0x03,0x04);w16(out,20);w16(out,0);w16(out,0);w16(out,0);w16(out,0);w32(out,crc);w32(out,data.length);w32(out,data.length);w16(out,nameB.length);w16(out,0);wb(out,nameB);wb(out,data);offset=out.length;central.push(0x50,0x4b,0x01,0x02);w16(central,20);w16(central,20);w16(central,0);w16(central,0);w16(central,0);w16(central,0);w32(central,crc);w32(central,data.length);w32(central,data.length);w16(central,nameB.length);w16(central,0);w16(central,0);w16(central,0);w16(central,0);w32(central,0);w32(central,local);wb(central,nameB);});var cdStart=out.length;for(var i=0;i<central.length;i++)out.push(central[i]);out.push(0x50,0x4b,0x05,0x06);w16(out,0);w16(out,0);w16(out,files.length);w16(out,files.length);w32(out,central.length);w32(out,cdStart);w16(out,0);return new Uint8Array(out);}
-function downloadZipTemplate(){var csv='type,topic,section,difficulty,question,optionA,optionB,optionC,optionD,correct,explanation,QuestionImage,OptionAImage,OptionBImage,OptionCImage,OptionDImage,ExplanationImage\nmcq,Circuits,Section A,medium,Identify the element marked X,Resistor,Capacitor,Inductor,Diode,B,A capacitor stores charge between two plates.,circuit-x.png,,optB.png,,,\n';var readme='GyanSetu - image question import\n\n1. Fill questions.csv (one question per row).\n2. Put image files inside the images/ folder.\n3. Reference each image by file name in the *Image columns: QuestionImage, OptionAImage..OptionDImage, ExplanationImage.\n4. Select questions.csv + the images folder, zip them together, then upload the .zip.\nSupported images: png, jpg, jpeg, gif, webp.\n';var zip=makeZip([{name:'questions.csv',data:csv},{name:'README.txt',data:readme},{name:'images/place-images-here.txt',data:'Put your image files in this folder.'}]);var blob=new Blob([zip],{type:'application/zip'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gyansetu_image_questions_template.zip';a.click();toast('ZIP template downloaded','ok');}
+function downloadZipTemplate(){var csv='Type,Topic,Section,Difficulty,Question,OptionA,OptionB,OptionC,OptionD,Correct,Explanation,QuestionImage,OptionAImage,OptionBImage,OptionCImage,OptionDImage,ExplanationImage\nmcq,Circuits,Section A,medium,Identify the element marked X,Resistor,Capacitor,Inductor,Diode,B,A capacitor stores charge between two plates.,circuit-x.png,,optB.png,,,\n';var readme='GyanSetu - image question import\n\n1. Fill questions.csv (one question per row).\n2. Put image files inside the images/ folder.\n3. Reference each image by file name in the *Image columns: QuestionImage, OptionAImage..OptionDImage, ExplanationImage.\n4. Select questions.csv + the images folder, zip them together, then upload the .zip.\nSupported images: png, jpg, jpeg, gif, webp.\n';var zip=makeZip([{name:'questions.csv',data:csv},{name:'README.txt',data:readme},{name:'images/place-images-here.txt',data:'Put your image files in this folder.'}]);var blob=new Blob([zip],{type:'application/zip'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gyansetu_image_questions_template.zip';a.click();toast('ZIP template downloaded','ok');}
 async function handleZip(e){if(!guard('question.create'))return;var f=e.target.files&&e.target.files[0];if(!f)return;CREATE._fileName=f.name;try{var buf=await f.arrayBuffer();var files=await unzip(buf);var names=Object.keys(files);var manName=names.find(function(n){return /\.csv$/i.test(n);})||names.find(function(n){return /\.xlsx?$/i.test(n);});if(!manName){toast('No CSV/Excel manifest found inside the ZIP','err');e.target.value='';return;}var rows;if(/\.csv$/i.test(manName)){rows=csvToObjects(_decodeText(files[manName]));}else{if(!window.XLSX){toast('Excel manifest needs the XLSX parser — put a CSV in the ZIP instead','warn');e.target.value='';return;}var wb=XLSX.read(files[manName],{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});}var imgMap={};names.forEach(function(n){var m=_extMime(n);if(m&&!/\.(csv|xlsx?|txt)$/i.test(n))imgMap[_base(n).toLowerCase()]='data:'+m+';base64,'+_b64(files[n]);});var gen=rowsToQuestions(rows,imgMap);showImportPreview(gen,true);}catch(err){if(typeof console!=='undefined')console.error(err);toast('Could not read ZIP: '+(err&&err.message||'error'),'err');}e.target.value='';}
 function showImportPreview(gen,isZip){if(!gen||!gen.length)return toast('No valid rows found in file','warn');window._importGen=gen;var withImg=gen.filter(function(q){return hasMedia(q);}).length;$('#xlPreview').innerHTML='<div class="flex between center mt16" style="margin-bottom:10px"><span class="fw6 small"><i class="ti ti-file-check" style="color:var(--teal)"></i> '+gen.length+' questions parsed from '+(CREATE._fileName||'file')+(isZip?(' \u00b7 '+withImg+' with image(s)'):'')+'</span><button class="btn teal sm" onclick="acceptImport()"><i class="ti ti-check"></i> Import All (as Pending)</button></div>'+gen.slice(0,40).map(function(q){return '<div class="card" style="margin-bottom:8px;padding:13px"><div class="flex gap8 wrap" style="margin-bottom:7px">'+diffBadge(q.diff)+typeBadge(q.type)+'<span class="chip">'+escAttr(q.topic)+'</span>'+mediaBadge(q)+'<span class="badge '+(isZip?'bg-violet':'bg-teal')+'"><i class="ti '+(isZip?'ti-file-zip':'ti-file-spreadsheet')+'"></i> '+(isZip?'ZIP':'Excel')+'</span></div><div class="fw6 small" style="margin-bottom:7px">'+q.text+'</div>'+qImg(q.image)+((q.options&&q.options.length)?('<div class="flex gap8 wrap">'+q.options.map(function(o,j){return '<span class="chip" style="'+(j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':'')+'">'+String.fromCharCode(65+j)+'. '+escAttr(o)+((q.optionImages&&q.optionImages[j])?qImgInline(q.optionImages[j]):'')+(j===q.correct?' \u2713':'')+'</span>';}).join('')+'</div>'):'')+'</div>';}).join('')+(gen.length>40?('<p class="tiny muted">\u2026and '+(gen.length-40)+' more</p>'):'');}
 function save(){ // merge scoped state writes back into DB (upsert by id), then persist + rescope
@@ -955,6 +956,10 @@ function establishSession(u,remember){
   openApp(u);
 }
 function gateRequired(role){return role!=='sysadmin'&&role!=='instadmin';}
+function deviceApprover(role){return role==='itadmin'?'instadmin':'itadmin';}
+function thisDeviceFp(){try{var k=localStorage.getItem('hub_device_fp');if(!k){k='DEV-'+Math.random().toString(36).slice(2,10).toUpperCase();localStorage.setItem('hub_device_fp',k);}return k;}catch(e){return 'DEV-LOCAL';}}
+function rotateDeviceFp(){try{var k='DEV-'+Math.random().toString(36).slice(2,10).toUpperCase();localStorage.setItem('hub_device_fp',k);return k;}catch(e){return 'DEV-LOCAL';}}
+function simNewDevice(){rotateDeviceFp();toast('Now simulating a new device \u00b7 sign in to see the security check','warn');}
 function ensureDeviceRec(u){if(!u)return;if(!u.device)u.device={status:'none'};if(typeof u.keyGenerated!=='boolean')u.keyGenerated=false;}
 function uaInfo(){var ua=(typeof navigator!=='undefined'&&navigator.userAgent)||'';var br='Browser';if(/Edg\//.test(ua))br='Edge';else if(/Chrome\//.test(ua))br='Chrome';else if(/Firefox\//.test(ua))br='Firefox';else if(/Safari\//.test(ua))br='Safari';var os='Device';if(/Windows/.test(ua))os='Windows';else if(/Mac OS X|Macintosh/.test(ua))os='macOS';else if(/Android/.test(ua))os='Android';else if(/iPhone|iPad|iOS/.test(ua))os='iOS';else if(/Linux/.test(ua))os='Linux';return{browser:br,os:os};}
 function randFp(n){n=n||5;var b=new Uint8Array(n);try{(window.crypto||{}).getRandomValues&&window.crypto.getRandomValues(b);}catch(e){for(var k=0;k<n;k++)b[k]=Math.floor(Math.random()*256);}var s=[];for(var i=0;i<n;i++)s.push(('0'+b[i].toString(16)).slice(-2).toUpperCase());return s.join(':');}
@@ -977,7 +982,7 @@ async function pubKeyFingerprint(pub){try{var raw=await crypto.subtle.exportKey(
 const PERMS={
   sysadmin:['institute.create','institute.view','user.create','audit.view','settings.view'],
   itadmin:['project.create','project.view','bank.create','bank.configure','bank.setPassword','team.manage','user.create','review.configure','audit.view','settings.view'],
-  instadmin:['project.view','audit.view'],
+  instadmin:['user.create','project.view','audit.view'],
   projadmin:['bank.create','bank.configure','bank.setPassword','team.manage','review.configure','audit.view','settings.view'],
   creator:['question.create'],
   reviewer:['question.verify','question.edit','question.reject'],
@@ -1010,7 +1015,7 @@ function audit(action,detail){
 const ROLES={
   sysadmin:{name:'System Admin',icon:'ti-shield-cog',color:'#6C5CE7',desc:'Top-level. Creates client admins.'},
   itadmin:{name:'Management Executive',icon:'ti-server-cog',color:'#0F9D8C',desc:'Operates a client: exams, subjects, team & review.'},
-  instadmin:{name:'Admin',icon:'ti-eye-check',color:'#2D9CDB',desc:'Views overall project progress (read-only).'},
+  instadmin:{name:'Commissioner',icon:'ti-eye-check',color:'#2D9CDB',desc:'Commissioner: approves Management Executive device requests; read-only oversight.'},
   projadmin:{name:'Project Admin',icon:'ti-folder-cog',color:'#00B894',desc:'Manages exams & team for the client.'},
   creator:{name:'Content Creator',icon:'ti-pencil-plus',color:'#F5A623',desc:'Authors content (manual / Excel / AI).'},
   reviewer:{name:'Content Verifier',icon:'ti-checkup-list',color:'#FF6B57',desc:'Verifies & approves content across levels.'},
@@ -1022,8 +1027,8 @@ const ROLES={
 };
 const NAV={
   sysadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['institutes','User Management','ti-users-cog'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
-  itadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
-  instadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history']],
+  itadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
+  instadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['users','Management Executive','ti-user-shield'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history']],
   projadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   creator:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
   reviewer:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
@@ -1134,7 +1139,20 @@ function cancelMfa(){mfaUser=null;$('#step-mfa').style.display='none';$('#step-l
 function openApp(u){
   try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(function(){});}catch(e){}
   rescope();
-  if(gateRequired(u.role)){ensureDeviceRec(u);if(u.device.status!=='approved'){return showDeviceGate(u);}if(!u.keyGenerated){return showKeyGate(u);}}
+  if(gateRequired(u.role)){
+    ensureDeviceRec(u);
+    var __cur=thisDeviceFp();
+    if(u.device.status==='approved'&&u.device.fp===__cur){
+      if(!u.keyGenerated){return showKeyGate(u);}
+    } else if(u.device.status==='approved'&&u.device.fp&&u.device.fp!==__cur){
+      if(!u.device.pendingNew||u.device.pendingNew.fp!==__cur){var __i=uaInfo();u.device.pendingNew={fp:__cur,ts:Date.now(),reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),browser:__i.browser,os:__i.os};persist();audit('device.new_request',{user:u.name});}
+      return showNewDeviceAlert(u);
+    } else {
+      if(!((u.device.status==='pending'||u.device.status==='rejected')&&u.device.fp===__cur)){if(u.device.fp!==__cur){u.device={status:'none'};u.keyGenerated=false;}}
+      if(u.device.status!=='approved'){return showDeviceGate(u);}
+      if(!u.keyGenerated){return showKeyGate(u);}
+    }
+  }
   enterApp(u);
 }
 function enterApp(u){
@@ -1154,28 +1172,39 @@ function logout(){audit('auth.logout',{});try{localStorage.removeItem('hub_sessi
 function hideGate(){var g=document.getElementById('gate');if(g){g.classList.remove('show');g.innerHTML='';}}
 function showGate(html){var g=document.getElementById('gate');if(!g)return;g.innerHTML='<div class="gate-card">'+html+'</div>';g.classList.add('show');var lg=document.getElementById('login');if(lg)lg.style.display='none';}
 function recheckGate(){var u=currentUser();if(!u)return;ensureDeviceRec(u);if(u.device.status==='approved'&&u.keyGenerated){hideGate();return enterApp(u);}if(u.device.status==='approved'){return showKeyGate(u);}return showDeviceGate(u);}
-function showDeviceGate(u){ensureDeviceRec(u);var d=u.device;var info=uaInfo();var bridge=hasDeviceBridge();_devPreview=null;
+function showDeviceGate(u){ensureDeviceRec(u);var d=u.device;var info=uaInfo();var bridge=hasDeviceBridge();_devPreview=null;var appr=(ROLES[deviceApprover(u.role)]||{}).name||'approver';
   if(d.status==='pending'){
     showGate('<div class="gate-ic" style="background:#fdf0d6;color:#8a5a00"><i class="ti ti-clock-hour-4"></i></div>'
-      +'<h3>Awaiting Approval</h3><div class="muted small" style="margin-bottom:10px">Your request has been sent to the Admin. You\'ll get access once this device is approved.</div>'
+      +'<h3>Awaiting Approval</h3><div class="muted small" style="margin-bottom:10px">Your request has been sent to the '+appr+'. You\'ll get access once this device is approved.</div>'
       +'<div class="gate-box"><div class="gate-row"><span class="muted">Request</span><span class="gate-mono">'+(d.reqId||'')+'</span></div><div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">Status</span><span style="color:#8a5a00">Pending</span></div></div>'
       +'<button class="btn ghost" style="width:100%" onclick="checkDeviceStatus()"><i class="ti ti-refresh"></i> Check Status</button>'
       +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to Sign in</button>'
       +'<div class="tiny muted" style="text-align:center;margin-top:8px">Navigation stays locked until approved</div>');return;}
   if(d.status==='rejected'){
     showGate('<div class="gate-ic" style="background:#fde7e1;color:#b23a23"><i class="ti ti-shield-x"></i></div>'
-      +'<h3>Device Rejected</h3><div class="muted small" style="margin-bottom:10px">Your Admin rejected this device'+(d.rejectReason?(': '+escAttr(d.rejectReason)):'')+'. You can send a new request.</div>'
+      +'<h3>Device Rejected</h3><div class="muted small" style="margin-bottom:10px">The '+appr+' rejected this device'+(d.rejectReason?(': '+escAttr(d.rejectReason)):'')+'. You can send a new request.</div>'
       +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register Your Device</button>'
       +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to Sign in</button>');return;}
   showGate('<div class="gate-ic" style="background:#efeafe;color:#5b46d6"><i class="ti ti-shield-lock"></i></div>'
-    +'<h3>Register This Device</h3><div class="muted small" style="margin-bottom:10px">For security, this device must be registered and approved by your Admin before you can access the workspace.</div>'
+    +'<h3>Register This Device</h3><div class="muted small" style="margin-bottom:10px">For security, this device must be registered and approved by your '+appr+' before you can access the workspace.</div>'
     +'<div style="text-align:center;margin-bottom:10px">'+(bridge?'<span class="badge bg-teal"><i class="ti ti-discount-check"></i> Verified Desktop App</span>':'<span class="badge bg-amber"><i class="ti ti-browser"></i> Browser \u2014 limited identity</span>')+'</div>'
     +'<div class="gate-box" id="dgFields">'+(bridge?'<div class="gate-row"><span class="muted">Reading device\u2026</span><span class="gate-mono">\u2022\u2022\u2022</span></div>':('<div class="gate-row"><span class="muted">Device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">User</span><span>'+escAttr(u.name)+'</span></div>'))+'</div>'
     +'<button class="btn pri" style="width:100%" onclick="sendDeviceRequest()"><i class="ti ti-send"></i> Register Your Device</button>'
     +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()">Back to Sign in</button>'
     +'<div class="tiny muted" style="text-align:center;margin-top:8px">No close \u2014 registration is mandatory</div>');if(bridge)previewDevice(u);}
-async function sendDeviceRequest(){var u=currentUser();if(!u)return;ensureDeviceRec(u);var m=_devPreview||await collectMachine();var dev;if(m){var fp=await hwFingerprint(m)||browserFp();dev={status:'pending',verified:true,machine:m,fp:fp,browser:m.os||'Desktop',os:m.os||'',reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}else{var info=uaInfo();dev={status:'pending',verified:false,fp:browserFp(),browser:info.browser,os:info.os,reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}u.device=dev;_devPreview=null;persist();audit('device.request',{device:(dev.verified?('desktop/'+(m.system||'')):('browser/'+dev.browser)),fp:dev.fp});toast('Registration request sent to Admin','ok');showDeviceGate(u);}
+async function sendDeviceRequest(){var u=currentUser();if(!u)return;ensureDeviceRec(u);var m=_devPreview||await collectMachine();var dev;if(m){var fp=await hwFingerprint(m)||browserFp();dev={status:'pending',verified:true,machine:m,fp:fp,browser:m.os||'Desktop',os:m.os||'',reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}else{var info=uaInfo();dev={status:'pending',verified:false,fp:browserFp(),browser:info.browser,os:info.os,reqId:'REQ-'+(1000+Math.floor(Math.random()*9000)),ts:Date.now()};}dev.fp=thisDeviceFp();if(u.device&&u.device._newAck)dev._newAck=true;u.device=dev;_devPreview=null;persist();audit('device.request',{device:(dev.verified?('desktop/'+(m.system||'')):('browser/'+dev.browser)),fp:dev.fp});toast('Registration request sent to the '+((ROLES[deviceApprover(u.role)]||{}).name||'approver'),'ok');showDeviceGate(u);}
 function checkDeviceStatus(){var u=currentUser();if(!u)return;ensureDeviceRec(u);if(u.device.status==='approved'){toast('Device approved \u2713','ok');return recheckGate();}if(u.device.status==='rejected'){return showDeviceGate(u);}toast('Still awaiting Admin approval','warn');}
+function showNewDeviceAlert(u){ensureDeviceRec(u);var info=uaInfo();var appr=(ROLES[deviceApprover(u.role)]||{}).name||'administrator';var d=u.device||{};
+  showGate('<div class="gate-ic" style="background:#fde7e1;color:#c0392b"><i class="ti ti-alert-triangle"></i></div>'
+    +'<h3 style="color:#c0392b">Security Alert \u00b7 New Device</h3>'
+    +'<div style="background:#fdecea;border:1px solid #f3b4a8;color:#a4321d;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px;line-height:1.45"><b>Potential security risk.</b> Your account <b>'+escAttr(u.name)+'</b> is already registered on another device, and for security only one device can be active at a time.<br><br>Please ask your <b>'+escAttr(appr)+'</b> to de-register your old device \u2014 then you can continue and generate a key on this device.</div>'
+    +'<div class="gate-box"><div class="gate-row"><span class="muted">Account</span><span>'+escAttr(u.email)+'</span></div><div class="gate-row"><span class="muted">This (new) device</span><span>'+info.browser+' \u00b7 '+info.os+'</span></div><div class="gate-row"><span class="muted">Request</span><span class="gate-mono">'+((d.pendingNew&&d.pendingNew.reqId)||'')+'</span></div><div class="gate-row"><span class="muted">Sent to</span><span>'+escAttr(appr)+'</span></div></div>'
+    +'<button class="btn ghost" style="width:100%" onclick="checkNewDeviceStatus()"><i class="ti ti-refresh"></i> Check Status</button>'
+    +'<button class="btn ghost" style="width:100%;margin-top:8px" onclick="logout()"><i class="ti ti-arrow-left"></i> This was not me \u2014 sign out</button>'
+    +'<div class="tiny muted" style="text-align:center;margin-top:8px">A request has been sent to your '+escAttr(appr)+'. Key generation stays blocked until your old device is de-registered.</div>');}
+function checkNewDeviceStatus(){var u=currentUser();if(!u)return;ensureDeviceRec(u);var cur=thisDeviceFp();
+  if(u.device.status==='approved'&&u.device.fp&&u.device.fp!==cur){toast('Your previous device is still registered \u00b7 ask your '+((ROLES[deviceApprover(u.role)]||{}).name||'administrator')+' to de-register it','warn');return;}
+  toast('Old device de-registered \u00b7 register this device to continue','ok');openApp(u);}
 function showKeyGate(u){ensureDeviceRec(u);
   showGate('<div class="gate-ic" style="background:#d9f5ec;color:#0a7a5f"><i class="ti ti-key"></i></div>'
     +'<h3>Generate Your Security Key</h3><div class="small" style="color:#1b7a44;margin-bottom:8px"><i class="ti ti-circle-check"></i> Device approved</div>'
@@ -1195,7 +1224,7 @@ function continueAfterGates(){var u=currentUser();if(!u)return;hideGate();enterA
 function navFor(role){
   if(role==='itadmin'){
     const u=currentUser(); const inst=u&&DB.institutes.find(i=>i.id===u.institute_id);
-    const items=[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['team','Team & Assignments','ti-users']];
+    const items=[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['team','Team & Assignments','ti-users'],['devices','Device Approvals','ti-devices']];
     items.push(['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']);
     return items;
   }
@@ -1204,7 +1233,7 @@ function navFor(role){
 function buildNav(){
   const items=navFor(session.role);const pending=state.questions.filter(q=>q.status==='pending').length;
   $('#nav').innerHTML=`<div class="nav-sec">Workspace</div>`+items.map(([id,label,ic])=>{
-    let b=(id==='review'&&pending)?`<span class="nav-badge">${pending}</span>`:'';if(id==='devices'){var dp=(DB.users||[]).filter(function(x){return gateRequired(x.role)&&x.device&&x.device.status==='pending';}).length;if(dp)b=`<span class="nav-badge">${dp}</span>`;}
+    let b=(id==='review'&&pending)?`<span class="nav-badge">${pending}</span>`:'';if(id==='devices'){var dp=(DB.users||[]).filter(function(x){return gateRequired(x.role)&&deviceApprover(x.role)===session.role&&x.device&&(x.device.status==='pending'||x.device.pendingNew);}).length;if(dp)b=`<span class="nav-badge">${dp}</span>`;}
     return `<button class="nav-item" data-screen="${id}" onclick="go('${id}')"><i class="ti ${ic}"></i> ${label}${b}</button>`;}).join('');
 }
 function goHome(){if(!session)return;closeModal();go('dashboard');}
@@ -1215,7 +1244,7 @@ function go(screen){ckDestroyAll();
   if(screen==='work'){ if(!WORK._keep)WORK.course=null; WORK._keep=false; }
   document.querySelectorAll('.nav-item[data-screen]').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen||(screen==='reviewedit'&&n.dataset.screen==='work')));
   const titles={dashboard:['Dashboard',''],work:['Exams','Pick an exam, then a subject'],institutes:['Clients','Manage client institutes & their admin logins'],projects:['Exams','Exams for this client'],
-    users:['Project Admins','Create & manage project admins'],qbank:['Subjects','Subjects & question banks by exam'],team:['Team & Assignments','Assign subjects to creators, reviewers & translators'],
+    users:['User Accounts','Create & manage user accounts'],qbank:['Subjects','Subjects & question banks by exam'],team:['Team & Assignments','Assign subjects to creators, reviewers & translators'],
     create:['Create Questions',''],reviewedit:['Review & Edit','Review and edit the questions you created'],review:['Review Queue','Approve questions through review levels'],translate:['Translation Workspace',''],
     export:['Sets & Export','Build sets, export & push to AssessPro'],audit:['Audit Log','Immutable record of all actions'],devices:['Device Approvals','Approve devices before users can sign in'],settings:['Security & Settings',''],transverify:['Verify Translations','Approve translated content'],qpverify:['Verify QP Sets','Check built question papers'],publish:['Publish QP','Final publish of verified papers']};
   const[t,s]=titles[screen]||[screen,''];
@@ -1313,15 +1342,14 @@ function renderAdminDash(){
   var alertsHtml=alerts.length?alerts.join(''):'<div class="empty" style="padding:16px"><i class="ti ti-circle-check"></i>Nothing needs attention.</div>';
   var atRisk=alerts.length;
   $('#content').innerHTML=
-    '<div class="grid g4" style="margin-bottom:14px">'
+    '<div class="grid g3" style="margin-bottom:14px">'
     +stat('Examination',courses.length,'ti-folders','#2D9CDB','tap for list',"adminDetail('courses')")
     +stat('Completed',courseDone,'ti-circle-check','#27AE60','100% verified',"adminDetail('courses_done')")
     +stat('Pending',coursePending,'ti-clock','#F5A623','in progress',"adminDetail('courses_pending')")
-    +stat('Team',members.length,'ti-users','#8E44AD',(atRisk?atRisk+' need action':'all on track'),"adminDetail('team')")
     +'</div>'
     +'<div class="grid g3" style="margin-bottom:16px">'
     +stat('Questions',total,'ti-database','#6C5CE7','created',"adminDetail('questions')")
-    +stat('Verified',verified+' · '+coverage+'%','ti-rosette-discount-check','#27AE60','coverage',"adminDetail('verified')")
+    +stat('Verified',verified,'ti-rosette-discount-check','#27AE60','',"adminDetail('verified')")
     +stat('Pending review',pending,'ti-clock','#F5A623',(rejected?rejected+' rejected':'awaiting'),"adminDetail('pending')")
     +'</div>'
     +'<div style="margin-bottom:16px">'
@@ -1329,7 +1357,7 @@ function renderAdminDash(){
     +'</div>'
     +'<div class="grid g2">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-alert-triangle"></i> Needs Action</span></div>'+alertsHtml+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-folders"></i> Exam Progress</span></div>'+courseRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-folders"></i> Completion Status</span></div>'+courseRows+'</div>'
     +'</div>';
 }
 function renderCreatorDash(){
@@ -1349,8 +1377,8 @@ function renderCreatorDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to keep your work moving.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
-    +stat('Questions Created',authored,'ti-pencil','#6C5CE7','',"go('work')")
-    +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','',"go('work')")
+    +stat('Questions Created',authored,'ti-pencil','#6C5CE7','by me',"go('reviewedit')")
+    +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','verified',"go('work')")
     +stat('Needs Rework',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
@@ -1378,13 +1406,13 @@ function renderReviewerDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to clear your review queue.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned Subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
-    +stat('Questions to Review',queue.length,'ti-clock','#F5A623','pending',"go('work')")
-    +stat('Approved',approvedByMe,'ti-rosette-discount-check','#27AE60','level actions',"go('work')")
-    +stat('Rejected',rejectedByMe,'ti-flag','#FF6B57','sent back',"go('work')")
+    +stat('Pending for Review',queue.length,'ti-clock','#F5A623','pending',"go('work')")
+    +stat('Approved Count',approvedByMe,'ti-rosette-discount-check','#27AE60','level actions',"go('work')")
+    +stat('Rejected Count',rejectedByMe,'ti-flag','#FF6B57','sent back',"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-details"></i> Queue by Subject</span></div>'+subRows+'</div>'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stairs-up"></i> Queue by Level</span></div>'+lvlRows+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-stairs-up"></i> Pending</span></div>'+lvlRows+'</div>'
     +'</div>'
     +'<div class="grid g2">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-chart-pie"></i> Accepted vs Rejected</span></div>'+barRow('Accepted',apprPct,approvedByMe,'var(--green)')+barRow('Rejected',100-apprPct,rejectedByMe,'var(--coral)')+'</div>'
@@ -1584,9 +1612,10 @@ RENDER.publish=()=>{const sets=state.sets||[];
   $('#content').innerHTML='<div class="cgrid">'+courses.map(c=>{const cs=sets.filter(s=>s.course===c.id);const r=cs.filter(s=>(s.status||'draft')==='qp_verified').length;const p=cs.filter(s=>s.status==='published').length;return qpCourseCard(c,'pubOpenCourse',[{val:r,label:'ready',cls:'bg-green'},{val:p,label:'published',cls:'bg-violet'}]);}).join('')+'</div>';
 };
 function publisherExport(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var rows=setRows(s);if(!rows.length)return toast('No questions in this set','warn');downloadRows(rows,(s.name||'set').replace(/[\/\\:*?"<>|]+/g,'-'),'excel');var me=currentUser();if((s.status||'')!=='published'){s.status='published';s.publishedBy={by:me.name,ts:Date.now(),via:'export'};audit('qp.export',{set:s.name,count:rows.length});save();}toast('Exported '+rows.length+' questions','ok');if(SCREEN==='publish')RENDER.publish();}
-function assessProModal(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var courses=(state.projects||[]).map(function(c){return '<option>'+escAttr(c.name)+'</option>';}).join('');modal('<div class="modal-h"><h3><i class="ti ti-rocket" style="color:var(--violet);margin-right:8px"></i>Send to AssessPro</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div><div class="modal-b"><p class="small muted" style="margin-top:0">Pushing <b>'+escAttr(s.name)+'</b> ('+(s.count||(s.questionIds||[]).length)+' questions) to the AssessPro exam engine.</p><div class="field"><label class="fl">Drive</label><div class="input-ic"><i class="ti ti-server"></i><select id="ap_drive"><option>Primary Drive</option><option>Secondary Drive</option><option>Archive Drive</option></select></div></div><div class="field"><label class="fl">Exam</label><div class="input-ic"><i class="ti ti-folders"></i><select id="ap_course">'+courses+'</select></div></div><div class="field"><label class="fl">Batch</label><div class="input-ic"><i class="ti ti-users"></i><select id="ap_batch"><option>2026 — Batch A</option><option>2026 — Batch B</option><option>2026 — Crash Exam</option></select></div></div></div><div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="confirmAssessPro(\''+id+'\')"><i class="ti ti-send"></i> Push to AssessPro</button></div>');}
-function confirmAssessPro(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var me=currentUser();var f={drive:($('#ap_drive')||{}).value||'',course:($('#ap_course')||{}).value||'',batch:($('#ap_batch')||{}).value||''};s.status='published';s.assesspro=f;s.publishedBy={by:me.name,ts:Date.now(),via:'assesspro'};audit('qp.assesspro',{set:s.name,batch:f.batch});save();closeModal();toast('Sent to AssessPro · '+f.batch,'ok');if(SCREEN==='publish')RENDER.publish();}
-function publishCard(s){return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · ${setTotalMarks(s)} marks · verified by ${s.verifiedBy?escAttr(s.verifiedBy.by):'\u2014'}</div></div>${qpStatusBadge('qp_verified')}<button class="btn sm" onclick="publisherExport('${s.id}')"><i class="ti ti-file-spreadsheet"></i> Export</button><button class="btn pri sm" onclick="assessProModal('${s.id}')"><i class="ti ti-rocket"></i> Send to AssessPro</button></div>`;}
+function assessProModal(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var courses=(state.projects||[]).map(function(c){return '<option>'+escAttr(c.name)+'</option>';}).join('');modal('<div class="modal-h"><h3><i class="ti ti-rocket" style="color:var(--violet);margin-right:8px"></i>Push To AssessPro</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div><div class="modal-b"><p class="small muted" style="margin-top:0">Pushing <b>'+escAttr(s.name)+'</b> ('+(s.count||(s.questionIds||[]).length)+' questions) to the AssessPro exam engine.</p><div class="field"><label class="fl">Drive</label><div class="input-ic"><i class="ti ti-server"></i><select id="ap_drive"><option>Primary Drive</option><option>Secondary Drive</option><option>Archive Drive</option></select></div></div><div class="field"><label class="fl">Exam</label><div class="input-ic"><i class="ti ti-folders"></i><select id="ap_course">'+courses+'</select></div></div><div class="field"><label class="fl">Batch</label><div class="input-ic"><i class="ti ti-users"></i><select id="ap_batch"><option>2026 — Batch A</option><option>2026 — Batch B</option><option>2026 — Crash Exam</option></select></div></div></div><div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="confirmAssessPro(\''+id+'\')"><i class="ti ti-send"></i> Push To AssessPro</button></div>');}
+function confirmAssessPro(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;var me=currentUser();var f={drive:($('#ap_drive')||{}).value||'',course:($('#ap_course')||{}).value||'',batch:($('#ap_batch')||{}).value||''};s.status='published';s.assesspro=f;s.publishedBy={by:me.name,ts:Date.now(),via:'assesspro'};audit('qp.assesspro',{set:s.name,batch:f.batch});save();closeModal();toast('Pushed To AssessPro · '+f.batch,'ok');if(SCREEN==='publish')RENDER.publish();}
+function publishJIT(id){if(!guard('qp.publish'))return;var s=state.sets.find(function(x){return x.id===id;});if(!s)return;s.jit=true;s.jitTs=Date.now();var me=currentUser();if(!s.publishedBy)s.publishedBy={by:me?me.name:'',ts:Date.now(),via:'jit'};audit('qp.jit',{set:s.name});save();toast('Published to JIT \u2713','ok');if(SCREEN==='publish')RENDER.publish();}
+function publishCard(s){return `<div class="set-card" style="margin-bottom:10px"><div class="set-num">QP</div><div style="flex:1"><div class="fw6 small">${escAttr(s.name)}</div><div class="tiny muted">${s.count||(s.questionIds||[]).length} questions · ${setTotalMarks(s)} marks · verified by ${s.verifiedBy?escAttr(s.verifiedBy.by):'\u2014'}</div></div>${qpStatusBadge('qp_verified')}<button class="btn sm" onclick="publishJIT('${s.id}')"><i class="ti ti-cloud-upload"></i> Publish to JIT</button><button class="btn pri sm" onclick="assessProModal('${s.id}')"><i class="ti ti-rocket"></i> Push To AssessPro</button></div>`;}
 
 function renderTransVerifierDash(){
   var me=currentUser();var mt=myTeam();
@@ -1837,12 +1866,12 @@ async function saveClient(){
     if(findUser(login)) return toast('Login ID already exists','warn');
     const id=uid('i');
     state.institutes.push({id,name,code,address:addr,admin:spoc,spoc_contact:phone,email,slug,logo:CLIENT_LOGO||'',needsProjectAdmin:$('#cl_hierarchy').checked,since:'Jun 2026',status:'active'});
-    const acc=await createAccount(spoc,login,'itadmin',{institute_id:id},pw);
+    const acc=await createAccount(spoc,login,'instadmin',{institute_id:id},pw);
     audit('client.create',{name,code,slug});
-    audit('user.create',{name:spoc,role:'itadmin',email:acc&&acc.email});
+    audit('user.create',{name:spoc,role:'instadmin',email:acc&&acc.email});
     save();
     CLIENT_LOGO=null; CLIENT_FORM=false;
-    toast('Client "'+name+'" created · login: '+(acc&&acc.email),'ok');
+    toast('Client "'+name+'" created · '+ROLES.instadmin.name+' login: '+(acc&&acc.email),'ok');
     RENDER.institutes();
   }
 }
@@ -1923,8 +1952,8 @@ async function addProject(){if(!guard('project.create'))return;const n=$('#m_pna
   audit('course.create',{name:n,reviewLevels:lv});save();closeModal();go('projects');toast('Exam created · password set','ok');}
 
 /* USERS */
-RENDER.users=()=>{const creating=session.role==='sysadmin'?'Institute Admin':'Project Admin';
-  const wantRole=session.role==='sysadmin'?'instadmin':'projadmin';
+RENDER.users=()=>{const creating=session.role==='sysadmin'?'Institute Admin':session.role==='instadmin'?'Management Executive':'Project Admin';
+  const wantRole=session.role==='sysadmin'?'instadmin':session.role==='instadmin'?'itadmin':'projadmin';
   const q=(USER_SEARCH||'').toLowerCase();
   let list=state.users.filter(u=>u.role===wantRole);
   if(q)list=list.filter(u=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q));
@@ -1934,17 +1963,30 @@ RENDER.users=()=>{const creating=session.role==='sysadmin'?'Institute Admin':'Pr
     ${list.length?list.map(u=>`<tr><td class="flex center gap8"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">${initials(u.name)}</div>${u.name}</td><td><span class="badge bg-sky">${ROLES[u.role].name}</span></td><td class="muted">${u.email}</td><td><span class="badge bg-green"><i class="ti ti-check"></i> Active</span></td><td><button class="btn sm danger" onclick="deleteUser('${u.id}')"><i class="ti ti-trash"></i></button></td></tr>`).join(''):`<tr><td colspan="5"><div class="empty" style="padding:26px"><i class="ti ti-users"></i>No ${creating}s yet — create one.</div></td></tr>`}
   </tbody></table></div>`;};
 function modalUser(role){modal(`<div class="modal-h"><h3>Create ${role}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
-  <div class="modal-b"><div class="field"><label class="fl">Full Name</label><input id="m_uname" placeholder="Full name"></div>
-    <div class="field"><label class="fl">Email</label><input id="m_uemail" type="email" placeholder="name@org.edu"></div>
-    <p class="tiny muted"><i class="ti ti-shield-lock"></i> A login account is created with temp password <b>demo1234</b> (hashed). They can sign in immediately and explore their role.</p></div>
+  <div class="modal-b"><div class="field"><label class="fl">Full Name *</label><input id="m_uname" placeholder="e.g. Ishan Verma"></div>
+    <div class="field"><label class="fl">Email (Login ID) *</label><input id="m_uemail" type="email" placeholder="name@org.edu"></div>
+    <div class="field"><label class="fl">Mobile</label><input id="m_umobile" type="tel" placeholder="10-digit mobile (optional)"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label class="fl">Password *</label><input id="m_upw" type="password" placeholder="At least 6 characters"></div><div class="field"><label class="fl">Confirm Password *</label><input id="m_upw2" type="password" placeholder="Re-enter password"></div></div>
+    <p class="tiny muted"><i class="ti ti-shield-lock"></i> The account is created with the password you set (stored hashed). They can sign in immediately as <b>${role}</b>.</p></div>
   <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="addUser('${role}')"><i class="ti ti-check"></i> Create Account</button></div>`);}
-async function addUser(role){if(!guard('user.create'))return;const n=$('#m_uname').value.trim(),em=$('#m_uemail').value.trim();if(!n)return toast('Name required','warn');
-  const cur=currentUser(); const r=role==='Institute Admin'?'instadmin':'projadmin'; let extra={};
-  if(role==='Institute Admin'){const ii=uid('i');state.institutes.push({id:ii,name:n+"'s Institute",admin:n,since:'Jun 2026',status:'active'});extra={institute_id:ii};}
-  else{const inst=cur&&cur.institute_id?cur.institute_id:'';const pp=uid('p');state.projects.push({id:pp,name:n+"'s Project",institute:inst,admin:n,status:'draft'});extra={institute_id:inst,project_id:pp};}
-  const acc=await createAccount(n,em,r,extra);
+async function addUser(role){if(!guard('user.create'))return;
+  const n=$('#m_uname').value.trim(),em=$('#m_uemail').value.trim().toLowerCase();
+  const mob=$('#m_umobile')?$('#m_umobile').value.trim():'';
+  const pw=$('#m_upw')?$('#m_upw').value:'',pw2=$('#m_upw2')?$('#m_upw2').value:'';
+  if(!n)return toast('Full name required','warn');
+  if(!em)return toast('Email (Login ID) required','warn');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return toast('Enter a valid email address','warn');
+  if(findUser(em))return toast('That email / login is already in use','warn');
+  if(mob&&!/^[0-9+\-\s]{7,15}$/.test(mob))return toast('Enter a valid mobile number','warn');
+  if(pw.length<6)return toast('Password must be at least 6 characters','warn');
+  if(pw!==pw2)return toast('Passwords do not match','warn');
+  const cur=currentUser(); const r=role==='Institute Admin'?'instadmin':role==='Management Executive'?'itadmin':'projadmin'; let extra={mobile:mob};
+  if(role==='Institute Admin'){const ii=uid('i');state.institutes.push({id:ii,name:n+"'s Institute",admin:n,since:'Jun 2026',status:'active'});extra.institute_id=ii;}
+  else if(role==='Management Executive'){extra.institute_id=(cur&&cur.institute_id)||'';}
+  else{const inst=cur&&cur.institute_id?cur.institute_id:'';const pp=uid('p');state.projects.push({id:pp,name:n+"'s Project",institute:inst,admin:n,status:'draft'});extra.institute_id=inst;extra.project_id=pp;}
+  const acc=await createAccount(n,em,r,extra,pw);
   audit('user.create',{name:n,role:r});save();closeModal();go('users');
-  if(acc)toast(role+' created · login: '+acc.email+' / demo1234','ok');else toast(role+' created','ok');}
+  if(acc)toast(role+' created · login: '+acc.email,'ok');else toast(role+' created','ok');}
 function deleteUser(id){if(!guard('user.create'))return;const u=DB.users.find(x=>x.id===id);if(!u)return;if(!confirm('Delete account for '+u.name+'?'))return;
   DB.users=DB.users.filter(x=>x.id!==id);audit('user.delete',{name:u.name});persist();rescope();go('users');toast('Account deleted','warn');}
 
@@ -1962,7 +2004,7 @@ RENDER.team=()=>{$('#content').innerHTML=`
     ${state.team.length?state.team.map(u=>{const r=ROLES[u.role]||ROLES.creator;return `<tr><td style="padding-left:20px"><div class="flex center gap8"><div class="avatar" style="width:32px;height:32px;font-size:11px;background:${r.color}22;color:${r.color}">${initials(u.name)}</div><div><div class="fw6">${escAttr(u.name)}</div><div class="tiny muted">${escAttr(u.email)}</div></div></div></td>
       <td><span class="badge" style="background:${r.color}1a;color:${r.color}"><i class="ti ${r.icon}"></i> ${r.name}</span></td>
       <td class="small muted">${u.username?escAttr(u.username):'<span class="tiny muted">—</span>'}</td>
-      <td class="small muted">${u.mobile?escAttr(u.mobile):'<span class="tiny muted">—</span>'}</td>
+      <td class="small muted">${(u.mobile||emailMobile(u.email||''))?escAttr(u.mobile||emailMobile(u.email||'')):'<span class="tiny muted">—</span>'}</td>
       <td>${instWideRole(u.role)?'<span class="tiny muted">all subjects</span>':(u.banks.map(bid=>{const b=bankById(bid);return b?`<span class="chip">${escAttr(b.name)}</span>`:'';}).join('')||'<span class="tiny muted">none</span>')}</td>
       <td>${teamTimeChip(u)}</td><td><div class="flex gap8">${instWideRole(u.role)?'':`<button class="btn sm" onclick="modalAssign('${u.id}')"><i class="ti ti-database-edit"></i> Assign</button>`}<button class="btn sm" onclick="modalTeam('${u.id}')"><i class="ti ti-edit"></i> Edit</button><button class="btn sm" onclick="resetTeamPw('${u.id}')"><i class="ti ti-key"></i> Reset</button></div></td></tr>`;}).join(''):`<tr><td colspan="7"><div class="empty" style="padding:26px"><i class="ti ti-users"></i>No team members yet — add one to begin.</div></td></tr>`}
   </tbody></table></div>`;};
@@ -2190,7 +2232,7 @@ function saveManual(){if(!guard('question.create'))return;const b=bankById(CREAT
   else if(CREATE.qtype==='group'){const subs=[];for(let i=0;i<CREATE.subs;i++){const s=$('#g_sub'+i);if(s&&s.value.trim()){subs.push({text:s.value.trim(),options:[0,1,2,3].map(j=>$('#g_sub'+i+'_o'+j)?$('#g_sub'+i+'_o'+j).value.trim():'').filter(Boolean)});}}extra.group={passage:$('#g_passage')?$('#g_passage').value.trim():'',subs};if(!subs.length)return toast('Add at least one sub-question','warn');}
   state.questions.push({id:uid('q'),bank:CREATE.bank,type:CREATE.qtype,topic:$('#q_topic').value,diff:$('#q_diff').value,text,options,correct,explain:ckGet('q_explain'),author:currentUser().name,authorId:currentUser().id,status:'pending',version:1,history:[],source:{type:'manual',by:currentUser().name},translations:{},image:_d.image||null,explainImage:_d.explainImage||null,optionImages:(CREATE.qtype==='mcq'?(_d.optImgs||[]).slice(0,options.length):[]),...extra});
   audit('question.create',{bank:b.name,type:CREATE.qtype});resetDraft();save();toast('Question saved to '+b.name,'ok');renderCreate();buildNav();}
-function downloadTemplate(){const csv='type,topic,section,difficulty,question,optionA,optionB,optionC,optionD,correct,explanation\nmcq,Cell Biology,Section A,easy,Sample?,A,B,C,D,B,Because...';
+function downloadTemplate(){const csv='Type,Topic,Section,Difficulty,Question,OptionA,OptionB,OptionC,OptionD,Correct,Explanation\nmcq,Cell Biology,Section A,easy,Sample?,A,B,C,D,B,Because...';
   const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hubble_authoring_template.csv';a.click();toast('Template downloaded','ok');}
 function handleFile(e){if(!guard('question.create'))return;const f=e.target.files&&e.target.files[0];if(!f)return;CREATE._fileName=f.name;const lower=f.name.toLowerCase();const reader=new FileReader();
   if(lower.endsWith('.csv')){reader.onload=()=>{try{importPreview(csvToObjects(String(reader.result)));}catch(err){toast('Could not parse CSV','err');}};reader.readAsText(f);}
@@ -2454,13 +2496,13 @@ RENDER.export=()=>{
     </div>
     <div class="card" style="margin-top:14px"><div class="card-h"><span class="ttl"><i class="ti ti-stack-2"></i> Sets — ${escAttr(course.name)}</span><span class="badge bg-gray">${sets.length} set(s)</span></div>
       <div id="setsContainer">${sets.length?sets.map(setCard).join(''):`<div class="empty"><i class="ti ti-stack-2"></i>No sets yet. Configure subjects above and build.</div>`}</div>
-      ${sets.length?`<div class="divider"></div><div class="flex gap8 between center"><span class="tiny muted"><i class="ti ti-info-circle"></i> ${sets.filter(s=>s.status==='pushed').length} of ${sets.length} pushed</span><div class="flex gap8">${can('assesspro.push')?`<button class="btn" style="background:#8E44AD;color:#fff;border-color:#8E44AD" onclick="pushAssessPro()"><i class="ti ti-rocket"></i> Push to AssessPro</button>`:''}<button class="btn pri" onclick="exportFile('excel')"><i class="ti ti-file-spreadsheet"></i> Export All (Excel)</button></div></div>`:''}
+      ${sets.length?`<div class="divider"></div><div class="flex gap8 between center"><span class="tiny muted"><i class="ti ti-info-circle"></i> ${sets.filter(s=>s.status==='pushed').length} of ${sets.length} submitted</span><div class="flex gap8">${can('assesspro.push')?`<button class="btn" style="background:#8E44AD;color:#fff;border-color:#8E44AD" onclick="pushAssessPro()"><i class="ti ti-send"></i> Submit</button>`:''}<button class="btn pri" onclick="exportFile('excel')"><i class="ti ti-file-spreadsheet"></i> Export All (Excel)</button></div></div>`:''}
     </div>
   </div></div>`;};
 function setCard(s){return `<div class="set-card"><div class="set-num">S${(s.name.match(/\d+/)||[''])[0]||''}</div><div style="flex:1"><div class="fw6 small">${s.name}</div><div class="tiny muted">${s.count} questions · ${setTotalMarks(s)} marks · ${escAttr(s.filters||'')}</div></div>${s.status==='pushed'?'<span class="badge" style="background:#efe3fa;color:#7d3ca8"><i class="ti ti-rocket"></i> Pushed</span>':statusBadge(s.status)}<button class="btn sm" onclick="exportSet('${s.id}')" title="Export this set"><i class="ti ti-download"></i></button><button class="btn sm ghost" onclick="rmSet('${s.id}')"><i class="ti ti-trash"></i></button></div>`;}
 function pushAssessPro(){if(!guard('assesspro.push'))return;const course=projectById(EXPORT.course);if(!course)return;if(!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
   const pending=state.sets.filter(s=>s.course===course.id&&s.status!=='pushed');if(!pending.length)return toast('Build sets first','warn');
-  pending.forEach(s=>s.status='pushed');audit('assesspro.push',{course:course.name,sets:pending.length});save();RENDER.export();toast(pending.length+' set(s) pushed to AssessPro \u2713','ok');}
+  pending.forEach(s=>s.status='pushed');audit('assesspro.push',{course:course.name,sets:pending.length});save();RENDER.export();toast(pending.length+' set(s) submitted \u2713','ok');}
 function shuffleArr(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function verifiedByDiff(bankId,diff,usage){let qs=state.questions.filter(q=>q.bank===bankId&&q.diff===diff&&q.status==='verified');if(usage==='fresh')qs=qs.filter(q=>!q.used);else if(usage==='used')qs=qs.filter(q=>q.used);return qs.length;}
 function exTotals(){let total=0;document.querySelectorAll('#ex_subjects .subj-row').forEach(row=>{const on=row.querySelector('.subj-pick').checked;const v=c=>+row.querySelector(c).value||0;const sub=v('.fr-e')+v('.fr-m')+v('.fr-h')+v('.us-e')+v('.us-m')+v('.us-h');row.querySelector('.sd-sub').textContent=sub;if(on)total+=sub;});const el=$('#ex_persettotal');if(el)el.textContent=total;}
@@ -2543,22 +2585,22 @@ RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div cla
 function saveMarks(){if(session.role!=='itadmin')return;var e=Math.max(0,+($('#mk_easy')||{}).value||0),m=Math.max(0,+($('#mk_medium')||{}).value||0),h=Math.max(0,+($('#mk_hard')||{}).value||0);setMarksScheme(e,m,h);audit('marks.configure',{easy:e,medium:m,hard:h});toast('Marks scheme saved \u00b7 Easy '+e+' / Medium '+m+' / Hard '+h,'ok');}
 
 /* DEVICE APPROVALS (Admin) */
-RENDER.devices=()=>{if(session.role!=='instadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only Admin can review device approvals.</div>';return;}
+RENDER.devices=()=>{if(session.role!=='instadmin'&&session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only the Commissioner or Management Executive can review device approvals.</div>';return;}
   var me=currentUser();var inst=me?me.institute_id:'';
-  var users=(DB.users||[]).filter(function(x){return gateRequired(x.role)&&x.device&&x.device.status&&x.device.status!=='none'&&(x.institute_id===inst||!inst);});
-  var pending=users.filter(function(x){return x.device.status==='pending';});
-  var done=users.filter(function(x){return x.device.status!=='pending';});
+  var users=(DB.users||[]).filter(function(x){return gateRequired(x.role)&&deviceApprover(x.role)===session.role&&x.device&&x.device.status&&x.device.status!=='none'&&(x.institute_id===inst||!inst);});
+  var pending=users.filter(function(x){return x.device.status==='pending'||x.device.pendingNew;});
+  var done=users.filter(function(x){return !(x.device.status==='pending'||x.device.pendingNew);});
   function row(x){var d=x.device;var r=ROLES[x.role]||{name:x.role,color:'#6C5CE7'};var act='';
     if(d.status==='pending')act='<button class="btn ok sm" onclick="approveDevice(\''+x.id+'\')"><i class="ti ti-check"></i> Approve</button><button class="btn danger sm" onclick="rejectDevice(\''+x.id+'\')"><i class="ti ti-x"></i> Reject</button>';
-    else if(d.status==='approved')act='<span class="badge bg-green"><i class="ti ti-circle-check"></i> Approved</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Revoke device"><i class="ti ti-rotate-2"></i></button>';
+    else if(d.status==='approved')act=d.pendingNew?('<span class="badge bg-amber"><i class="ti ti-alert-triangle"></i> New device pending</span><button class="btn danger sm" onclick="revokeDevice(\''+x.id+'\')"><i class="ti ti-shield-x"></i> De-register old device</button>'):('<span class="badge bg-green"><i class="ti ti-circle-check"></i> Approved</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Revoke device"><i class="ti ti-rotate-2"></i></button>');
     else act='<span class="badge bg-coral"><i class="ti ti-shield-x"></i> Rejected</span><button class="btn sm ghost" onclick="revokeDevice(\''+x.id+'\')" title="Reset"><i class="ti ti-rotate-2"></i></button>';
     return '<div style="padding:11px 0;border-bottom:1px solid var(--line)"><div class="flex between center" style="gap:12px"><div class="flex center gap8" style="flex:1;min-width:0"><span class="avatar" style="width:34px;height:34px;font-size:12px;background:'+r.color+'">'+initials(x.name)+'</span><div style="min-width:0"><div class="small fw6">'+escAttr(x.name)+' '+(d.verified?'<span class="badge bg-teal" style="font-size:10px"><i class="ti ti-discount-check"></i> Desktop Verified</span>':'<span class="badge bg-amber" style="font-size:10px"><i class="ti ti-browser"></i> Browser Only</span>')+'</div><div class="tiny muted">'+escAttr(r.name)+' \u00b7 '+((d.verified&&d.machine)?(escAttr(d.machine.system||'?')+' \u00b7 '+escAttr(d.machine.os||'')):((d.browser||'?')+' \u00b7 '+(d.os||'?')))+(d.ts?(' \u00b7 '+timeAgo(d.ts)):'')+'</div></div></div><span class="tiny gate-mono" style="color:var(--ink-3)">'+(d.fp||'')+'</span><div class="flex gap8" style="flex-shrink:0">'+act+'</div></div>'+((d.verified&&d.machine)?machineChips(d.machine):'')+'</div>';}
   $('#content').innerHTML='<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-devices"></i> Device Approvals</span><span class="badge bg-amber">'+pending.length+' pending</span></div>'
     +(pending.length?pending.map(row).join(''):'<div class="empty" style="padding:22px"><i class="ti ti-device-desktop-check"></i>No pending device requests.</div>')
     +(done.length?'<div class="sec-label" style="margin:14px 0 4px"><i class="ti ti-history"></i> Reviewed</div>'+done.map(row).join(''):'')+'</div>';};
-function approveDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;x.device.status='approved';x.device.approvedTs=Date.now();delete x.device.rejectReason;persist();audit('device.approve',{user:x.name});toast('Device approved for '+x.name,'ok');RENDER.devices();buildNav();}
-function rejectDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;var why=(typeof window!=='undefined'&&window.prompt)?window.prompt('Reason for rejecting this device (optional):',''):'';x.device.status='rejected';x.device.rejectReason=(why||'').trim();persist();audit('device.reject',{user:x.name});toast('Device rejected for '+x.name,'warn');RENDER.devices();buildNav();}
-function revokeDevice(id){if(session.role!=='instadmin')return;var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x)return;x.device={status:'none'};x.keyGenerated=false;delete x.keyFp;persist();audit('device.revoke',{user:x.name});toast('Device access reset for '+x.name+' \u2014 they must re-register','warn');RENDER.devices();buildNav();}
+function approveDevice(id){var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;if(session.role!==deviceApprover(x.role))return;x.device.status='approved';x.device.approvedTs=Date.now();delete x.device.rejectReason;x.knownDevices=x.knownDevices||[];if(x.device.fp&&x.knownDevices.indexOf(x.device.fp)<0)x.knownDevices.push(x.device.fp);delete x.device._newAck;persist();audit('device.approve',{user:x.name});toast('Device approved for '+x.name,'ok');RENDER.devices();buildNav();}
+function rejectDevice(id){var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x||!x.device)return;if(session.role!==deviceApprover(x.role))return;var why=(typeof window!=='undefined'&&window.prompt)?window.prompt('Reason for rejecting this device (optional):',''):'';x.device.status='rejected';x.device.rejectReason=(why||'').trim();persist();audit('device.reject',{user:x.name});toast('Device rejected for '+x.name,'warn');RENDER.devices();buildNav();}
+function revokeDevice(id){var x=(DB.users||[]).find(function(u){return u.id===id;});if(!x)return;if(session.role!==deviceApprover(x.role))return;x.device={status:'none'};x.keyGenerated=false;delete x.keyFp;persist();audit('device.revoke',{user:x.name});toast('Device access reset for '+x.name+' \u2014 they must re-register','warn');RENDER.devices();buildNav();}
 
 /* AUDIT LOG */
 RENDER.audit=()=>{if(!can('audit.view')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>You don\'t have permission to view the audit log.</div>';return;}
@@ -2664,6 +2706,11 @@ async function seedDemo(){
       _tm2[bk.id]=_tm2[bk.id]||{};if(r.topic)_tm2[bk.id][r.topic]=1;_cm2[bk.id]=(_cm2[bk.id]||0)+1;});
     Object.keys(_tm2).forEach(function(bid){var b=DB.banks.find(function(x){return x.id===bid;});if(b){b.topics=b.topics||[];Object.keys(_tm2[bid]).forEach(function(t){if(b.topics.indexOf(t)<0)b.topics.push(t);});b.target=(b.target||0)+(_cm2[bid]||0);}});
   }catch(e){if(typeof console!=='undefined')console.warn('seedImg',e);}
+  // ===== Demo: populate mobile numbers (every device must be approved on first sign-in) =====
+  try{
+    (DB.users||[]).forEach(function(u){ if(!u.mobile) u.mobile=emailMobile(u.email)||''; });
+    (DB.team||[]).forEach(function(t){ if(!t.mobile){ var usr=(t.user_id&&DB.users.find(function(u){return u.id===t.user_id;}))||DB.users.find(function(u){return u.email&&t.email&&u.email.toLowerCase()===t.email.toLowerCase();}); t.mobile=(usr&&usr.mobile)||emailMobile((usr&&usr.email)||t.email||'')||''; } });
+  }catch(e){if(typeof console!=='undefined')console.warn('seed-mobile',e);}
   // ===== Move EVERY question through the full pipeline (full capacity), then keep a small demo queue =====
   try{
     var _trName=(tr&&tr.name)||'Tara Singh', _tvName=(tv&&tv.name)||'Tanvi Iyer', _rvName=(rv&&rv.name)||'Vinay Rao';
@@ -2718,7 +2765,7 @@ async function quickLogin(){
 }
 (async function boot(){
   await initDB();
-  var APP_VERSION='v1.0-final',APP_BUILD='gyansetu-v1.0-final-2026-06-07';var SEED_VERSION='pcm-mba-v9';
+  var APP_VERSION='v1.0-final',APP_BUILD='gyansetu-v1.0-final-2026-06-07';var SEED_VERSION='pcm-mba-v11';
   if(localStorage.getItem('hub_seed')!==SEED_VERSION){
     try{TABLES.forEach(function(t){if(Array.isArray(DB[t]))DB[t]=[];});}catch(e){}
     try{localStorage.removeItem('hubble_db');localStorage.removeItem('hub_session');}catch(e){}
