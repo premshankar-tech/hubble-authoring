@@ -841,8 +841,8 @@ const SEED={
     {id:'q3',bank:'qb1',type:'truefalse',topic:'Cell Biology',section:'Section A',diff:'easy',text:'Ribosomes are the site of protein synthesis.',options:['True','False'],correct:0,explain:'Ribosomes assemble polypeptides from mRNA.',status:'pending',version:1,history:[],source:{type:'manual'},translations:{}},
     {id:'q4',bank:'qb1',type:'descriptive',topic:'Evolution',section:'Section C',diff:'medium',text:'Explain natural selection with one example.',options:[],correct:null,explain:'Differential survival based on heritable traits.',status:'pending',version:1,history:[],source:{type:'manual'},translations:{}},
     {id:'q5',bank:'qb2',type:'mcq',topic:'Kinematics',section:'Section A',diff:'easy',text:'What is the SI unit of acceleration?',options:['m/s','m/s²','N','J'],correct:1,explain:'Acceleration = change in velocity per time.',status:'pending',version:1,history:[],source:{type:'manual'},translations:{}}],
-  sets:[{id:'s1',bank:'qb1',name:'Set 1',count:100,shuffled:false,filters:'Cell Bio + Genetics · 30/50/20',status:'ready'},
-        {id:'s2',bank:'qb1',name:'Set 2',count:100,shuffled:false,filters:'Cell Bio + Genetics · 30/50/20',status:'ready'}],
+  sets:[{id:'s1',bank:'qb1',name:'Set 1',count:100,shuffled:false,filters:'Cell Bio + Genetics · 30/50/20',status:'draft'},
+        {id:'s2',bank:'qb1',name:'Set 2',count:100,shuffled:false,filters:'Cell Bio + Genetics · 30/50/20',status:'draft'}],
   audit:[], lockouts:{}
 };
 const EMPTY=()=>({institutes:[],projects:[],banks:[],questions:[],team:[],sets:[],audit:[],users:[]});
@@ -1455,19 +1455,35 @@ function renderReviewerDash(){
     +'</div>';
 }
 function langDetail(){
+  var verifier=session.role==='transverifier';
   var verified=state.questions.filter(function(q){return q.status==='verified'||q.status==='published';});
-  var rows=Object.keys(LANGS).map(function(k){
-    var done=verified.filter(function(q){return q.translations&&q.translations[k]&&q.translations[k].text;}).length;
-    return {k:k,name:LANGS[k],done:done,total:verified.length};
-  }).sort(function(a,b){return b.done-a.done;});
-  var inUse=rows.filter(function(r){return r.done>0;}).length;
+  var used={};
+  state.questions.forEach(function(q){var tr=q.translations||{};Object.keys(tr).forEach(function(l){if(tr[l]&&tr[l].text)used[l]=1;});});
+  var keys=Object.keys(used).sort();
+  var rows=keys.map(function(l){
+    var t=verified.filter(function(q){return q.translations&&q.translations[l]&&q.translations[l].text;});
+    var done=t.length;var ver=t.filter(function(q){return q.transVerified;}).length;var pend=t.filter(function(q){return !q.transVerified&&!q.transFlag;}).length;
+    return {l:l,name:(LANGS[l]||l),done:done,total:verified.length,ver:ver,pend:pend};
+  });
+  var inUse=rows.length;
   var body=rows.map(function(r){
-    var pct=r.total?Math.round(r.done/r.total*100):0;
-    var col=pct>=80?'var(--teal)':(pct<40?'var(--amber)':'var(--violet)');
-    return '<div style="cursor:pointer;padding:5px 8px;border-radius:8px" onmouseover="this.style.background=\'var(--surface-2)\'" onmouseout="this.style.background=\'\'" onclick="closeModal();TR.lang=\''+r.k+'\';TR.idx=0;go(\'translate\')" title="Open translator for this language">'+barRow(escAttr(r.name),pct,r.done+'/'+r.total,col)+'</div>';
+    var native=String(r.name).split(' (')[0];var av=native.slice(0,3);
+    var pct=r.total?Math.round(r.done/r.total*100):0;var vpct=r.done?Math.round(r.ver/r.done*100):0;
+    var barPct=verifier?vpct:pct;var barCol=barPct>=80?'var(--teal)':(barPct<40?'var(--amber)':'var(--violet)');
+    var meta=verifier?(r.ver+' verified \u00b7 '+r.pend+' to verify \u00b7 '+r.done+' translated'):(r.done+' of '+r.total+' verified questions \u00b7 '+pct+'% coverage');
+    var act=verifier?('<button class="btn sm" style="flex-shrink:0" onclick="closeModal();cardOpen(\'tv_pending\',\'To verify\')"><i class="ti ti-checks"></i> Verify</button>'):('<button class="btn pri sm" style="flex-shrink:0" onclick="closeModal();TR.lang=\''+r.l+'\';TR.idx=0;TR.topic=\'all\';go(\'translate\')"><i class="ti ti-language"></i> Translate</button>');
+    var badge=(verifier&&r.pend)?'<span class="badge bg-amber" style="font-size:10px">'+r.pend+' to verify</span>':'';
+    return '<div style="border:0.5px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:14px;margin-bottom:10px">'
+      +'<div style="width:40px;height:40px;border-radius:50%;background:var(--violet-soft);color:var(--violet-ink);display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0">'+av+'</div>'
+      +'<div style="flex:1;min-width:0"><div class="flex center gap8" style="flex-wrap:wrap"><span class="fw6" style="font-size:15px">'+escAttr(r.name)+'</span>'+badge+'</div>'
+      +'<div class="small muted" style="margin:4px 0 8px">'+meta+'</div>'
+      +'<div style="height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden"><div style="width:'+barPct+'%;height:100%;background:'+barCol+'"></div></div></div>'
+      +act+'</div>';
   }).join('');
-  modal('<div class="modal-h"><h3>Languages \u00b7 '+inUse+' in use</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'
-    +'<div class="modal-b"><div class="small muted" style="margin-bottom:10px">Translation coverage of verified questions in your subjects. Click any language to start translating it.</div>'+body+'</div>'
+  var empty='<div class="small muted" style="padding:22px;text-align:center"><i class="ti ti-language" style="font-size:24px;display:block;margin-bottom:8px"></i>No translations yet in your subjects.</div>';
+  var sub=verifier?'Only languages with at least one translation are shown. Click to verify pending translations.':'Only languages with at least one translation are shown. Click to continue translating.';
+  modal('<div class="modal-h"><h3><i class="ti ti-world"></i> Languages in use \u00b7 '+inUse+'</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'
+    +'<div class="modal-b"><div class="small muted" style="margin-bottom:12px">'+sub+'</div>'+(inUse?body:empty)+'</div>'
     +'<div class="modal-f"><button class="btn" onclick="closeModal()">Close</button></div>', false);
 }
 function renderTranslatorDash(){
@@ -1567,12 +1583,14 @@ RENDER.transverify=()=>{
   if(!html)html='<div class="empty"><i class="ti ti-database-off"></i>No subjects assigned to you yet.</div>';
   $('#content').innerHTML=`<div class="actionrow"><div class="fw6" style="flex:1">Verify translations</div><button class="btn" onclick="go('reviewedit')"><i class="ti ti-layout-grid"></i> Focus / Cards</button></div>`+html;
 };
+function transCompare(q){var langs=Object.keys(q.translations||{});if(!langs.length)return '<div class="small muted" style="margin-top:12px;padding:11px 13px;background:var(--surface-2);border-radius:10px"><i class="ti ti-alert-triangle"></i> No translation submitted yet.</div>';return langs.map(function(l){var T=q.translations[l]||{};var to=T.options||[];var rtl=RTL.includes(l)?' dir="rtl"':'';var rows=(q.options||[]).map(function(o,j){var tv=(to[j]!=null&&to[j]!=='')?to[j]:'<span class="muted">\u2014</span>';return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:7px 0;border-top:1px solid var(--line)">'+'<div class="small">'+String.fromCharCode(65+j)+'. '+(o||'')+(j===q.correct?' \u2713':'')+'</div>'+'<div class="small"'+rtl+'>'+tv+(j===q.correct&&to[j]?' \u2713':'')+'</div></div>';}).join('');return '<div style="margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden">'+'<div class="flex between center" style="padding:9px 13px;background:var(--violet-soft)"><span class="small fw6" style="color:var(--violet-ink)"><i class="ti ti-language"></i> English \u2194 '+(LANGS[l]||l)+'</span></div>'+'<div style="padding:13px 15px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px">'+'<div><div class="tiny muted" style="margin-bottom:3px">English</div><div class="fw6 small">'+q.text+'</div></div>'+'<div'+rtl+'><div class="tiny muted" style="margin-bottom:3px">'+(LANGS[l]||l)+'</div><div class="fw6 small">'+(T.text||'<span class="muted">\u2014</span>')+'</div></div></div>'+rows+'</div></div>';}).join('');}
+function engOptions(q){return (q.options&&q.options.length)?'<div style="margin-top:8px;display:grid;gap:6px">'+q.options.map(function(o,j){return '<div class="small" style="padding:7px 11px;border-radius:8px;background:'+(j===q.correct?'var(--teal-soft)':'var(--surface-2)')+'">'+String.fromCharCode(65+j)+'. '+(o||'')+(j===q.correct?' \u2713':'')+'</div>';}).join('')+'</div>':'';}
+function transWorkCard(q){var langs=Object.keys(q.translations||{});var hasTr=langs.length>0;var b=bankById(q.bank);var act=hasTr?'<button class="btn sm" onclick="openTranslateFor(\''+q.id+'\')"><i class="ti ti-edit"></i> Edit translation</button>':'<button class="btn pri sm" onclick="openTranslateFor(\''+q.id+'\')"><i class="ti ti-language"></i> Translate</button>';return '<div class="card" style="margin-bottom:12px"><div class="flex between" style="gap:12px"><div style="flex:1;min-width:0">'+'<div class="flex gap8 wrap" style="margin-bottom:8px">'+codeBadge(q)+verBadge(q)+diffBadge(q.diff)+marksBadge(q)+'<span class="chip">'+(b?escAttr(b.name):'')+'</span>'+langs.map(function(l){return '<span class="chip"><i class="ti ti-language"></i> '+(LANGS[l]||l)+'</span>';}).join('')+'</div>'+(hasTr?transCompare(q):('<div class="fw6">'+q.text+'</div>'+qImg(q.image)+engOptions(q)))+'</div><div class="flex gap8" style="flex-shrink:0;align-items:flex-start">'+act+'</div></div></div>';}
 function transVerifyCard(q){const langs=Object.keys(q.translations||{});const b=bankById(q.bank);
   return `<div class="card" style="margin-bottom:12px"><div class="flex between" style="gap:12px"><div style="flex:1">
     <div class="flex gap8 wrap" style="margin-bottom:8px">${codeBadge(q)}${verBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${mediaBadge(q)}<span class="chip">${b?escAttr(b.name):''}</span>${langs.map(l=>`<span class="chip"><i class="ti ti-language"></i> ${LANGS[l]||l}</span>`).join('')}${q.transFlag?'<span class="badge bg-coral"><i class="ti ti-flag"></i> Rejected</span>':''}</div>
-    <div class="fw6">${q.text}</div>${qImg(q.image)}
-    ${langs.map(l=>`<div class="small muted" style="margin-top:8px;padding:8px 11px;background:var(--surface-2);border-radius:8px"><b>${LANGS[l]||l}:</b> ${(q.translations[l]&&q.translations[l].text)||''}</div>`).join('')}</div>
-    <div class="flex gap8" style="flex-shrink:0;align-items:flex-start"><button class="btn ok sm" onclick="verifyTranslation('${q.id}')"><i class="ti ti-check"></i> Approve</button><button class="btn danger sm" onclick="flagTranslation('${q.id}')"><i class="ti ti-x"></i> Reject</button></div></div></div>`;}
+    ${qImg(q.image)}${transCompare(q)}</div>
+    <div class="flex gap8" style="flex-shrink:0;align-items:flex-start">${q.transVerified?`<span class="badge bg-green" style="padding:7px 12px"><i class="ti ti-check"></i> Verified</span>`:`<button class="btn ok sm" onclick="verifyTranslation('${q.id}')"><i class="ti ti-check"></i> Approve</button>`}<button class="btn danger sm" onclick="flagTranslation('${q.id}')"><i class="ti ti-x"></i> Reject</button></div></div></div>`;}
 
 let QPV_SET=null;
 let QPV_COURSE=null;
@@ -1701,7 +1719,7 @@ function renderTransVerifierDash(){
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('transverify')")
     +stat('To verify',toV,'ti-clock','#F5A623','translations',"cardOpen('tv_pending','Pending verification')")
     +stat('Verified by me',vById,'ti-checks','#27AE60','',"cardOpen('tv_verified','Verified translations')")
-    +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"go('transverify')")
+    +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"langDetail()")
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translation Verification by Subject</span></div>'+subRows+'</div>';
 }
@@ -2504,7 +2522,7 @@ function reCardScope(key){
 }
 function cardOpen(key,label){RE.cardKey=key;RE.cardLabel=label;RE.bank='__all';RE.topic='__all';RE.idx=0;RE.mode='cards';go('reviewedit');}
 function cardClear(){RE.cardKey=null;RE.cardLabel=null;RE.idx=0;RENDER.reviewedit();}
-function openTranslateFor(id){var q=state.questions.find(function(x){return x.id===id;});if(!q)return;TR.bank=q.bank;TR.idx=0;go('translate');}
+function openTranslateFor(id){var q=state.questions.find(function(x){return x.id===id;});if(!q)return;TR.bank=q.bank;TR.topic='all';var _tq=state.questions.filter(function(x){return x.bank===TR.bank;});var _ix=_tq.findIndex(function(x){return x.id===id;});TR.idx=_ix<0?0:_ix;go('translate');}
 function reCard(q){const opts=(q.options&&q.options.length)?q.options.map((o,j)=>`<span class="chip" style="font-size:11px;${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}${o?'. '+o:''}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' \u2713':''}</span>`).join(''):'';
   return `<div class="card" style="height:300px;display:flex;flex-direction:column;overflow:hidden;margin:0;cursor:pointer" onclick="reFocus('${q.id}')" title="Open in Focus">
     <div class="flex between center gap8" style="margin-bottom:8px"><div class="flex gap8 wrap center" style="min-width:0">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${statusBadge(q.status)}</div>
@@ -2521,7 +2539,7 @@ function reFocusView(q){
     <div style="font-size:18px;font-weight:600;line-height:1.55;margin-bottom:18px">${q.text}</div>
     ${q.image?`<div style="text-align:left;margin-bottom:20px"><img src="${q.image}" alt="" style="max-height:220px;max-width:100%;border-radius:10px;border:1px solid var(--line)"></div>`:''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start">${opts}</div>
-    ${q.explain?`<div class="small muted" style="margin-top:14px;padding:13px 15px;background:var(--surface-2);border-radius:10px"><b style="color:var(--ink)">Explanation:</b> ${q.explain}</div>`:''}
+    ${q.explain?`<div class="small muted" style="margin-top:14px;padding:13px 15px;background:var(--surface-2);border-radius:10px"><b style="color:var(--ink)">Explanation:</b> ${q.explain}</div>`:''}${session.role==='transverifier'?transCompare(q):''}
   </div>`;}
 RENDER.reviewedit=()=>{
   const me=currentUser();
@@ -2530,10 +2548,12 @@ RENDER.reviewedit=()=>{
   if(RE.bank!=='__all'&&!sbanks.find(b=>b.id===RE.bank))RE.bank='__all';
   const qs0=RE.bank==='__all'?mine:mine.filter(q=>q.bank===RE.bank);const reTopics=[...new Set(qs0.map(q=>q.topic).filter(Boolean))].sort();if(RE.topic!=='__all'&&!reTopics.includes(RE.topic))RE.topic='__all';const qs=(RE.topic==='__all')?qs0:qs0.filter(q=>q.topic===RE.topic);
   const segBtn=(m,ic,lbl)=>`<button onclick="reMode('${m}')" style="border:none;background:${RE.mode===m?'var(--violet)':'transparent'};color:${RE.mode===m?'#fff':'var(--ink-2)'};padding:7px 14px;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer"><i class="ti ${ic}"></i> ${lbl}</button>`;
-  const seg=`<div style="display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface)">${segBtn('focus','ti-focus-2','Focus')}${segBtn('cards','ti-layout-grid','Cards')}</div>`;
+  const seg=(session.role==='transverifier'||session.role==='translator')?'':`<div style="display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface)">${segBtn('focus','ti-focus-2','Focus')}${segBtn('cards','ti-layout-grid','Cards')}</div>`;
   const subjSel=`<select style="width:auto" onchange="RE.bank=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.bank==='__all'?'selected':''}>All subjects (${mine.length})</option>${sbanks.map(b=>`<option value="${b.id}" ${RE.bank===b.id?'selected':''}>${escAttr(b.name)} (${mine.filter(q=>q.bank===b.id).length})</option>`).join('')}</select>`;
   let body;
-  if(!qs.length){body=`<div class="empty"><i class="ti ti-pencil"></i>Nothing here to review right now.</div>`;}
+  if(session.role==='transverifier'){body=qs.length?qs.map(function(q){return transVerifyCard(q);}).join(''):`<div class="empty"><i class="ti ti-checks"></i>Nothing here to review right now.</div>`;}
+  else if(session.role==='translator'){body=qs.length?qs.map(function(q){return transWorkCard(q);}).join(''):`<div class="empty"><i class="ti ti-language"></i>Nothing to translate here right now.</div>`;}
+  else if(!qs.length){body=`<div class="empty"><i class="ti ti-pencil"></i>Nothing here to review right now.</div>`;}
   else if(RE.mode==='focus'){
     if(RE.focusId){const fi=qs.findIndex(x=>x.id===RE.focusId);RE.focusId=null;if(fi>=0)RE.idx=fi;}if(RE.idx>=qs.length)RE.idx=0;if(RE.idx<0)RE.idx=qs.length-1;
     const q=qs[RE.idx];
@@ -2573,14 +2593,23 @@ function mtLangOk(l){return ['hi','bn','ta','te','mr','ur','fr','es'].indexOf(l)
 async function mtTranslate(text,lang){
   if(!text||!String(text).trim())return '';
   var clean=String(text).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
-  var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(clean)+'&langpair='+encodeURIComponent('en|'+lang);
-  var r=await fetch(url,{method:'GET'});
-  if(!r.ok)throw new Error('http '+r.status);
-  var j=await r.json();
-  var t=j&&j.responseData&&j.responseData.translatedText;
-  if(!t)throw new Error('empty');
-  if(/MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID LANGUAGE/i.test(t))throw new Error('limit');
-  return t;
+  var lastErr=null;
+  try{
+    var g='https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl='+encodeURIComponent(lang)+'&dt=t&q='+encodeURIComponent(clean);
+    var rg=await fetch(g);
+    if(rg.ok){var jg=await rg.json();if(jg&&jg[0]){var out=jg[0].map(function(seg){return (seg&&seg[0])?seg[0]:'';}).join('');if(out&&out.trim())return out;}}
+  }catch(e){lastErr=e;}
+  try{
+    var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(clean)+'&langpair='+encodeURIComponent('en|'+lang);
+    var r=await fetch(url,{method:'GET'});
+    if(!r.ok)throw new Error('http '+r.status);
+    var j=await r.json();
+    var t=j&&j.responseData&&j.responseData.translatedText;
+    if(!t)throw new Error('empty');
+    if(/MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID LANGUAGE/i.test(t))throw new Error('limit');
+    return t;
+  }catch(e){lastErr=e;}
+  throw (lastErr||new Error('unavailable'));
 }
 async function autoFillOne(btn){
   const qs=state.questions.filter(q=>q.bank===TR.bank);const q=qs[TR.idx];if(!q)return;
@@ -2593,13 +2622,42 @@ async function autoFillOne(btn){
     for(let i=0;i<q.options.length;i++){const o=q.options[i];const el=$('#tr_opt'+i);if(!el)continue;if(!o){el.value='';continue;}try{el.value=await mtTranslate(o,lang);}catch(e){el.value=o;}}
     toast('Translated to '+pre+' \u2014 review & edit, then Mark Done.','ok');
   }catch(e){
-    draft();toast('Live translation unavailable \u2014 filled an editable draft.');
+    draft();toast('Live translation unavailable (offline or blocked) \u2014 filled an editable draft you can edit.');
   }finally{if(btn){btn.disabled=false;btn.innerHTML=orig;}}
 }
 
 function saveTranslation(id){if(!guard('question.translate'))return;const q=state.questions.find(x=>x.id===id);
   q.translations[TR.lang]={text:ckGet('tr_text'),options:q.options.map((_,i)=>{const el=$('#tr_opt'+i);return el?el.value:'';}),by:currentUser().name};
   logEvent(q,'translated · '+(LANGS[TR.lang]||TR.lang));audit('question.translate',{id,lang:TR.lang});save();toast('Translation saved','ok');RENDER.translate();}
+async function realizeAll(btn){
+  if(!guard('question.translate'))return;
+  var MOCK=['[\u092e\u0930\u093e\u0920\u0940] '];
+  var isMock=function(s){return !!s&&MOCK.some(function(m){return String(s).indexOf(m)===0;});};
+  var targets=[];
+  state.questions.forEach(function(q){var tr=q.translations||{};Object.keys(tr).forEach(function(l){if(tr[l]&&isMock(tr[l].text))targets.push({q:q,l:l});});});
+  if(!targets.length){toast('No demo placeholders left \u2014 all translations are already real.','ok');return;}
+  toast('Translating '+targets.length+' item(s) via MyMemory\u2026 this may take a few minutes.','');
+  var orig=btn?btn.innerHTML:''; if(btn){btn.disabled=true;}
+  var done=0,failed=0,stop=false;
+  for(var i=0;i<targets.length;i++){
+    if(stop)break;
+    var q=targets[i].q,l=targets[i].l;
+    if(btn)btn.innerHTML='<i class="ti ti-loader-2"></i> '+done+'/'+targets.length;
+    try{
+      var text=await mtTranslate(q.text,l);
+      var opts=[];var os=q.options||[];
+      for(var j=0;j<os.length;j++){opts.push(await mtTranslate(os[j],l));}
+      var prev=q.translations[l]||{};
+      q.translations[l]={text:text,options:opts,by:prev.by||'MyMemory'};
+      done++; if(done%5===0)save();
+    }catch(e){ if(/limit|http 4|http 5/i.test((e&&e.message)||'')){stop=true;} else {failed++;} }
+  }
+  save();
+  if(btn){btn.disabled=false;btn.innerHTML=orig;}
+  try{ if(SCREEN&&RENDER[SCREEN])RENDER[SCREEN](); }catch(_){}
+  if(stop)toast('Translated '+done+' so far \u2014 hit the free MyMemory limit. Click again later to continue.','');
+  else toast('Done \u2014 '+done+' translation'+(done===1?'':'s')+' are now real'+(failed?(' ('+failed+' failed)'):'')+'.','ok');
+}
 function autoTranslate(btn){return _autoTranslate(btn);}
 async function _autoTranslate(btn){
   if(!guard('question.translate'))return;
@@ -2720,7 +2778,7 @@ function buildSets(meta){if(!guard('set.build'))return;const course=projectById(
     const n=state.sets.filter(s=>s.course===course.id&&!s.shuffled).length+1;
     const setName=(session?session+'_':'')+(exam?exam+'_':'')+'SET '+n;
     const comp=specs.map(sp=>{const f=sp.fresh.easy+sp.fresh.medium+sp.fresh.hard,u=sp.used.easy+sp.used.medium+sp.used.hard;return (bankById(sp.bank)||{name:'?'}).name+' '+(f+u)+'('+f+'f/'+u+'u)';}).join(', ');
-    state.sets.push({id:uid('s'),course:course.id,bank:specs[0].bank,name:setName,session,exam,tags,count:ids.length,questionIds:ids,freshIds,shuffled:false,usage:'mixed',filters:comp+(tagText?(' · '+tagText):''),status:'ready'});
+    state.sets.push({id:uid('s'),course:course.id,bank:specs[0].bank,name:setName,session,exam,tags,count:ids.length,questionIds:ids,freshIds,shuffled:false,usage:'mixed',filters:comp+(tagText?(' · '+tagText):''),status:'draft'});
     ids.forEach(qid=>{const q=state.questions.find(x=>x.id===qid);if(q){q.usedIn=q.usedIn||[];q.usedIn.push({set:setName,session,exam,tags,ts:Date.now()});}});
     built++;}
   audit('set.build',{course:course.name,sets:built,session,exam});save();RENDER.export();
@@ -2987,6 +3045,7 @@ async function quickLogin(){
   }
   try{await ensureUsers();await seedDemo();}catch(e){if(typeof console!=='undefined')console.warn('seed',e);}
   try{localStorage.setItem('hub_seed',SEED_VERSION);}catch(e){}
+  try{var _md=0;(DB.sets||[]).forEach(function(s){if(s&&s.status==='ready'){s.status='draft';_md++;}});if(_md)save();}catch(e){}
   renderLogin();
   try{const s=JSON.parse(localStorage.getItem('hub_session')||'null');
     if(s&&s.expires>Date.now()&&DB.users.find(u=>u.id===s.userId)){session=s;rescope();openApp(currentUser());}
