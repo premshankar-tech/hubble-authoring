@@ -1349,8 +1349,8 @@ function renderCreatorDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to keep your work moving.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
-    +stat('Created',authored,'ti-pencil','#6C5CE7','by me',"go('work')")
-    +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','verified',"go('work')")
+    +stat('Questions Created',authored,'ti-pencil','#6C5CE7','',"go('work')")
+    +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','',"go('work')")
     +stat('Needs Rework',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
@@ -1377,10 +1377,10 @@ function renderReviewerDash(){
   var pace=(mt&&mt.dueDate)?(barRow('Time elapsed',expectedPct(mt)||0,(expectedPct(mt)||0)+'%','var(--ink-3)')+'<div class="small muted" style="margin-top:6px">'+teamTimeChip(mt)+'</div>'):'<div class="empty" style="padding:16px"><i class="ti ti-calendar-off"></i>No deadline set.</div>';
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to clear your review queue.')
     +'<div class="grid g4" style="margin-bottom:16px">'
-    +stat('Review queue',queue.length,'ti-clock','#F5A623','pending',"go('work')")
+    +stat('Assigned Subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
+    +stat('Questions to Review',queue.length,'ti-clock','#F5A623','pending',"go('work')")
     +stat('Approved',approvedByMe,'ti-rosette-discount-check','#27AE60','level actions',"go('work')")
     +stat('Rejected',rejectedByMe,'ti-flag','#FF6B57','sent back',"go('work')")
-    +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-details"></i> Queue by Subject</span></div>'+subRows+'</div>'
