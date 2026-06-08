@@ -353,6 +353,17 @@ a{color:var(--violet-ink);text-decoration:none;font-weight:600}a:hover{text-deco
 .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
 .card-h .ttl{font-family:'Bricolage Grotesque';font-weight:600;font-size:14.5px}
 .grid{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.content.content-dash{overflow:hidden;display:flex;flex-direction:column}
+.dash{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px}
+.dash-top{flex:0 0 auto;display:flex;flex-direction:column;gap:14px}
+.dash-grid{flex:1;min-height:0;display:grid;gap:16px;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;overflow:auto;align-content:stretch}
+.dash-grid.cards-1{grid-template-columns:1fr}
+.dash-grid.cards-3 .dash-card:nth-child(3){grid-column:1 / -1}
+.dash-grid .dash-card{min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.dash-grid .dash-card>.card-h{flex:0 0 auto;margin-bottom:12px}
+.dash-grid .dash-card .dash-b{flex:1;min-height:0;overflow:auto;margin:0 -6px;padding:0 6px 2px}
+.dash-grid .dash-card .dash-b::-webkit-scrollbar{width:8px}.dash-grid .dash-card .dash-b::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
+@media(max-width:760px){.content.content-dash{overflow:auto}.dash{flex:0 0 auto;min-height:100%}.dash-grid{grid-template-columns:1fr;grid-auto-rows:minmax(220px,auto);overflow:visible}}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:.16s}
 .stat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .stat::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,var(--violet));opacity:.85}
@@ -1241,6 +1252,7 @@ function go(screen){ckDestroyAll();
   if(screen!=='projects')_courseView=null;
   rescope();
   SCREEN=screen;
+  try{var _cd=document.getElementById('content');if(_cd)_cd.classList.remove('content-dash');}catch(e){}
   if(screen==='work'){ if(!WORK._keep)WORK.course=null; WORK._keep=false; }
   document.querySelectorAll('.nav-item[data-screen]').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen||(screen==='reviewedit'&&n.dataset.screen==='work')));
   const titles={dashboard:['Dashboard',''],work:['Exams','Pick an exam, then a subject'],institutes:['Clients','Manage client institutes & their admin logins'],projects:['Exams','Exams for this client'],
@@ -1281,7 +1293,7 @@ function memberStats(t){
   return {targetLoad:targetLoad,done:done,pending:pending,queue:queue,pct:pct,status:status,color:color,dleft:dleft};
 }
 function nudgeMember(tid){if(!guard('team.manage'))return;var t=state.team.find(function(x){return x.id===tid;});if(!t)return;t.nudge={by:currentUser().name,ts:Date.now()};save();audit('team.nudge',{name:t.name});toast('Nudge sent to '+t.name,'ok');RENDER.dashboard();}
-function nudgeBanner(mt,msg){return (mt&&mt.nudge)?'<div class="card" style="margin-bottom:16px;border-color:#f0c98a;background:var(--amber-soft)"><div class="flex center gap8"><i class="ti ti-bell" style="color:var(--amber-ink);font-size:20px"></i><div class="small fw6" style="color:var(--amber-ink)">'+msg+'</div></div></div>':'';}
+function nudgeBanner(mt,msg){return (mt&&mt.nudge)?'<div class="card dash-keep-top" style="margin-bottom:16px;border-color:#f0c98a;background:var(--amber-soft)"><div class="flex center gap8"><i class="ti ti-bell" style="color:var(--amber-ink);font-size:20px"></i><div class="small fw6" style="color:var(--amber-ink)">'+msg+'</div></div></div>':'';}
 function sysAnalytics(){
   var qs=state.questions;var total=qs.length;
   var verified=qs.filter(function(q){return q.status==='verified';}).length,pending=qs.filter(function(q){return q.status==='pending';}).length,rejected=qs.filter(function(q){return q.status==='rejected';}).length;
@@ -1290,7 +1302,7 @@ function sysAnalytics(){
   var maxr=Math.max.apply(null,[1].concat(roles.map(rc)));
   var pipe=function(l,v,c){return barRow(l,total>0?Math.round(v/total*100):0,v,c);};
   return '<div class="grid g2" style="margin-bottom:16px">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> System Question Pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.translations&&Object.values(q.translations).some(function(t){return t&&t.verified;});}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> System Question Pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.transVerified;}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-users-group"></i> Users by Role</span></div>'+roles.map(function(r){return barRow(ROLES[r].name,Math.round(rc(r)/maxr*100),rc(r));}).join('')+'</div>'
     +'</div>';
 }
@@ -1353,7 +1365,7 @@ function renderAdminDash(){
     +stat('Pending review',pending,'ti-clock','#F5A623',(rejected?rejected+' rejected':'awaiting'),"adminDetail('pending')")
     +'</div>'
     +'<div style="margin-bottom:16px">'
-    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> Review Pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.translations&&Object.values(q.translations).some(function(t){return t&&t.verified;});}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
+    +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-filter"></i> Review Pipeline</span></div>'+pipe('QB Created',total,'var(--ink-3)')+pipe('Verified',verified,'var(--green)')+pipe('Pending',pending,'var(--amber)')+pipe('Rejected',rejected,'var(--coral)')+pipe('Translated',qs.filter(function(q){return q.transVerified;}).length,'var(--violet)')+pipe('QP Created',(state.sets||[]).length,'var(--teal)')+pipe('QP Published',(state.sets||[]).filter(function(s){return s.status==='published';}).length,'var(--green)')+'</div>'
     +'</div>'
     +'<div class="grid g2">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-alert-triangle"></i> Needs Action</span></div>'+alertsHtml+'</div>'
@@ -1377,9 +1389,9 @@ function renderCreatorDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to keep your work moving.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
-    +stat('Questions Created',authored,'ti-pencil','#6C5CE7','by me',"go('reviewedit')")
-    +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','verified',"go('work')")
-    +stat('Needs Rework',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"go('work')")
+    +stat('Questions Created',authored,'ti-pencil','#6C5CE7','by me',"cardOpen('mine','Questions created')")
+    +stat('Approved',approved,'ti-rosette-discount-check','#27AE60','verified',"cardOpen('verified','Approved')")
+    +stat('Needs Rework',tofix.length,'ti-rotate','#FF6B57',(inrev+' in review'),"cardOpen('rejected','Needs rework')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Progress by Subject</span></div>'+subRows+'</div>'
@@ -1393,8 +1405,8 @@ function renderCreatorDash(){
 function renderReviewerDash(){
   var me=currentUser();var mt=myTeam();var inMy=state.questions;
   var queue=inMy.filter(function(q){return q.status==='pending';});
-  var approvedByMe=inMy.reduce(function(s,q){return s+((q.reviewedBy||[]).filter(function(r){return r.by===me.name;}).length);},0);
-  var rejectedByMe=inMy.filter(function(q){return q.rejectedBy&&q.rejectedBy.by===me.name;}).length;
+  var approvedByMe=inMy.filter(function(q){return q.status==='verified';}).length;
+  var rejectedByMe=inMy.filter(function(q){return q.status==='rejected';}).length;
   var subjects=state.banks;
   var qBySub=subjects.map(function(b){return {b:b,c:queue.filter(function(q){return q.bank===b.id;}).length};});
   var maxc=Math.max.apply(null,[1].concat(qBySub.map(function(x){return x.c;})));
@@ -1406,9 +1418,9 @@ function renderReviewerDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you to clear your review queue.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned Subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
-    +stat('Pending for Review',queue.length,'ti-clock','#F5A623','pending',"go('work')")
-    +stat('Approved Count',approvedByMe,'ti-rosette-discount-check','#27AE60','level actions',"go('work')")
-    +stat('Rejected Count',rejectedByMe,'ti-flag','#FF6B57','sent back',"go('work')")
+    +stat('Pending for Review',queue.length,'ti-clock','#F5A623','pending',"cardOpen('pending','Pending for review')")
+    +stat('Approved Count',approvedByMe,'ti-rosette-discount-check','#27AE60','level actions',"cardOpen('verified','Approved')")
+    +stat('Rejected Count',rejectedByMe,'ti-flag','#FF6B57','sent back',"cardOpen('rejected','Rejected')")
     +'</div>'
     +'<div class="grid g2" style="margin-bottom:16px">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-details"></i> Queue by Subject</span></div>'+subRows+'</div>'
@@ -1419,11 +1431,27 @@ function renderReviewerDash(){
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-gauge"></i> Pace vs Timeline</span></div>'+pace+'</div>'
     +'</div>';
 }
+function langDetail(){
+  var verified=state.questions.filter(function(q){return q.status==='verified'||q.status==='published';});
+  var rows=Object.keys(LANGS).map(function(k){
+    var done=verified.filter(function(q){return q.translations&&q.translations[k]&&q.translations[k].text;}).length;
+    return {k:k,name:LANGS[k],done:done,total:verified.length};
+  }).sort(function(a,b){return b.done-a.done;});
+  var inUse=rows.filter(function(r){return r.done>0;}).length;
+  var body=rows.map(function(r){
+    var pct=r.total?Math.round(r.done/r.total*100):0;
+    var col=pct>=80?'var(--teal)':(pct<40?'var(--amber)':'var(--violet)');
+    return '<div style="cursor:pointer;padding:5px 8px;border-radius:8px" onmouseover="this.style.background=\'var(--surface-2)\'" onmouseout="this.style.background=\'\'" onclick="closeModal();TR.lang=\''+r.k+'\';TR.idx=0;go(\'translate\')" title="Open translator for this language">'+barRow(escAttr(r.name),pct,r.done+'/'+r.total,col)+'</div>';
+  }).join('');
+  modal('<div class="modal-h"><h3>Languages \u00b7 '+inUse+' in use</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'
+    +'<div class="modal-b"><div class="small muted" style="margin-bottom:10px">Translation coverage of verified questions in your subjects. Click any language to start translating it.</div>'+body+'</div>'
+    +'<div class="modal-f"><button class="btn" onclick="closeModal()">Close</button></div>', false);
+}
 function renderTranslatorDash(){
   var me=currentUser();var mt=myTeam();var inMy=state.questions;
   var verified=inMy.filter(function(q){return q.status==='verified';});
   var anyTr=function(q){return Object.keys(q.translations||{}).length>0;};
-  var translatedByMe=inMy.filter(function(q){return Object.keys(q.translations||{}).some(function(k){return q.translations[k]&&q.translations[k].by===me.name;});}).length;
+  var translatedByMe=inMy.filter(function(q){return (q.status==='verified'||q.status==='published')&&Object.keys(q.translations||{}).length>0;}).length;
   var pending=verified.filter(function(q){return !anyTr(q);}).length;
   var langs={};inMy.forEach(function(q){Object.keys(q.translations||{}).forEach(function(k){langs[k]=1;});});
   var subjects=state.banks;
@@ -1432,9 +1460,9 @@ function renderTranslatorDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you on pending translations.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('work')")
-    +stat('Translated',translatedByMe,'ti-language','#27AE60','by me',"go('work')")
-    +stat('Pending',pending,'ti-clock','#F5A623','verified, untranslated',"go('work')")
-    +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"go('work')")
+    +stat('Translated',translatedByMe,'ti-language','#27AE60','by me',"cardOpen('translated','Translated')")
+    +stat('Pending',pending,'ti-clock','#F5A623','verified, untranslated',"cardOpen('untranslated','Pending translation')")
+    +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"langDetail()")
     +'</div>'
     +'<div class="grid g2">'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translated</span></div>'+subRows+'</div>'
@@ -1621,15 +1649,15 @@ function renderTransVerifierDash(){
   var me=currentUser();var mt=myTeam();
   var tr=state.questions.filter(function(q){return Object.keys(q.translations||{}).length>0;});
   var toV=tr.filter(function(q){return !q.transVerified;}).length;
-  var vById=state.questions.filter(function(q){return q.transVerifiedBy&&q.transVerifiedBy.by===me.name;}).length;
+  var vById=state.questions.filter(function(q){return !!q.transVerified;}).length;
   var langs={};state.questions.forEach(function(q){Object.keys(q.translations||{}).forEach(function(k){langs[k]=1;});});
   var subjects=state.banks;
   var subRows=subjects.map(function(b){var t=state.questions.filter(function(q){return q.bank===b.id&&Object.keys(q.translations||{}).length>0;});var v=t.filter(function(q){return q.transVerified;}).length;var pct=t.length?Math.round(v/t.length*100):0;return barRow(escAttr(b.name),pct,v+'/'+t.length,pct<40?'var(--amber)':'var(--violet)');}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-database-off"></i>No subjects assigned</div>';
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you on pending translation checks.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('transverify')")
-    +stat('To verify',toV,'ti-clock','#F5A623','translations',"go('transverify')")
-    +stat('Verified by me',vById,'ti-checks','#27AE60','',"go('transverify')")
+    +stat('To verify',toV,'ti-clock','#F5A623','translations',"cardOpen('tv_pending','Pending verification')")
+    +stat('Verified by me',vById,'ti-checks','#27AE60','',"cardOpen('tv_verified','Verified translations')")
     +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"go('transverify')")
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translation Verification by Subject</span></div>'+subRows+'</div>';
@@ -1664,7 +1692,32 @@ function renderPublisherFinalDash(){
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-rocket"></i> Recently Published</span></div>'+rows+'</div>';
 }
-RENDER.dashboard=()=>{
+function applyDashFit(){
+  var c=document.getElementById('content'); if(!c) return;
+  var kids=[].slice.call(c.children); if(!kids.length) return;
+  var top=[], cards=[];
+  kids.forEach(function(el){
+    if(!el.classList){ top.push(el); return; }
+    if(el.classList.contains('dash-keep-top')||(el.querySelector&&el.querySelector('.dash-keep-top'))){ top.push(el); return; }
+    if(el.querySelector&&el.querySelector('.stat')&&!el.querySelector('.card-h')){ top.push(el); return; }
+    var cs=el.classList.contains('card')?[el]:(el.querySelectorAll?[].slice.call(el.querySelectorAll('.card')):[]);
+    if(cs.length){ cs.forEach(function(cd){cards.push(cd);}); return; }
+    top.push(el);
+  });
+  if(!cards.length) return;
+  var dash=document.createElement('div'); dash.className='dash';
+  if(top.length){ var tw=document.createElement('div'); tw.className='dash-top';
+    top.forEach(function(el){ try{el.style.marginBottom='0';}catch(e){} tw.appendChild(el); }); dash.appendChild(tw); }
+  var grid=document.createElement('div'); grid.className='dash-grid cards-'+Math.min(cards.length,6);
+  cards.forEach(function(cd){ cd.classList.add('dash-card'); try{cd.style.margin='0';}catch(e){}
+    var h=null,ch=cd.children; for(var i=0;i<ch.length;i++){ if(ch[i].classList&&ch[i].classList.contains('card-h')){ h=ch[i]; break; } }
+    var body=document.createElement('div'); body.className='dash-b';
+    [].slice.call(cd.childNodes).forEach(function(n){ if(n!==h) body.appendChild(n); });
+    cd.appendChild(body); grid.appendChild(cd); });
+  dash.appendChild(grid);
+  c.innerHTML=''; c.appendChild(dash); c.classList.add('content-dash');
+}
+function _dashDispatch(){
   var __r=session.role;
   if(__r==='sysadmin')return renderSysDashboard();
   if(__r==='instadmin'||__r==='itadmin'||__r==='projadmin')return renderAdminDash();
@@ -1692,6 +1745,7 @@ RENDER.dashboard=()=>{
           <div style="flex:1"><div class="small fw6">${a.actor} <span class="muted" style="font-weight:500">· ${a.action}</span></div><div class="tiny muted">${timeAgo(a.ts)}</div></div></div>`).join('')||'<div class="empty" style="padding:20px"><i class="ti ti-history"></i>No activity yet</div>'}</div>
     </div>`;
 };
+RENDER.dashboard=function(){_dashDispatch();try{applyDashFit();}catch(e){}};
 /* SYSADMIN dashboard — client/admin oversight */
 function renderSysDashboard(){
   const clients=state.institutes;
@@ -2364,7 +2418,7 @@ function qRow(q,edit){return `<div class="card" style="margin-bottom:10px"><div 
     ${q.options&&q.options.length?`<div class="flex gap8 wrap">${q.options.map((o,j)=>`<span class="chip" style="${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}. ${o}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' ✓':''}</span>`).join('')}</div>`:''}
     ${q.model?`<div class="small muted mt8"><b>Model answer:</b> ${q.model}</div>`:''}
     ${q.group?`<div class="small muted mt8"><b>Group passage</b> · ${q.group.subs.length} sub-question(s)</div>`:''}</div>`;}
-let RE={mode:'cards',bank:'__all',idx:0,focusId:null,topic:'__all'};
+let RE={mode:'cards',bank:'__all',idx:0,focusId:null,topic:'__all',cardKey:null,cardLabel:null};
 function reMode(m){RE.mode=m;RENDER.reviewedit();}
 function reStep(d){RE.idx+=d;RENDER.reviewedit();}
 function reFocus(id){RE.mode='focus';RE.focusId=id;RENDER.reviewedit();}
@@ -2386,8 +2440,27 @@ function reActions(q,compact){
   if(r==='reviewer')return hist+b('btn ok','verifyQ','ti-check','Approve')+b('btn','editQ','ti-edit','Edit')+b('btn danger','rejectQ','ti-x','Reject');
   if(r==='transverifier')return hist+b('btn ok','verifyTranslation','ti-check','Approve')+b('btn danger','flagTranslation','ti-x','Reject');
   if(r==='creator')return hist+b('btn','editQ','ti-edit','Edit')+b('btn danger','deleteQ','ti-trash','Delete');
+  if(r==='translator')return hist+b('btn','openTranslateFor','ti-language','Translate');
   return hist;
 }
+
+function reCardScope(key){
+  var me=currentUser(),r=session.role,all=state.questions;
+  var base=(r==='creator')?all.filter(function(q){return q.author===me.name;}):all;
+  if(key==='mine')return base.slice();
+  if(key==='verified')return base.filter(function(q){return q.status==='verified';});
+  if(key==='rejected')return base.filter(function(q){return q.status==='rejected';});
+  if(key==='pending')return base.filter(function(q){return q.status==='pending';});
+  if(key==='translated')return all.filter(function(q){return (q.status==='verified'||q.status==='published')&&q.translations&&Object.keys(q.translations).length>0;});
+  if(key==='untranslated')return all.filter(function(q){return (q.status==='verified'||q.status==='published')&&!(q.translations&&Object.keys(q.translations).length>0);});
+  if(key==='tv_pending')return all.filter(function(q){return q.translations&&Object.keys(q.translations).length>0&&!q.transVerified;});
+  if(key==='tv_verified')return all.filter(function(q){return !!q.transVerified;});
+  if(key==='tv_rework')return all.filter(function(q){return !!q.transFlag;});
+  return null;
+}
+function cardOpen(key,label){RE.cardKey=key;RE.cardLabel=label;RE.bank='__all';RE.topic='__all';RE.idx=0;RE.mode='cards';go('reviewedit');}
+function cardClear(){RE.cardKey=null;RE.cardLabel=null;RE.idx=0;RENDER.reviewedit();}
+function openTranslateFor(id){var q=state.questions.find(function(x){return x.id===id;});if(!q)return;TR.bank=q.bank;TR.idx=0;go('translate');}
 function reCard(q){const opts=(q.options&&q.options.length)?q.options.map((o,j)=>`<span class="chip" style="font-size:11px;${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}${o?'. '+o:''}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' \u2713':''}</span>`).join(''):'';
   return `<div class="card" style="height:300px;display:flex;flex-direction:column;overflow:hidden;margin:0;cursor:pointer" onclick="reFocus('${q.id}')" title="Open in Focus">
     <div class="flex between center gap8" style="margin-bottom:8px"><div class="flex gap8 wrap center" style="min-width:0">${codeBadge(q)}${diffBadge(q.diff)}${marksBadge(q)}${statusBadge(q.status)}</div>
@@ -2408,7 +2481,7 @@ function reFocusView(q){
   </div>`;}
 RENDER.reviewedit=()=>{
   const me=currentUser();
-  let mine=reScope();
+  let mine=(RE.cardKey?reCardScope(RE.cardKey):null)||reScope();
   const sbanks=state.banks.filter(b=>mine.some(q=>q.bank===b.id));
   if(RE.bank!=='__all'&&!sbanks.find(b=>b.id===RE.bank))RE.bank='__all';
   const qs0=RE.bank==='__all'?mine:mine.filter(q=>q.bank===RE.bank);const reTopics=[...new Set(qs0.map(q=>q.topic).filter(Boolean))].sort();if(RE.topic!=='__all'&&!reTopics.includes(RE.topic))RE.topic='__all';const qs=(RE.topic==='__all')?qs0:qs0.filter(q=>q.topic===RE.topic);
@@ -2424,7 +2497,7 @@ RENDER.reviewedit=()=>{
   } else {
     body=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">${qs.map(q=>reCard(q)).join('')}</div>`;
   }
-  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="go(reHome())"><i class="ti ti-arrow-left"></i> Back</button><div class="fw6" style="flex:1">${reTitle()}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><div class="flex center gap8">${subjSel}${reTopics.length?`<select style="width:auto" onchange="RE.topic=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.topic==='__all'?'selected':''}>All topics</option>${reTopics.map(t=>`<option value="${escAttr(t)}" ${RE.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select>`:''}<span class="badge bg-gray" style="padding:7px 12px">${qs.length} question${qs.length===1?'':'s'}</span></div>${seg}</div>${body}`;
+  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="go(reHome())"><i class="ti ti-arrow-left"></i> Back</button><div class="fw6" style="flex:1">${reTitle()}</div>${RE.cardKey?'<span class="chip" style="background:var(--violet-soft);color:var(--violet-ink);border-color:#d9d5f5;font-weight:600"><i class="ti ti-filter"></i> '+escAttr(RE.cardLabel||RE.cardKey)+' <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="cardClear()" title="Clear filter"></i></span>':''}</div><div class="flex between center wrap gap12" style="margin-bottom:14px"><div class="flex center gap8">${subjSel}${reTopics.length?`<select style="width:auto" onchange="RE.topic=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.topic==='__all'?'selected':''}>All topics</option>${reTopics.map(t=>`<option value="${escAttr(t)}" ${RE.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select>`:''}<span class="badge bg-gray" style="padding:7px 12px">${qs.length} question${qs.length===1?'':'s'}</span></div>${seg}</div>${body}`;
 };
 function logEvent(q,action,note){if(!q)return;q.history=q.history||[];q.history.push({version:q.version||1,action:action,note:note||'',event:true,status:q.status,ts:Date.now(),by:(currentUser()&&currentUser().name)||'system'});}
 function viewHistory(id){const q=state.questions.find(x=>x.id===id);modal(`<div class="modal-h"><h3>Version history ${q.code?'· '+q.code:''}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
@@ -2441,28 +2514,74 @@ const MOCK_TR={'Which organelle is known as the powerhouse of the cell?':'कि
 RENDER.translate=()=>{ckDestroy('tr_text');if(!state.banks.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No banks assigned to you yet.</div>';return;}if(!state.banks.find(b=>b.id===TR.bank))TR.bank=state.banks[0].id;const qsAll=state.questions.filter(q=>q.bank===TR.bank);const trTopics=[...new Set(qsAll.map(q=>q.topic).filter(Boolean))].sort();if(TR.topic!=='all'&&!trTopics.includes(TR.topic))TR.topic='all';const qs=(TR.topic==='all')?qsAll:qsAll.filter(q=>q.topic===TR.topic);if(TR.idx>=qs.length)TR.idx=0;const q=qs[TR.idx]||qs[0];if(!q){$('#content').innerHTML='<div class="empty"><i class="ti ti-language"></i>No questions in this bank yet.</div>';return;}
   const done=qs.filter(x=>x.translations&&x.translations[TR.lang]).length;const rtl=RTL.includes(TR.lang);
   $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="workReturn()"><i class="ti ti-arrow-left"></i> Subjects</button><div class="fw6" style="flex:1">${(bankById(TR.bank)||{}).name||''}</div></div><div class="flex between center wrap gap12" style="margin-bottom:14px"><select onchange="TR.bank=this.value;TR.idx=0;RENDER.translate()" style="width:auto">${state.banks.map(b=>`<option value="${b.id}" ${TR.bank===b.id?'selected':''}>${b.name}</option>`).join('')}</select>
-    <select onchange="TR.topic=this.value;TR.idx=0;RENDER.translate()" style="width:auto"><option value="all">All topics</option>${trTopics.map(t=>`<option value="${escAttr(t)}" ${TR.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select><div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate()"><i class="ti ti-bolt"></i> Auto-Translate All</button></div></div>
+    <select onchange="TR.topic=this.value;TR.idx=0;RENDER.translate()" style="width:auto"><option value="all">All topics</option>${trTopics.map(t=>`<option value="${escAttr(t)}" ${TR.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select><div class="flex center gap8"><span class="small muted">Engine:</span><select id="tr_engine" style="width:auto">${ENGINES.map(e=>`<option>${e}</option>`).join('')}</select><button class="btn pri" onclick="autoTranslate(this)"><i class="ti ti-bolt"></i> Auto-Translate All</button></div></div>
     <div class="flex center gap12 wrap" style="margin-bottom:14px"><span class="chip"><i class="ti ti-language" style="color:var(--violet)"></i> <b>English</b> (source)</span><i class="ti ti-arrows-right-left muted"></i>
       <select onchange="TR.lang=this.value;RENDER.translate()" style="width:auto;color:var(--violet-ink);font-weight:600">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}" ${TR.lang===k?'selected':''}>${v}</option>`).join('')}</select>
       <span class="badge bg-sky" style="margin-left:auto">${done}/${qs.length} translated</span></div>
     <div class="translator" style="margin-bottom:14px"><div class="tpanel l"><div class="ph"><span class="small fw6 muted">English (source)</span><div class="flex gap8">${diffBadge(q.diff)}<span class="chip">${q.topic}</span></div></div>
       <div class="fw6" style="font-size:15px;line-height:1.5;margin-bottom:12px">${q.text}</div>
       ${q.options.map((o,i)=>`<div class="small" style="padding:8px 11px;border-radius:8px;margin-bottom:5px;${i===q.correct?'background:var(--teal-soft)':'background:var(--surface-2)'}">${String.fromCharCode(65+i)}. ${o}${i===q.correct?' ✓':''}</div>`).join('')}</div>
-      <div class="tpanel"><div class="ph"><span class="small fw6" style="color:var(--violet-ink)">${LANGS[TR.lang]}${rtl?' · RTL':''}</span><button class="btn sm" onclick="autoFillOne()"><i class="ti ti-bolt"></i> Auto-Fill</button></div>
+      <div class="tpanel"><div class="ph"><span class="small fw6" style="color:var(--violet-ink)">${LANGS[TR.lang]}${rtl?' · RTL':''}</span><button class="btn sm" onclick="autoFillOne(this)"><i class="ti ti-bolt"></i> Auto-Fill</button></div>
         <textarea id="tr_text" class="ck" rows="2" dir="${rtl?'rtl':'ltr'}" style="font-size:15px;font-weight:600;margin-bottom:12px" placeholder="Translate the question...">${(q.translations[TR.lang]&&q.translations[TR.lang].text)||''}</textarea>
         ${q.options.map((o,i)=>`<input id="tr_opt${i}" dir="${rtl?'rtl':'ltr'}" style="margin-bottom:5px;${i===q.correct?'background:var(--teal-soft);border-color:#bce8dc':''}" placeholder="${String.fromCharCode(65+i)}. translation" value="${(q.translations[TR.lang]&&q.translations[TR.lang].options&&q.translations[TR.lang].options[i])||''}">`).join('')}
         <div class="flex between mt12"><span class="tiny muted">${q.translations[TR.lang]?'<i class="ti ti-check"></i> Saved':'Not yet translated'}</span><button class="btn ok sm" onclick="saveTranslation('${q.id}')"><i class="ti ti-check"></i> Mark Done</button></div></div></div>
     <div class="flex between center" style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)"><button class="btn sm" onclick="TR.idx=Math.max(0,TR.idx-1);RENDER.translate()" ${TR.idx===0?'disabled':''}><i class="ti ti-arrow-left"></i> Previous</button><span class="small muted">Question ${TR.idx+1} of ${qs.length}</span><button class="btn pri sm" onclick="TR.idx=Math.min(${qs.length-1},TR.idx+1);RENDER.translate()" ${TR.idx>=qs.length-1?'disabled':''}>Next <i class="ti ti-arrow-right"></i></button></div>`;ckMountAll();};
-function autoFillOne(){const qs=state.questions.filter(q=>q.bank===TR.bank);const q=qs[TR.idx];const pre=LANGS[TR.lang].split(' ')[0];
-  if(TR.lang==='hi'){ckSet('tr_text',MOCK_TR[q.text]||('['+pre+'] '+q.text));q.options.forEach((o,i)=>{const el=$('#tr_opt'+i);if(el)el.value=MOCK_TR[o]||o;});}
-  else{ckSet('tr_text','['+pre+'] '+q.text);q.options.forEach((o,i)=>{const el=$('#tr_opt'+i);if(el)el.value='['+pre+'] '+o;});}
-  toast('Auto-translated via '+$('#tr_engine').value,'ok');}
+function mtLangOk(l){return ['hi','bn','ta','te','mr','ur','fr','es'].indexOf(l)>=0;}
+async function mtTranslate(text,lang){
+  if(!text||!String(text).trim())return '';
+  var clean=String(text).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(clean)+'&langpair='+encodeURIComponent('en|'+lang);
+  var r=await fetch(url,{method:'GET'});
+  if(!r.ok)throw new Error('http '+r.status);
+  var j=await r.json();
+  var t=j&&j.responseData&&j.responseData.translatedText;
+  if(!t)throw new Error('empty');
+  if(/MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID LANGUAGE/i.test(t))throw new Error('limit');
+  return t;
+}
+async function autoFillOne(btn){
+  const qs=state.questions.filter(q=>q.bank===TR.bank);const q=qs[TR.idx];if(!q)return;
+  const lang=TR.lang;const eng=($('#tr_engine')&&$('#tr_engine').value)||'MyMemory';const pre=LANGS[lang].split(' ')[0];
+  function draft(){ckSet('tr_text',(lang==='hi'&&MOCK_TR[q.text])||('['+pre+'] '+q.text));q.options.forEach((o,i)=>{const el=$('#tr_opt'+i);if(el)el.value=(lang==='hi'&&MOCK_TR[o])||o;});}
+  if(eng==='Manual only'){draft();toast('Manual mode \u2014 edit the draft, then Mark Done.');return;}
+  const orig=btn?btn.innerHTML:'';if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Translating\u2026';}
+  try{
+    const qt=await mtTranslate(q.text,lang);ckSet('tr_text',qt);
+    for(let i=0;i<q.options.length;i++){const o=q.options[i];const el=$('#tr_opt'+i);if(!el)continue;if(!o){el.value='';continue;}try{el.value=await mtTranslate(o,lang);}catch(e){el.value=o;}}
+    toast('Translated to '+pre+' \u2014 review & edit, then Mark Done.','ok');
+  }catch(e){
+    draft();toast('Live translation unavailable \u2014 filled an editable draft.');
+  }finally{if(btn){btn.disabled=false;btn.innerHTML=orig;}}
+}
+
 function saveTranslation(id){if(!guard('question.translate'))return;const q=state.questions.find(x=>x.id===id);
   q.translations[TR.lang]={text:ckGet('tr_text'),options:q.options.map((_,i)=>{const el=$('#tr_opt'+i);return el?el.value:'';}),by:currentUser().name};
   logEvent(q,'translated · '+(LANGS[TR.lang]||TR.lang));audit('question.translate',{id,lang:TR.lang});save();toast('Translation saved','ok');RENDER.translate();}
-function autoTranslate(){if(!guard('question.translate'))return;const qs=state.questions.filter(q=>q.bank===TR.bank);const eng=$('#tr_engine').value;const pre=LANGS[TR.lang].split(' ')[0];
-  qs.forEach(q=>{q.translations[TR.lang]={text:(TR.lang==='hi'&&MOCK_TR[q.text])||('['+pre+'] '+q.text),options:q.options.map(o=>(TR.lang==='hi'&&MOCK_TR[o])||o),by:eng};logEvent(q,'auto-translated · '+(LANGS[TR.lang]||TR.lang),eng);});
-  audit('question.translate_bulk',{bank:bankById(TR.bank).name,lang:TR.lang,engine:eng,count:qs.length});save();toast('Auto-translated '+qs.length+' via '+eng,'ok');RENDER.translate();}
+function autoTranslate(btn){return _autoTranslate(btn);}
+async function _autoTranslate(btn){
+  if(!guard('question.translate'))return;
+  const qs=state.questions.filter(q=>q.bank===TR.bank);const lang=TR.lang;const eng=($('#tr_engine')&&$('#tr_engine').value)||'MyMemory';const pre=LANGS[lang].split(' ')[0];
+  if(eng==='Manual only'){toast('Pick a translation engine (not "Manual only") to auto-translate.');return;}
+  const todo=qs.filter(q=>!(q.translations[lang]&&q.translations[lang].text));
+  if(!todo.length){toast('All '+qs.length+' already translated to '+pre+'.','ok');return;}
+  const orig=btn?btn.innerHTML:'';if(btn)btn.disabled=true;
+  let done=0,failed=0,stop=false;
+  for(const q of todo){
+    if(stop)break;
+    if(btn)btn.innerHTML='<i class="ti ti-loader-2"></i> '+(done+failed+1)+'/'+todo.length;
+    try{
+      const tt=await mtTranslate(q.text,lang);
+      const opts=[];for(let i=0;i<q.options.length;i++){const o=q.options[i];if(!o){opts.push('');continue;}try{opts.push(await mtTranslate(o,lang));}catch(e){opts.push(o);}}
+      q.translations[lang]={text:tt,options:opts,by:eng};logEvent(q,'auto-translated \u00b7 '+(LANGS[lang]||lang),eng);done++;
+    }catch(e){failed++;if((e&&e.message)==='limit')stop=true;}
+  }
+  audit('question.translate_bulk',{bank:bankById(TR.bank).name,lang:lang,engine:eng,count:done});save();
+  if(btn){btn.disabled=false;btn.innerHTML=orig;}
+  if(stop)toast('Translated '+done+' \u2014 service limit reached, try later or edit manually.');
+  else if(failed)toast('Translated '+done+', '+failed+' need manual edit.','ok');
+  else toast('Translated all '+done+' to '+pre+'.','ok');
+  RENDER.translate();
+}
 
 /* EXPORT */
 let EXPORT={course:'',numSets:2};
@@ -2680,7 +2799,14 @@ async function seedDemo(){
   const sLog=mkBank('Logical Ability',mbaId,'#00B894',['Arrangements','Puzzles','Syllogisms','Series']);
   const sQa=mkBank('Quantitative Aptitude',mbaId,'#E17055',['Arithmetic','Algebra','Geometry','Number System']);
   const sAbs=mkBank('Abstract Reasoning',mbaId,'#8E44AD',['Pattern Recognition','Analogies','Classification','Series']);
-  const allBanks=[sPhy,sChem,sMath,sVarc,sLog,sQa,sAbs];
+  const salt3=randomSalt();const hash3=await hashPassword('course123',salt3);
+  const pcbId=uid('p');
+  DB.projects.push({id:pcbId,name:'PCB',institute:instId,admin:'',grade:'',status:'active',reviewLevels:2,qTarget:0,pwSalt:salt3,pwHash:hash3,marks:{easy:1,medium:2,hard:4}});
+  const phyId=mkBank('Physics',pcbId,'#2D9CDB',['Vectors','Laws of Motion','Gravitation','Optics','Electrostatics','Current Electricity','Semiconductors','Modern Physics','Wave Optics','Electromagnetic Induction']);
+  const chemId=mkBank('Chemistry',pcbId,'#27AE60',['Atomic Structure','Chemical Bonding','Thermodynamics','Equilibrium','Electrochemistry','Organic Chemistry','p-Block Elements','d-Block Elements','Polymers','Hydrocarbons']);
+  const bioId=mkBank('Biology',pcbId,'#E17055',['Cell Biology','Plant Physiology','Reproduction in Plants','Genetics','Biotechnology','Ecology','Human Physiology','Animal Reproduction','Genetics & Evolution','Biodiversity','Animal Husbandry']);
+  [phyId,chemId,bioId].forEach(function(id){var b=DB.banks.find(function(x){return x.id===id;});if(b)b.target=50;});
+  const allBanks=[sPhy,sChem,sMath,sVarc,sLog,sQa,sAbs,phyId,chemId,bioId];
   const today=Date.now();const iso=d=>new Date(today+d*86400000).toISOString().slice(0,10);
   const team=(u,role,bks,dueIn)=>{if(!u)return;DB.team.push({id:uid('u'),user_id:u.id,name:u.name,role:role,email:u.email,mobile:'',username:u.email.split('@')[0],banks:bks,startDate:iso(-10),dueDate:iso(dueIn),institute_id:instId,project_id:pcmId});};
   team(cr,'creator',allBanks,12);
@@ -2728,6 +2854,41 @@ async function seedDemo(){
     bq.slice(3,6).forEach(function(q){ q.translations={}; delete q.transVerified; delete q.transVerifiedBy; });   // Translator
     bq.slice(6,9).forEach(function(q){ delete q.transVerified; delete q.transVerifiedBy; });   // Translation Verifier
   }catch(e){if(typeof console!=='undefined')console.warn('seed-advance',e);}
+  // ===== Demo: PCB exam · 3 subjects (PYQ-style) at staged pipeline progress (50 Qs each) =====
+  try{
+    var _mRv=(rv&&rv.name)||'Vinay Rao', _mTr=(tr&&tr.name)||'Tara Singh', _mTv=(tv&&tv.name)||'Tanvi Iyer';
+    var MMR='[\u092e\u0930\u093e\u0920\u0940] ';
+    var mockPlan=[{bank:phyId,done:50},{bank:chemId,done:25},{bank:bioId,done:0}];
+    mockPlan.forEach(function(pl){
+      var b=DB.banks.find(function(x){return x.id===pl.bank;}); if(!b)return;
+      var tops=(b.topics&&b.topics.length)?b.topics:['General'];
+      for(var i=0;i<50;i++){
+        var d=['easy','medium','hard'][i%3]; var corr=i%4;
+        var q={id:uid('q'),bank:pl.bank,type:'mcq',topic:tops[i%tops.length],topics:[tops[i%tops.length]],section:(i%2?'Section B':'Section A'),diff:d,
+          text:b.name+' \u00b7 Q'+(i+1)+': identify the correct option for this '+d+' item.',
+          options:['Option A','Option B','Option C','Option D'],correct:corr,
+          explain:'Option '+String.fromCharCode(65+corr)+' is correct.',
+          author:cr?cr.name:'Import',authorId:cr?cr.id:'',version:1,history:[],source:{type:'pyq'},
+          status:'pending',reviewLevel:0,translations:{}};
+        if(i<pl.done){
+          q.status='verified'; q.reviewLevel=2; q.verifiedBy={by:_mRv,ts:today};
+          q.translations={ mr:{ text:MMR+q.text, options:q.options.map(function(o){return MMR+o;}), by:_mTr } };
+          q.transVerified=true; q.transVerifiedBy={by:_mTv,ts:today};
+        }
+        DB.questions.push(q);
+      }
+    });
+  }catch(e){if(typeof console!=='undefined')console.warn('seed-pcb',e);}
+  // ===== Demo: populate the Rejected stage (Needs Rework) =====
+  try{
+    var _rjBy=(rv&&rv.name)||'Vinay Rao';
+    var _rjReasons=['Ambiguous wording','Incorrect answer key','Duplicate item','Out of syllabus','Option overlap'];
+    var _rjPool=DB.questions.filter(function(q){return q.bank===bioId && q.status==='pending';});
+    _rjPool.slice(0,12).forEach(function(q,ix){
+      q.status='rejected'; q.reviewLevel=0; q.rejectReason=_rjReasons[ix%_rjReasons.length];
+      q.rejectedBy={by:_rjBy,ts:today}; delete q.verifiedBy;
+    });
+  }catch(e){if(typeof console!=='undefined')console.warn('seed-reject',e);}
   // ===== Build QP papers covering the FULL verified pool (full capacity) =====
   try{
     [pcmId,mbaId].forEach(function(pid){
@@ -2765,7 +2926,7 @@ async function quickLogin(){
 }
 (async function boot(){
   await initDB();
-  var APP_VERSION='v1.0-final',APP_BUILD='gyansetu-v1.0-final-2026-06-07';var SEED_VERSION='pcm-mba-v11';
+  var APP_VERSION='v1.0-final',APP_BUILD='gyansetu-v1.0-final-2026-06-07';var SEED_VERSION='pcm-mba-pcb-v14';
   if(localStorage.getItem('hub_seed')!==SEED_VERSION){
     try{TABLES.forEach(function(t){if(Array.isArray(DB[t]))DB[t]=[];});}catch(e){}
     try{localStorage.removeItem('hubble_db');localStorage.removeItem('hub_session');}catch(e){}
