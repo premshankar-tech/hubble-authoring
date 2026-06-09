@@ -344,7 +344,7 @@ a{color:var(--violet-ink);text-decoration:none;font-weight:600}a:hover{text-deco
 .tb-icon:hover{background:var(--surface-2);color:var(--ink);border-color:var(--line-2)}
 .tb-dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--coral);border:1.5px solid var(--surface)}
 .menu-btn{display:none}
-.topuser{display:flex;align-items:center;gap:10px;padding-left:6px;margin-left:4px;border-left:1px solid var(--line)}
+.topuser{display:flex;align-items:center;gap:10px;padding-left:6px;margin-left:4px;border-left:1px solid var(--line)}.proctor{display:flex;align-items:center;gap:8px;margin-right:4px}.proctor-cam{position:relative;width:56px;height:38px;border-radius:8px;overflow:hidden;background:#111;border:1px solid var(--line);flex-shrink:0}.proctor-cam video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}.proctor-off{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#9a958c;font-size:16px}.proctor-dot{position:absolute;top:3px;left:3px;width:7px;height:7px;border-radius:50%;background:#e7483d;animation:proctorPulse 1.6s infinite}@keyframes proctorPulse{0%{box-shadow:0 0 0 0 rgba(231,72,61,.55)}70%{box-shadow:0 0 0 6px rgba(231,72,61,0)}100%{box-shadow:0 0 0 0 rgba(231,72,61,0)}}.proctor-lbl{display:flex;flex-direction:column;line-height:1.15}.proctor-lbl b{font-size:10px;color:var(--coral-ink);font-weight:700;letter-spacing:.05em}.proctor-lbl span{font-size:10px;color:var(--ink-3)}@media(max-width:760px){.proctor-lbl{display:none}}#camGate{position:fixed;inset:0;z-index:2147483000;background:rgba(15,14,11,.62);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:24px}#camGate.on{display:flex}.camgate-card{width:420px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:28px 26px;text-align:center;box-shadow:var(--shadow-lg)}.camgate-ic{width:66px;height:66px;border-radius:50%;background:var(--coral-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:30px;color:var(--coral-ink)}
 .tu-meta{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
 .tu-name{font-size:12px;font-weight:700;white-space:nowrap}
 .tu-role{font-size:11px;color:var(--ink-3);font-weight:600}
@@ -766,13 +766,13 @@ input[placeholder^="Search"]{background:none!important;border:none!important;bor
       <button class="tb-icon" id="themeBtn" title="Switch to dark mode" aria-label="Toggle dark mode" onclick="toggleTheme()"><i class="ti ti-moon" id="themeIcon"></i></button>
       <button class="tb-icon" title="Notifications" aria-label="Notifications"><i class="ti ti-bell"></i><span class="tb-dot"></span></button>
       <button class="tb-icon" title="Help" aria-label="Help"><i class="ti ti-help"></i></button>
-      <div class="topuser"><div class="tu-meta"><span class="tu-name" id="topName">&mdash;</span><span class="tu-role" id="topRole"></span></div><div class="avatar" id="topAvatar">PA</div></div>
+      <div class="proctor" id="proctorCam" style="display:none" title="Live proctoring — your camera is being monitored"><div class="proctor-cam"><video id="proctorVid" autoplay playsinline muted></video><span class="proctor-dot"></span></div><div class="proctor-lbl"><b>LIVE</b><span>Monitored</span></div></div><div class="topuser"><div class="tu-meta"><span class="tu-name" id="topName">&mdash;</span><span class="tu-role" id="topRole"></span></div><div class="avatar" id="topAvatar">PA</div></div>
     </div>
     <div class="content" id="content"></div>
   </div>
 </div>
 
-<div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div><div id="camGate"><div class="camgate-card"><div class="camgate-ic"><i class="ti ti-video-off"></i></div><div style="font-size:18px;font-weight:600;margin-bottom:8px">Camera access required</div><p class="small muted" style="line-height:1.6;margin:0 0 18px">Live proctoring is mandatory for your role. Your camera is turned off or blocked, so the app is locked. Re-enable the camera to continue — no tasks can be performed until it’s active.</p><div style="display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border-radius:999px;padding:5px 12px;margin-bottom:20px"><span style="width:8px;height:8px;border-radius:50%;background:#e7483d;display:inline-block"></span><span class="small muted" id="camGateRole">Monitored session</span></div><button class="btn pri" style="width:100%;justify-content:center" onclick="camRetry(this)"><i class="ti ti-camera"></i> Enable camera &amp; continue</button><div class="tiny muted" style="margin-top:14px"><i class="ti ti-refresh"></i> Re-checking automatically every few seconds…</div></div></div>
 <div class="toast-wrap" id="toasts" aria-live="polite"></div>
 <div class="gate-ov" id="gate"></div>
 <style>
@@ -1189,6 +1189,19 @@ function openApp(u){
   }
   enterApp(u);
 }
+let _proctorStream=null,_camTimer=null,_camPerm=null;
+const PROCTOR_EXEMPT=['sysadmin','instadmin','itadmin'];
+function isMonitored(role){role=role||(session&&session.role);return !!role&&PROCTOR_EXEMPT.indexOf(role)<0;}
+async function initProctorCam(role){role=role||(session&&session.role);var wrap=document.getElementById('proctorCam');if(!isMonitored(role)){stopProctorCam();hideCamGate();stopCamTimer();if(wrap)wrap.style.display='none';return;}if(wrap)wrap.style.display='flex';await acquireCam();watchCamPermission();}
+async function acquireCam(){if(!isMonitored())return true;if(_proctorStream&&_proctorStream.getVideoTracks().some(function(t){return t.readyState==='live';})){hideCamGate();stopCamTimer();return true;}var wrap=document.getElementById('proctorCam');try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('unsupported');var stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:160},height:{ideal:120}},audio:false});_proctorStream=stream;if(wrap){var cam=wrap.querySelector('.proctor-cam');if(cam&&!document.getElementById('proctorVid')){cam.innerHTML='<video id="proctorVid" autoplay playsinline muted></video><span class="proctor-dot"></span>';}}var vid=document.getElementById('proctorVid');try{if(vid)vid.srcObject=stream;}catch(_e){}stream.getVideoTracks().forEach(function(t){t.onended=camFail;t.onmute=camFail;});hideCamGate();stopCamTimer();return true;}catch(e){camFail();return false;}}
+function camFail(){stopProctorCam();var wrap=document.getElementById('proctorCam');if(wrap){var cam=wrap.querySelector('.proctor-cam');if(cam)cam.innerHTML='<span class="proctor-off"><i class="ti ti-video-off"></i></span><span class="proctor-dot"></span>';}if(isMonitored()){showCamGate();startCamTimer();}}
+function showCamGate(){var g=document.getElementById('camGate');if(!g)return;try{var u=currentUser();var rl=document.getElementById('camGateRole');if(rl)rl.textContent='Monitored session'+(u&&ROLES[u.role]?(' \u00b7 '+ROLES[u.role].name):'');}catch(e){}try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(e){}g.classList.add('on');}
+function hideCamGate(){var g=document.getElementById('camGate');if(g)g.classList.remove('on');}
+function startCamTimer(){if(_camTimer)return;_camTimer=setInterval(function(){if(!isMonitored()){stopCamTimer();return;}acquireCam();},3000);}
+function stopCamTimer(){if(_camTimer){clearInterval(_camTimer);_camTimer=null;}}
+async function camRetry(btn){if(btn)btn.disabled=true;await acquireCam();if(btn)btn.disabled=false;}
+function watchCamPermission(){try{if(_camPerm||!navigator.permissions||!navigator.permissions.query)return;navigator.permissions.query({name:'camera'}).then(function(st){_camPerm=st;st.onchange=function(){if(!isMonitored())return;if(st.state==='denied'){camFail();}else{acquireCam();}};}).catch(function(){});}catch(e){}}
+function stopProctorCam(){try{if(_proctorStream){_proctorStream.getTracks().forEach(function(t){t.stop();});_proctorStream=null;}var v=document.getElementById('proctorVid');if(v)v.srcObject=null;}catch(e){}}
 function enterApp(u){
   hideGate();
   const r=ROLES[u.role];
@@ -1197,11 +1210,11 @@ function enterApp(u){
   $('#sideRole').querySelector('span').textContent=r.name;$('#sideRole').querySelector('i').className='ti '+r.icon;
   $('#sideRole').parentElement.style.background=r.color+'18';$('#sideRole').parentElement.style.borderColor=r.color+'33';$('#sideRole').style.color=r.color;
   $('#topAvatar').textContent=initials(u.name);$('#topAvatar').style.background=r.color;$('#topAvatar').title=u.name;
-  $('#topName').textContent=u.name;$('#topRole').textContent=r.name;
+  $('#topName').textContent=u.name;$('#topRole').textContent=r.name;try{initProctorCam(u.role);}catch(e){}
   document.documentElement.style.setProperty('--violet',r.color);
   buildNav();go(NAV[u.role][0][0]);
 }
-function logout(){audit('auth.logout',{});try{localStorage.removeItem('hub_session');}catch(e){}session=null;_unlocked={};hideGate();
+function logout(){stopProctorCam();hideCamGate();stopCamTimer();audit('auth.logout',{});try{localStorage.removeItem('hub_session');}catch(e){}session=null;_unlocked={};hideGate();
   $('#app').classList.remove('active');$('#login').style.display='';document.documentElement.style.setProperty('--violet','#6C5CE7');resetLoginUI();}
 function hideGate(){var g=document.getElementById('gate');if(g){g.classList.remove('show');g.innerHTML='';}}
 function showGate(html){var g=document.getElementById('gate');if(!g)return;g.innerHTML='<div class="gate-card">'+html+'</div>';g.classList.add('show');var lg=document.getElementById('login');if(lg)lg.style.display='none';}
@@ -1471,7 +1484,7 @@ function langDetail(){
     var pct=r.total?Math.round(r.done/r.total*100):0;var vpct=r.done?Math.round(r.ver/r.done*100):0;
     var barPct=verifier?vpct:pct;var barCol=barPct>=80?'var(--teal)':(barPct<40?'var(--amber)':'var(--violet)');
     var meta=verifier?(r.ver+' verified \u00b7 '+r.pend+' to verify \u00b7 '+r.done+' translated'):(r.done+' of '+r.total+' verified questions \u00b7 '+pct+'% coverage');
-    var act=verifier?('<button class="btn sm" style="flex-shrink:0" onclick="closeModal();cardOpen(\'tv_pending\',\'To verify\')"><i class="ti ti-checks"></i> Verify</button>'):('<button class="btn pri sm" style="flex-shrink:0" onclick="closeModal();TR.lang=\''+r.l+'\';TR.idx=0;TR.topic=\'all\';go(\'translate\')"><i class="ti ti-language"></i> Translate</button>');
+    var act=verifier?('<button class="btn sm" style="flex-shrink:0" onclick="closeModal();cardOpen(\'tv_pending\',\'To be Verify\')"><i class="ti ti-checks"></i> Verify</button>'):('<button class="btn pri sm" style="flex-shrink:0" onclick="closeModal();TR.lang=\''+r.l+'\';TR.idx=0;TR.topic=\'all\';go(\'translate\')"><i class="ti ti-language"></i> Translate</button>');
     var badge=(verifier&&r.pend)?'<span class="badge bg-amber" style="font-size:10px">'+r.pend+' to verify</span>':'';
     return '<div style="border:0.5px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:14px;margin-bottom:10px">'
       +'<div style="width:40px;height:40px;border-radius:50%;background:var(--violet-soft);color:var(--violet-ink);display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0">'+av+'</div>'
@@ -1717,8 +1730,8 @@ function renderTransVerifierDash(){
   $('#content').innerHTML=nudgeBanner(mt,'Your admin nudged you on pending translation checks.')
     +'<div class="grid g4" style="margin-bottom:16px">'
     +stat('Assigned subjects',subjects.length,'ti-database','#6C5CE7','',"go('transverify')")
-    +stat('To verify',toV,'ti-clock','#F5A623','translations',"cardOpen('tv_pending','Pending verification')")
-    +stat('Verified by me',vById,'ti-checks','#27AE60','',"cardOpen('tv_verified','Verified translations')")
+    +stat('To be Verify',toV,'ti-clock','#F5A623','translations',"cardOpen('tv_pending','Pending verification')")
+    +stat('Verified',vById,'ti-checks','#27AE60','',"cardOpen('tv_verified','Verified translations')")
     +stat('Languages',Object.keys(langs).length,'ti-world','#2D9CDB','in use',"langDetail()")
     +'</div>'
     +'<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-list-check"></i> Translation Verification by Subject</span></div>'+subRows+'</div>';
@@ -1731,8 +1744,8 @@ function renderQpVerifierDash(){
   var rows=sets.slice(-6).reverse().map(function(s){return '<div class="flex between center" style="padding:9px 0;border-bottom:1px solid var(--line)"><div class="small fw6">'+escAttr(s.name||'Set')+' <span class="muted">· '+(s.count||(s.questionIds||[]).length)+' Q</span></div>'+qpStatusBadge(s.status||'draft')+'</div>';}).join('')||'<div class="empty" style="padding:16px"><i class="ti ti-stack-2"></i>No sets yet</div>';
   $('#content').innerHTML=
     '<div class="grid g4" style="margin-bottom:16px">'
-    +stat('To verify',draft,'ti-clipboard-list','#F5A623','draft sets',"qpvCardOpen('draft','To verify · draft sets')")
-    +stat('Verified by me',vById,'ti-clipboard-check','#27AE60','',"qpvCardOpen('mine','Verified by me')")
+    +stat('To be Verify',draft,'ti-clipboard-list','#F5A623','draft sets',"qpvCardOpen('draft','To be Verify · draft sets')")
+    +stat('Verified',vById,'ti-clipboard-check','#27AE60','',"qpvCardOpen('mine','Verified')")
     +stat('Published',published,'ti-rocket','#8E44AD','',"qpvCardOpen('published','Published')")
     +stat('Total sets',sets.length,'ti-stack-2','#2D9CDB','',"qpvCardOpen('all','All sets')")
     +'</div>'
