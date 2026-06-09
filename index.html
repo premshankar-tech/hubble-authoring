@@ -2030,7 +2030,7 @@ function renderCourseDetail(id){const p=projectById(id);if(!p){_courseView=null;
   <button class="btn ghost sm" onclick="closeCourse()" style="margin-bottom:14px"><i class="ti ti-arrow-left"></i> All Exams</button>
   <div class="card" style="margin-bottom:16px"><div class="flex between wrap gap12" style="align-items:flex-start">
     <div class="flex center gap8"><div class="avatar" style="width:42px;height:42px;border-radius:12px;background:var(--violet-soft);color:var(--violet-ink)"><i class="ti ti-folder" style="font-size:21px"></i></div>
-      <div><div class="fw7" style="font-size:18px">${escAttr(p.name)}</div><div class="tiny muted">${escAttr(p.grade||'Multi-grade')} · ${subs.length} subject${subs.length===1?'':'s'} · target ${p.qTarget||300} Qs/subject · ${p.pwHash?'<i class="ti ti-lock"></i> protected':'<i class="ti ti-lock-open"></i> no password'} · ${escAttr(p.status||'active')}</div></div></div>
+      <div><div class="fw7" style="font-size:18px">${escAttr(p.name)}</div><div class="tiny muted">${escAttr(p.grade||'Multi-grade')} · ${subs.length} subject${subs.length===1?'':'s'} · target ${p.qTarget||((subs[0]&&subs[0].target)||300)} Qs/subject · ${p.pwHash?'<i class="ti ti-lock"></i> protected':'<i class="ti ti-lock-open"></i> no password'} · ${escAttr(p.status||'active')}</div></div></div>
     <div class="flex gap8" style="align-items:flex-end">${can('review.configure')?`<div class="field" style="margin:0"><label class="fl" style="margin-bottom:4px">Review Levels</label><select onchange="setCourseLevels('${p.id}',this.value)" style="width:auto;padding:6px 10px"><option value="1" ${lv===1?'selected':''}>1 — single</option><option value="2" ${lv===2?'selected':''}>2 — two-stage</option><option value="3" ${lv===3?'selected':''}>3 — three-stage</option></select></div>`:''}
       ${can('project.create')?`<button class="btn sm" onclick="modalCourseEdit('${p.id}')"><i class="ti ti-edit"></i> Edit Details</button>`:''}</div></div></div>
   <div class="flex between center" style="margin-bottom:12px"><div class="sec-label"><i class="ti ti-database"></i> Subjects mapped to this exam</div>${can('bank.create')?`<button class="btn pri sm" onclick="newSubjectFor('${p.id}')"><i class="ti ti-plus"></i> Add Subject</button>`:''}</div>
@@ -2040,14 +2040,14 @@ function setCourseLevels(pid,v){if(!guard('review.configure'))return;const p=DB.
 function modalCourseEdit(id){const p=projectById(id);if(!p)return;const lv=p.reviewLevels||1;const mk=p.marks||{};modal(`<div class="modal-h"><h3>Edit Exam</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b"><div class="field"><label class="fl">Exam Name</label><input id="ce_name" value="${escAttr(p.name)}"></div>
     <div class="field"><label class="fl">Grade / Level</label><input id="ce_grade" value="${escAttr(p.grade||'')}" placeholder="Grade 10"></div>
-    <div class="field"><label class="fl">Target Questions per Subject</label><input id="ce_target" type="number" value="${p.qTarget||300}" min="0"></div>
+    <div class="field"><label class="fl">Target Questions per Subject</label><input id="ce_target" type="number" value="${p.qTarget||((state.banks.filter(b=>b.project===p.id)[0]||{}).target||300)}" min="0"></div>
     <div class="field"><label class="fl">Review Levels</label><select id="ce_levels"><option value="1" ${lv===1?'selected':''}>1 — single review</option><option value="2" ${lv===2?'selected':''}>2 — two-stage</option><option value="3" ${lv===3?'selected':''}>3 — three-stage</option></select></div>
     <div class="field"><label class="fl">Marks per Difficulty</label><div class="flex gap8 wrap center"><span class="diff-easy">Easy</span><input type="number" id="ce_measy" value="${mk.easy!=null?mk.easy:1}" min="0" style="width:74px"><span class="diff-medium">Medium</span><input type="number" id="ce_mmed" value="${mk.medium!=null?mk.medium:2}" min="0" style="width:74px"><span class="diff-hard">Hard</span><input type="number" id="ce_mhard" value="${mk.hard!=null?mk.hard:4}" min="0" style="width:74px"></div></div><div class="field"><label class="fl">Status</label><select id="ce_status"><option value="active" ${p.status==='active'?'selected':''}>Active</option><option value="draft" ${p.status==='draft'?'selected':''}>Draft</option><option value="archived" ${p.status==='archived'?'selected':''}>Archived</option></select></div>
     <div class="field"><label class="fl">Exam password <span class="tiny muted">(leave blank to keep)</span></label><input id="ce_pw" type="password" placeholder="${p.pwHash?'•••••••• set — type to change':'Not set — enter to set'}" style="background:var(--violet-soft);border-color:#d8d2ff"></div></div>
   <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveCourse('${id}')"><i class="ti ti-check"></i> Save Changes</button></div>`);}
 async function saveCourse(id){if(!guard('project.create'))return;const p=DB.projects.find(x=>x.id===id);if(!p)return;const n=$('#ce_name').value.trim();if(!n)return toast('Exam name required','warn');
   const np=($('#ce_pw')||{}).value||'';if(np){if(np.length<6)return toast('Password must be at least 6 characters','warn');p.pwSalt=randomSalt();p.pwHash=await hashPassword(np,p.pwSalt);delete _unlocked[id];audit('course.setPassword',{course:n});}
-  p.name=n;p.grade=$('#ce_grade').value.trim();p.reviewLevels=Math.min(3,Math.max(1,+$('#ce_levels').value||1));p.status=$('#ce_status').value;p.qTarget=Math.max(0,+$('#ce_target').value||0);p.marks={easy:Math.max(0,+(($('#ce_measy')||{}).value)||0),medium:Math.max(0,+(($('#ce_mmed')||{}).value)||0),hard:Math.max(0,+(($('#ce_mhard')||{}).value)||0)};
+  p.name=n;p.grade=$('#ce_grade').value.trim();p.reviewLevels=Math.min(3,Math.max(1,+$('#ce_levels').value||1));p.status=$('#ce_status').value;p.qTarget=Math.max(0,+$('#ce_target').value||0);if(p.qTarget>0){state.banks.filter(function(b){return b.project===p.id;}).forEach(function(b){b.target=p.qTarget;});}p.marks={easy:Math.max(0,+(($('#ce_measy')||{}).value)||0),medium:Math.max(0,+(($('#ce_mmed')||{}).value)||0),hard:Math.max(0,+(($('#ce_mhard')||{}).value)||0)};
   audit('course.update',{name:n});save();closeModal();go('projects');toast('Exam updated'+(np?' · password changed':''),'ok');}
 function afterSubjectChange(){if(_courseView)go('projects');else go('qbank');}
 function newSubjectFor(courseId){_qbCourse=courseId;modalQB();}
@@ -2228,14 +2228,14 @@ RENDER.work=()=>{
     const c=(DB.projects||[]).find(p=>p.id===WORK.course);
     if(!c){WORK.course=null;return RENDER.work();}
     const cb=banks.filter(b=>b.project===c.id);
-    let h=`<div class="actionrow"><button class="btn" onclick="workToCourses()"><i class="ti ti-arrow-left"></i> Exams</button><div style="flex:1"><div class="fw6">${escAttr(c.name)}</div><div class="tiny muted">Pick a subject to ${actionWord}</div></div>${role==='creator'?`<button class="btn" onclick="go(\'reviewedit\')"><i class="ti ti-edit"></i> Review &amp; Edit</button>`:''}</div><div class="cgrid">`;
+    let h=`<div class="actionrow"><button class="btn" onclick="workToCourses()"><i class="ti ti-arrow-left"></i> Exams</button><div style="flex:1"><div class="fw6">${escAttr(c.name)}</div><div class="tiny muted">Pick a subject to ${actionWord}</div></div>${role==='creator'?`<button class="btn" onclick="reExam(\'${c.id}\')"><i class="ti ti-edit"></i> Review &amp; Edit</button>`:''}</div><div class="cgrid">`;
     cb.forEach(b=>{const m=subMetric(b);
       h+=`<div class="ccard" onclick="workOpenSubject('${b.id}')"><div class="flex between center" style="gap:6px"><div class="ccnm">${escAttr(b.name)}</div><i class="ti ti-arrow-right" style="color:var(--ink-3);font-size:14px"></i></div><div class="ccmeta">${m.a}</div><div class="flex center gap8"><div class="cbar"><div style="width:${m.pct}%"></div></div><span class="badge ${m.badge}" style="font-size:10px;padding:2px 7px">${m.btext}</span></div></div>`;});
     h+='</div>'+(cb.length?'':'<div class="empty"><i class="ti ti-database-off"></i>No subjects in this exam assigned to you.</div>');
     $('#content').innerHTML=h;return;
   }
   if(!courses.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams assigned to you yet.</div>';return;}
-  let h=(role==='creator'?`<div class="actionrow" style="justify-content:flex-end"><button class="btn" onclick="go('reviewedit')"><i class="ti ti-edit"></i> Review &amp; Edit Questions</button></div>`:'')+'<div class="cgrid">';
+  let h=(role==='creator'?`<div class="actionrow" style="justify-content:flex-end"><button class="btn" onclick="reAll()"><i class="ti ti-edit"></i> Review &amp; Edit Questions</button></div>`:'')+'<div class="cgrid">';
   courses.forEach(c=>{const cb=banks.filter(b=>b.project===c.id);
     const total=cb.reduce((s,b)=>s+qCount(b.id),0),ver=cb.reduce((s,b)=>s+verifiedCount(b.id),0),tgt=cb.reduce((s,b)=>s+(b.target||0),0);
     const pct=tgt?Math.min(100,Math.round((role==='reviewer'?ver:total)/tgt*100)):0;
@@ -2479,7 +2479,7 @@ function qRow(q,edit){return `<div class="card" style="margin-bottom:10px"><div 
     ${q.options&&q.options.length?`<div class="flex gap8 wrap">${q.options.map((o,j)=>`<span class="chip" style="${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}. ${o}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' ✓':''}</span>`).join('')}</div>`:''}
     ${q.model?`<div class="small muted mt8"><b>Model answer:</b> ${q.model}</div>`:''}
     ${q.group?`<div class="small muted mt8"><b>Group passage</b> · ${q.group.subs.length} sub-question(s)</div>`:''}</div>`;}
-let RE={mode:'cards',bank:'__all',idx:0,focusId:null,topic:'__all',cardKey:null,cardLabel:null};
+let RE={mode:'cards',bank:'__all',idx:0,focusId:null,topic:'__all',cardKey:null,cardLabel:null,course:null};
 function reMode(m){RE.mode=m;RENDER.reviewedit();}
 function reStep(d){RE.idx+=d;RENDER.reviewedit();}
 function reFocus(id){RE.mode='focus';RE.focusId=id;RENDER.reviewedit();}
@@ -2520,7 +2520,10 @@ function reCardScope(key){
   if(key==='tv_rework')return all.filter(function(q){return !!q.transFlag;});
   return null;
 }
-function cardOpen(key,label){RE.cardKey=key;RE.cardLabel=label;RE.bank='__all';RE.topic='__all';RE.idx=0;RE.mode='cards';go('reviewedit');}
+function reExam(pid){RE.course=pid;RE.bank='__all';RE.topic='__all';RE.cardKey=null;RE.cardLabel=null;RE.idx=0;RE.mode='cards';go('reviewedit');}
+function reAll(){RE.course=null;RE.bank='__all';RE.topic='__all';RE.cardKey=null;RE.cardLabel=null;RE.idx=0;RE.mode='cards';go('reviewedit');}
+function reExamClear(){RE.course=null;RE.bank='__all';RE.topic='__all';RE.idx=0;RENDER.reviewedit();}
+function cardOpen(key,label){RE.cardKey=key;RE.cardLabel=label;RE.bank='__all';RE.topic='__all';RE.idx=0;RE.mode='cards';RE.course=null;go('reviewedit');}
 function cardClear(){RE.cardKey=null;RE.cardLabel=null;RE.idx=0;RENDER.reviewedit();}
 function openTranslateFor(id){var q=state.questions.find(function(x){return x.id===id;});if(!q)return;TR.bank=q.bank;TR.topic='all';var _tq=state.questions.filter(function(x){return x.bank===TR.bank;});var _ix=_tq.findIndex(function(x){return x.id===id;});TR.idx=_ix<0?0:_ix;go('translate');}
 function reCard(q){const opts=(q.options&&q.options.length)?q.options.map((o,j)=>`<span class="chip" style="font-size:11px;${j===q.correct?'background:var(--teal-soft);color:var(--teal-ink);border-color:#bce8dc':''}">${String.fromCharCode(65+j)}${o?'. '+o:''}${q.optionImages&&q.optionImages[j]?qImgInline(q.optionImages[j]):''}${j===q.correct?' \u2713':''}</span>`).join(''):'';
@@ -2543,7 +2546,7 @@ function reFocusView(q){
   </div>`;}
 RENDER.reviewedit=()=>{
   const me=currentUser();
-  let mine=(RE.cardKey?reCardScope(RE.cardKey):null)||reScope();
+  let mine=(RE.cardKey?reCardScope(RE.cardKey):null)||reScope();if(RE.course){var _cbid=new Set(state.banks.filter(function(b){return b.project===RE.course;}).map(function(b){return b.id;}));mine=mine.filter(function(q){return _cbid.has(q.bank);});}
   const sbanks=state.banks.filter(b=>mine.some(q=>q.bank===b.id));
   if(RE.bank!=='__all'&&!sbanks.find(b=>b.id===RE.bank))RE.bank='__all';
   const qs0=RE.bank==='__all'?mine:mine.filter(q=>q.bank===RE.bank);const reTopics=[...new Set(qs0.map(q=>q.topic).filter(Boolean))].sort();if(RE.topic!=='__all'&&!reTopics.includes(RE.topic))RE.topic='__all';const qs=(RE.topic==='__all')?qs0:qs0.filter(q=>q.topic===RE.topic);
@@ -2561,7 +2564,7 @@ RENDER.reviewedit=()=>{
   } else {
     body=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">${qs.map(q=>reCard(q)).join('')}</div>`;
   }
-  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="go(reHome())"><i class="ti ti-arrow-left"></i> Back</button><div class="fw6" style="flex:1">${reTitle()}</div>${RE.cardKey?'<span class="chip" style="background:var(--violet-soft);color:var(--violet-ink);border-color:#d9d5f5;font-weight:600"><i class="ti ti-filter"></i> '+escAttr(RE.cardLabel||RE.cardKey)+' <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="cardClear()" title="Clear filter"></i></span>':''}</div><div class="flex between center wrap gap12" style="margin-bottom:14px"><div class="flex center gap8">${subjSel}${reTopics.length?`<select style="width:auto" onchange="RE.topic=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.topic==='__all'?'selected':''}>All topics</option>${reTopics.map(t=>`<option value="${escAttr(t)}" ${RE.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select>`:''}<span class="badge bg-gray" style="padding:7px 12px">${qs.length} question${qs.length===1?'':'s'}</span></div>${seg}</div>${body}`;
+  $('#content').innerHTML=`<div class="actionrow"><button class="btn" onclick="go(reHome())"><i class="ti ti-arrow-left"></i> Back</button><div class="fw6" style="flex:1">${reTitle()}</div>${RE.cardKey?'<span class="chip" style="background:var(--violet-soft);color:var(--violet-ink);border-color:#d9d5f5;font-weight:600"><i class="ti ti-filter"></i> '+escAttr(RE.cardLabel||RE.cardKey)+' <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="cardClear()" title="Clear filter"></i></span>':''}${RE.course?'<span class="chip" style="background:var(--teal-soft);color:var(--teal-ink);border-color:var(--teal-soft);font-weight:600;margin-left:6px"><i class="ti ti-folder"></i> '+escAttr((projectById(RE.course)||{}).name||'Exam')+' <i class="ti ti-x" style="cursor:pointer;margin-left:4px" onclick="reExamClear()" title="Show all exams"></i></span>':''}</div><div class="flex between center wrap gap12" style="margin-bottom:14px"><div class="flex center gap8">${subjSel}${reTopics.length?`<select style="width:auto" onchange="RE.topic=this.value;RE.idx=0;RENDER.reviewedit()"><option value="__all" ${RE.topic==='__all'?'selected':''}>All topics</option>${reTopics.map(t=>`<option value="${escAttr(t)}" ${RE.topic===t?'selected':''}>${escAttr(t)}</option>`).join('')}</select>`:''}<span class="badge bg-gray" style="padding:7px 12px">${qs.length} question${qs.length===1?'':'s'}</span></div>${seg}</div>${body}`;
 };
 function logEvent(q,action,note){if(!q)return;q.history=q.history||[];q.history.push({version:q.version||1,action:action,note:note||'',event:true,status:q.status,ts:Date.now(),by:(currentUser()&&currentUser().name)||'system'});}
 function viewHistory(id){const q=state.questions.find(x=>x.id===id);modal(`<div class="modal-h"><h3>Version history ${q.code?'· '+q.code:''}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
