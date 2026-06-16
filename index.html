@@ -847,7 +847,7 @@ const SEED={
 };
 const EMPTY=()=>({institutes:[],projects:[],banks:[],questions:[],team:[],sets:[],audit:[],users:[]});
 let DB=EMPTY(), state=EMPTY(), SCREEN='dashboard', db=null, lockouts={};
-function uid(p){return p+Math.random().toString(36).slice(2,7);}
+function uid(p){uid._n=(uid._n||0)+1;return p+Math.random().toString(36).slice(2,7)+uid._n.toString(36);}
 function bytesToB64(u8){let s='';const CH=0x8000;for(let i=0;i<u8.length;i+=CH)s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));return btoa(s);}
 function b64ToBytes(b){const bin=atob(b);const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);return u8;}
 const TABLES=['institutes','projects','banks','questions','team','sets','users','audit','settings'];
@@ -875,7 +875,8 @@ function rescope(){
     const tm=DB.team.find(t=>t.email&&t.email.toLowerCase()===u.email.toLowerCase());
     const assigned=tm&&tm.banks?tm.banks:[];
     banks=DB.banks.filter(b=>assigned.includes(b.id));
-    projects=DB.projects.filter(p=>p.id===u.project_id);
+    const bankProjects=new Set(banks.map(b=>b.project));
+    projects=DB.projects.filter(p=>p.id===u.project_id||bankProjects.has(p.id));
   }
   const bankIds=new Set(banks.map(b=>b.id));
   const questions=DB.questions.filter(q=>bankIds.has(q.bank));
@@ -1121,7 +1122,7 @@ function updateThemeIcon(){var dark=document.documentElement.classList.contains(
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('DOMContentLoaded',function(){try{updateThemeIcon();}catch(e){}});
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('fullscreenchange',function(){var i=document.getElementById('fsIcon');if(i)i.className='ti '+(document.fullscreenElement?'ti-minimize':'ti-maximize');});
 function renderLogin(){
-  const order=['admin@hubble.io','admin@mhcet.edu','itadmin@mhcet.edu','creator@mhcet.edu','verifier@mhcet.edu','translator@mhcet.edu','transverifier@mhcet.edu','qpcreator@mhcet.edu','qpverifier@mhcet.edu','publisher@mhcet.edu'];
+  const order=['admin@hubble.io','admin@mhcet.edu','creator@mhcet.edu','verifier@mhcet.edu','translator@mhcet.edu','transverifier@mhcet.edu','qpcreator@mhcet.edu','qpverifier@mhcet.edu','publisher@mhcet.edu'];
   var _st=document.getElementById('lg2-otpstep'); if(_st)_st.style.display='none'; var _ch=document.getElementById('lg2-chooser'); if(_ch)_ch.style.display=''; mobilePending=null;
   const rl=document.getElementById('roleList'); if(!rl)return;
   rl.innerHTML=order.map(em=>{const u=DB.users.find(x=>x.email.toLowerCase()===em.toLowerCase());if(!u)return '';const r=ROLES[u.role]||{name:u.role,color:'#6C5CE7'};const inst=DB.institutes.find(i=>i.id===u.institute_id);const org=inst?inst.name:'Hubble Platform';
@@ -2156,7 +2157,7 @@ function teamRoleChanged(){const r=($('#m_trole')||{}).value;const sec=$('#m_ass
 function modalTeam(editId){
   TEAM_EDIT_ID=editId||null;const editing=!!TEAM_EDIT_ID;
   const t=editing?state.team.find(x=>x.id===TEAM_EDIT_ID):null;const u=t?userForTeam(t):null;
-  const roleOpts=['itadmin','instadmin','creator','reviewer','translator','transverifier','publisher','qpverifier','qppublisher'].map(r=>`<option value="${r}" ${t&&t.role===r?'selected':''}>${ROLES[r].name}</option>`).join('');
+  const roleOpts=['instadmin','creator','reviewer','translator','transverifier','publisher','qpverifier','qppublisher'].map(r=>`<option value="${r}" ${t&&t.role===r?'selected':''}>${ROLES[r].name}</option>`).join('');
   modal(`<div class="modal-h"><h3>${editing?'Edit team member':'Add team member'}</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="modal-b">
     <div class="sec-label" style="margin-bottom:10px"><i class="ti ti-id-badge"></i> Profile details</div>
@@ -2820,7 +2821,7 @@ function exportFile(kind){if(!guard('export.run'))return;const course=projectByI
   audit('export.run',{course:course.name,sets:sets.length,count:rows.length});toast('Exported '+rows.length+' questions across '+sets.length+' set(s)','ok');}
 
 /* MARKS CONFIG (IT Admin) */
-RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only Management Executive can configure marks.</div>';return;}
+RENDER.marks=()=>{if(session.role!=='itadmin'&&session.role!=='instadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only Management Executive can configure marks.</div>';return;}
   var ms=marksScheme();
   $('#content').innerHTML=`<div class="card" style="max-width:560px"><div class="card-h"><span class="ttl"><i class="ti ti-award"></i> Marks Configuration</span><span class="badge bg-gray">Per difficulty</span></div>
     <p class="small muted" style="margin:0 0 14px">Marks awarded per question by difficulty. Each question inherits marks from its difficulty; the question-paper total is computed from the mix.</p>
@@ -2829,7 +2830,7 @@ RENDER.marks=()=>{if(session.role!=='itadmin'){$('#content').innerHTML='<div cla
     <div class="field"><label class="fl"><span class="diff-hard">Hard</span></label><input id="mk_hard" type="number" min="0" step="0.5" value="${ms.hard}" style="max-width:140px"></div>
     <div style="margin-top:6px"><button class="btn pri" onclick="saveMarks()"><i class="ti ti-check"></i> Save Marks Scheme</button></div>
     <p class="tiny muted mt8"><i class="ti ti-info-circle"></i> Applies to every question and to the total marks shown when a question paper is built.</p></div>`;};
-function saveMarks(){if(session.role!=='itadmin')return;var e=Math.max(0,+($('#mk_easy')||{}).value||0),m=Math.max(0,+($('#mk_medium')||{}).value||0),h=Math.max(0,+($('#mk_hard')||{}).value||0);setMarksScheme(e,m,h);audit('marks.configure',{easy:e,medium:m,hard:h});toast('Marks scheme saved \u00b7 Easy '+e+' / Medium '+m+' / Hard '+h,'ok');}
+function saveMarks(){if(session.role!=='itadmin'&&session.role!=='instadmin')return;var e=Math.max(0,+($('#mk_easy')||{}).value||0),m=Math.max(0,+($('#mk_medium')||{}).value||0),h=Math.max(0,+($('#mk_hard')||{}).value||0);setMarksScheme(e,m,h);audit('marks.configure',{easy:e,medium:m,hard:h});toast('Marks scheme saved \u00b7 Easy '+e+' / Medium '+m+' / Hard '+h,'ok');}
 
 /* DEVICE APPROVALS (Admin) */
 RENDER.devices=()=>{if(session.role!=='instadmin'&&session.role!=='itadmin'){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only the Commissioner or Management Executive can review device approvals.</div>';return;}
@@ -3053,6 +3054,836 @@ async function quickLogin(){
   const mfa=$('#step-mfa');
   if(mfa&&mfa.style.display==='block'){[0,1,2,3,4,5].forEach((d,i)=>{const el=$('#mfa'+i);if(el)el.value='123456'[i];});verifyMfa();}
 }
+/* =========================================================
+   DYNAMIC ROLE-BASED TASK ASSIGNMENT  (config-driven, no code changes)
+   Tables: taskdefs (Task Master) · taskroles (custom Role Master) · taskitems (work queue)
+========================================================= */
+try{['taskdefs','taskroles','taskitems'].forEach(function(t){if(TABLES.indexOf(t)<0)TABLES.push(t);});}catch(e){}
+try{['sysadmin','itadmin'].forEach(function(r){if(PERMS[r]&&PERMS[r].indexOf('task.manage')<0)PERMS[r].push('task.manage');});}catch(e){}
+(function(){function ins(role,beforeId,entry){var a=NAV[role];if(!a)return;if(a.some(function(x){return x[0]===entry[0];}))return;var i=a.findIndex(function(x){return x[0]===beforeId;});if(i<0)i=a.length;a.splice(i,0,entry);}
+  try{ins('sysadmin','audit',['tasks','Task Assignments','ti-checklist']);ins('itadmin','audit',['tasks','Task Assignments','ti-checklist']);
+  Object.keys(NAV).forEach(function(r){if(r==='sysadmin')return;if(!NAV[r].some(function(x){return x[0]==='mytasks';}))NAV[r].push(['mytasks','My Tasks','ti-inbox']);});}catch(e){}
+})();
+try{var _tamS=document.createElement('style');_tamS.textContent='.tam-tbl{width:100%;border-collapse:collapse;font-size:13px}.tam-tbl th{padding:9px 10px;text-align:left;color:var(--ink-3);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--line);white-space:nowrap}.tam-tbl td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}.tam-tbl tbody tr:hover td{background:var(--surface-2)}.tam-rolebox{cursor:pointer;user-select:none}.tam-rolebox input{width:auto;margin-right:6px}';document.head.appendChild(_tamS);}catch(e){}
+
+var TAM_CATS=['Approvals','Content','Assessment','Administration','Reports','Other'];
+var TAM_ACTIONS=['CREATE','REVIEW','APPROVE','ESCALATE'];
+var TAM_ASSIGN=[['direct','Direct role'],['department','Department-based'],['user','User-specific'],['workflow','Workflow-based']];
+var TAM={draft:null};
+
+function tamRoles(){var out={};Object.keys(ROLES).forEach(function(k){out[k]={name:ROLES[k].name,color:ROLES[k].color,builtin:true};});(DB.taskroles||[]).forEach(function(r){out[r.key]={name:r.name,color:r.color||'#6C5CE7',custom:true,id:r.id};});return out;}
+function tamRoleLabel(k){var r=tamRoles()[k];return r?r.name:(k||'—');}
+function tamRoleColor(k){var r=tamRoles()[k];return r?r.color:'#8a8a99';}
+function tamRoleChip(k){var c=tamRoleColor(k);return '<span class="badge" style="background:'+c+'1a;color:'+c+';border:1px solid '+c+'40">'+escAttr(tamRoleLabel(k))+'</span>';}
+function tamRoleChips(keys){keys=keys||[];return keys.length?keys.map(tamRoleChip).join(' '):'<span class="tiny muted">—</span>';}
+function tamAssignLabel(t){return (TAM_ASSIGN.find(function(x){return x[0]===t;})||['','—'])[1];}
+
+function tamSeed(){var ch=false;DB.taskdefs=DB.taskdefs||[];DB.taskroles=DB.taskroles||[];DB.taskitems=DB.taskitems||[];
+  if(!DB.taskroles.length){DB.taskroles=[
+    {id:uid('tr'),key:'devicemgr',name:'Device Manager',color:'#0F9D8C',desc:'Approves device registrations.'},
+    {id:uid('tr'),key:'academic',name:'Academic Manager',color:'#8E44AD',desc:'Approves academic question papers.'}];ch=true;}
+  if(!DB.taskdefs.length){var n=Date.now();DB.taskdefs=[
+    {id:uid('tk'),code:'DEVICE_APPROVAL',name:'Device Approval',category:'Approvals',assignType:'direct',assignedRoles:['devicemgr'],approvalRoles:['instadmin'],escalationRoles:['itadmin'],assignedUsers:[],dept:'',sla:24,status:'active',workflow:[],ts:n},
+    {id:uid('tk'),code:'TRANSLATION_APPROVAL',name:'Translation Approval',category:'Content',assignType:'direct',assignedRoles:['translator'],approvalRoles:['transverifier'],escalationRoles:['itadmin'],assignedUsers:[],dept:'',sla:48,status:'active',workflow:[],ts:n},
+    {id:uid('tk'),code:'USER_CREATION',name:'User Creation',category:'Administration',assignType:'direct',assignedRoles:['sysadmin'],approvalRoles:[],escalationRoles:[],assignedUsers:[],dept:'',sla:12,status:'active',workflow:[],ts:n},
+    {id:uid('tk'),code:'QP_CREATION',name:'QP Creation',category:'Assessment',assignType:'workflow',assignedRoles:['publisher'],approvalRoles:['academic'],escalationRoles:['itadmin'],assignedUsers:[],dept:'',sla:72,status:'active',workflow:[{order:1,name:'Create',role:'publisher',action:'CREATE'},{order:2,name:'Verify',role:'qpverifier',action:'REVIEW'},{order:3,name:'Approve',role:'academic',action:'APPROVE'}],ts:n},
+    {id:uid('tk'),code:'CONTENT_REVIEW',name:'Content Review',category:'Content',assignType:'direct',assignedRoles:['reviewer'],approvalRoles:[],escalationRoles:['itadmin'],assignedUsers:[],dept:'',sla:36,status:'active',workflow:[],ts:n},
+    {id:uid('tk'),code:'REPORT_APPROVAL',name:'Report Approval',category:'Reports',assignType:'direct',assignedRoles:['itadmin'],approvalRoles:['instadmin'],escalationRoles:[],assignedUsers:[],dept:'',sla:24,status:'active',workflow:[],ts:n}];ch=true;}
+  if(!DB.taskitems.length){var t0=Date.now();function it(code,ref,role,hrs){var t=DB.taskdefs.find(function(x){return x.code===code;});if(!t)return null;return {id:uid('ti'),taskId:t.id,ref:ref,status:'pending',currentRole:role,step:(t.workflow&&t.workflow.length?1:0),userId:'',dueAt:t0+hrs*3600000,createdTs:t0,history:[]};}
+    DB.taskitems=[it('QP_CREATION','Physics — QP Set 3',(DB.taskdefs.find(function(x){return x.code==='QP_CREATION';}).workflow[0].role),70),
+      it('TRANSLATION_APPROVAL','Biology Ch.4 — English→Marathi','translator',5),
+      it('CONTENT_REVIEW','Chemistry — Mole Concept (28 Qs)','reviewer',-3),
+      it('DEVICE_APPROVAL','DESKTOP-AX12 · Mrs Ashwani Munde','devicemgr',20)].filter(Boolean);ch=true;}
+  if(ch)persist();
+}
+
+/* ---- Task Master configuration screen (admin) ---- */
+RENDER.tasks=function(){
+  if(!guard('task.manage')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>You do not have permission to manage tasks.</div>';return;}
+  tamSeed();
+  try{$('#pageTitle').firstChild.textContent='Task Assignments';$('#pageSub').textContent='Define tasks, map roles & approval workflows — changes apply instantly, no code';}catch(e){}
+  var rows=(DB.taskdefs||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);}).map(function(t){
+    var st=t.status==='active'?'<span class="badge bg-teal">active</span>':t.status==='draft'?'<span class="badge bg-amber">draft</span>':'<span class="chip">inactive</span>';
+    return '<tr>'+
+      '<td><div class="fw6">'+escAttr(t.name)+'</div><div class="tiny muted">'+escAttr(t.code)+'</div></td>'+
+      '<td><span class="chip">'+escAttr(t.category||'—')+'</span></td>'+
+      '<td><span class="badge bg-violet">'+tamAssignLabel(t.assignType)+'</span>'+(t.assignType==='workflow'?(' <span class="tiny muted">'+((t.workflow||[]).length)+' steps</span>'):'')+'</td>'+
+      '<td>'+tamRoleChips(t.assignedRoles)+'</td>'+
+      '<td>'+tamRoleChips(t.approvalRoles)+'</td>'+
+      '<td>'+tamRoleChips(t.escalationRoles)+'</td>'+
+      '<td class="tiny">'+(t.sla?(t.sla+'h'):'—')+'</td>'+
+      '<td>'+st+'</td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn sm ghost" title="Edit" onclick="tamEdit(\''+t.id+'\')"><i class="ti ti-edit"></i></button>'+
+        '<button class="btn sm ghost" title="Change owner role" onclick="tamOwner(\''+t.id+'\')"><i class="ti ti-arrows-exchange"></i></button>'+
+        '<button class="btn sm ghost" title="Toggle active" onclick="tamToggle(\''+t.id+'\')"><i class="ti ti-power"></i></button>'+
+        '<button class="btn sm ghost" title="Delete" onclick="tamDel(\''+t.id+'\')"><i class="ti ti-trash"></i></button>'+
+      '</td></tr>';
+  }).join('');
+  $('#content').innerHTML=
+    '<div class="flex between center" style="margin-bottom:14px">'+
+      '<div class="flex gap8"><button class="btn pri" onclick="tamEdit(\'\')"><i class="ti ti-plus"></i> New Task</button>'+
+      '<button class="btn ghost" onclick="tamManageRoles()"><i class="ti ti-shield-cog"></i> Role Master</button></div>'+
+      '<span class="tiny muted">'+(DB.taskdefs||[]).length+' tasks configured</span>'+
+    '</div>'+
+    '<div class="card" style="padding:0;overflow:auto">'+
+      '<table class="tam-tbl"><thead><tr>'+
+        '<th>Task</th><th>Category</th><th>Assignment</th><th>Assigned Role(s)</th><th>Approval Role(s)</th><th>Escalation</th><th>SLA</th><th>Status</th><th>Actions</th>'+
+      '</tr></thead><tbody>'+(rows||'<tr><td colspan="9" class="muted" style="padding:18px">No tasks yet — click <b>New Task</b>.</td></tr>')+'</tbody></table>'+
+    '</div>';
+};
+
+function tamNewDraft(){return {id:'',code:'',name:'',category:'Approvals',assignType:'direct',assignedRoles:[],approvalRoles:[],escalationRoles:[],assignedUsers:[],dept:'',sla:24,status:'active',workflow:[]};}
+function tamEdit(id){tamSeed();var t=id?(DB.taskdefs||[]).find(function(x){return x.id===id;}):null;TAM.draft=t?JSON.parse(JSON.stringify(t)):tamNewDraft();tamForm();}
+function tamCapture(){var d=TAM.draft;if(!d)return;function v(id){var e=document.getElementById(id);return e?e.value:'';}
+  d.name=v('tk_name').trim();d.code=v('tk_code').trim();d.category=v('tk_cat').trim();d.assignType=v('tk_atype');d.sla=Number(v('tk_sla'))||0;d.status=v('tk_status');d.dept=v('tk_dept');
+  function chk(g){var a=[];document.querySelectorAll('input[data-grp="'+g+'"]:checked').forEach(function(c){a.push(c.value);});return a;}
+  d.assignedRoles=chk('ar');d.approvalRoles=chk('pr');d.escalationRoles=chk('er');
+}
+function tamForm(){var d=TAM.draft;var roles=tamRoles();
+  function boxes(g,sel){return Object.keys(roles).map(function(k){var on=sel.indexOf(k)>=0,c=roles[k].color;return '<label class="chip tam-rolebox" style="'+(on?'background:'+c+'1a;border-color:'+c+';color:'+c:'')+'"><input type="checkbox" data-grp="'+g+'" value="'+k+'" '+(on?'checked':'')+'>'+escAttr(roles[k].name)+'</label>';}).join(' ');}
+  var cats=TAM_CATS.map(function(c){return '<option '+(d.category===c?'selected':'')+'>'+c+'</option>';}).join('');
+  var atypes=TAM_ASSIGN.map(function(a){return '<option value="'+a[0]+'" '+(d.assignType===a[0]?'selected':'')+'>'+a[1]+'</option>';}).join('');
+  var sts=['active','inactive','draft'].map(function(s){return '<option '+(d.status===s?'selected':'')+'>'+s+'</option>';}).join('');
+  var roleOpts=Object.keys(roles).map(function(k){return '<option value="'+k+'">'+escAttr(roles[k].name)+'</option>';}).join('');
+  var wfRows=(d.workflow||[]).map(function(s,i){return '<div class="flex center gap8" style="margin-bottom:6px"><span class="chip">'+(i+1)+'</span><span class="fw6 small" style="min-width:90px">'+escAttr(s.name||s.action)+'</span><span class="small">'+tamRoleChip(s.role)+' <span class="tiny muted">'+s.action+'</span></span><button class="btn sm ghost" style="margin-left:auto" onclick="tamWfDel('+i+')"><i class="ti ti-x"></i></button></div>';}).join('')||'<div class="tiny muted">No steps yet — add the approval chain below.</div>';
+  var wfBlock=d.assignType==='workflow'?('<div class="card" style="padding:13px;margin-top:12px"><div class="fw6 small" style="margin-bottom:9px"><i class="ti ti-route"></i> Approval Workflow (ordered steps)</div>'+wfRows+
+    '<div class="flex center gap8 wrap" style="margin-top:10px"><input id="wf_name" placeholder="Step name e.g. Review" style="width:160px"><select id="wf_role" style="width:170px">'+roleOpts+'</select><select id="wf_act" style="width:130px">'+TAM_ACTIONS.map(function(a){return '<option>'+a+'</option>';}).join('')+'</select><button class="btn sm" onclick="tamWfAdd()"><i class="ti ti-plus"></i> Add step</button></div></div>'):'';
+  var deptBlock=d.assignType==='department'?('<div class="field" style="margin-top:12px"><label class="fl">Department(s) <span class="tiny muted">comma-separated</span></label><input id="tk_dept" value="'+escAttr(d.dept||'')+'" placeholder="e.g. Physics, Chemistry"></div>'):'<input type="hidden" id="tk_dept" value="'+escAttr(d.dept||'')+'">';
+  modal('<div class="modal-h"><h3>'+(d.id?'Edit Task':'New Task')+'</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'+
+    '<div class="modal-b">'+
+      '<div class="grid g2">'+
+        '<div class="field"><label class="fl">Task Name</label><input id="tk_name" value="'+escAttr(d.name)+'" placeholder="e.g. Device Approval"></div>'+
+        '<div class="field"><label class="fl">Task Code <span class="tiny muted">(auto if blank)</span></label><input id="tk_code" value="'+escAttr(d.code)+'" placeholder="DEVICE_APPROVAL"></div>'+
+        '<div class="field"><label class="fl">Task Category</label><select id="tk_cat">'+cats+'</select></div>'+
+        '<div class="field"><label class="fl">Assignment Type</label><select id="tk_atype" onchange="tamCapture();tamForm()">'+atypes+'</select></div>'+
+        '<div class="field"><label class="fl">SLA / Deadline (hours)</label><input id="tk_sla" type="number" min="0" value="'+(d.sla||0)+'"></div>'+
+        '<div class="field"><label class="fl">Status</label><select id="tk_status">'+sts+'</select></div>'+
+      '</div>'+deptBlock+
+      '<div class="field" style="margin-top:6px"><label class="fl">Assigned Role(s)</label><div class="flex gap8 wrap">'+boxes('ar',d.assignedRoles)+'</div></div>'+
+      '<div class="field"><label class="fl">Approval Role(s)</label><div class="flex gap8 wrap">'+boxes('pr',d.approvalRoles)+'</div></div>'+
+      '<div class="field"><label class="fl">Escalation Role(s)</label><div class="flex gap8 wrap">'+boxes('er',d.escalationRoles)+'</div></div>'+
+      wfBlock+
+    '</div>'+
+    '<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="tamSave()"><i class="ti ti-check"></i> Save Task</button></div>');
+}
+function tamWfAdd(){tamCapture();var d=TAM.draft;d.workflow=d.workflow||[];var nm=(document.getElementById('wf_name')||{}).value||'';var role=(document.getElementById('wf_role')||{}).value;var act=(document.getElementById('wf_act')||{}).value;if(!role){toast('Pick a role for the step','warn');return;}d.workflow.push({order:d.workflow.length+1,name:nm||act,role:role,action:act});tamForm();}
+function tamWfDel(i){tamCapture();TAM.draft.workflow.splice(i,1);TAM.draft.workflow.forEach(function(s,k){s.order=k+1;});tamForm();}
+function tamSave(){tamCapture();var d=TAM.draft;if(!d.name){toast('Task name is required','warn');return;}
+  if(!d.code)d.code=d.name.toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,'');
+  if(d.assignType==='workflow'&&(!d.workflow||!d.workflow.length)){toast('Workflow assignment needs at least one step','warn');return;}
+  DB.taskdefs=DB.taskdefs||[];
+  if(d.id){var i=DB.taskdefs.findIndex(function(x){return x.id===d.id;});if(i>=0)DB.taskdefs[i]=d;else DB.taskdefs.push(d);}
+  else{d.id=uid('tk');d.ts=Date.now();DB.taskdefs.push(d);}
+  persist();audit('task.save',{code:d.code});closeModal();toast('Task saved','ok');go('tasks');
+}
+function tamDel(id){var t=(DB.taskdefs||[]).find(function(x){return x.id===id;});if(!t)return;if(typeof confirm==='function'&&!confirm('Delete task "'+t.name+'"? Its work items will also be removed.'))return;DB.taskdefs=DB.taskdefs.filter(function(x){return x.id!==id;});DB.taskitems=(DB.taskitems||[]).filter(function(x){return x.taskId!==id;});persist();audit('task.delete',{code:t.code});toast('Task deleted','ok');go('tasks');}
+function tamToggle(id){var t=(DB.taskdefs||[]).find(function(x){return x.id===id;});if(!t)return;t.status=t.status==='active'?'inactive':'active';persist();audit('task.status',{code:t.code,status:t.status});go('tasks');}
+
+/* ---- change ownership dynamically ---- */
+function tamOwner(id){var t=(DB.taskdefs||[]).find(function(x){return x.id===id;});if(!t)return;var roles=tamRoles();var opts=Object.keys(roles).map(function(k){return '<option value="'+k+'">'+escAttr(roles[k].name)+'</option>';}).join('');
+  modal('<div class="modal-h"><h3>Change Ownership — '+escAttr(t.name)+'</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'+
+    '<div class="modal-b"><p class="small" style="margin-bottom:10px">Current owner role(s): '+tamRoleChips(t.assignedRoles)+'</p>'+
+    '<div class="field"><label class="fl">Transfer to role</label><select id="own_to">'+opts+'</select></div>'+
+    '<label class="checkline"><input type="checkbox" id="own_keep"> Keep existing role(s) as owners too</label></div>'+
+    '<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="tamOwnerSave(\''+id+'\')"><i class="ti ti-arrows-exchange"></i> Reassign</button></div>');
+}
+function tamOwnerSave(id){var t=(DB.taskdefs||[]).find(function(x){return x.id===id;});if(!t)return;var to=(document.getElementById('own_to')||{}).value;var keep=(document.getElementById('own_keep')||{}).checked;var prev=(t.assignedRoles||[]).slice();t.assignedRoles=keep?Array.from(new Set(prev.concat([to]))):[to];persist();audit('task.reassign',{code:t.code,from:prev,to:t.assignedRoles});closeModal();toast('Ownership reassigned to '+tamRoleLabel(to),'ok');go('tasks');}
+
+/* ---- Role Master (custom roles) ---- */
+function tamManageRoles(){tamSeed();var roles=tamRoles();var list=Object.keys(roles).map(function(k){var r=roles[k];return '<div class="flex center gap8" style="padding:8px 0;border-top:1px solid var(--line)"><span style="width:11px;height:11px;border-radius:50%;background:'+r.color+';display:inline-block;flex-shrink:0"></span><span class="fw6 small">'+escAttr(r.name)+'</span><span class="tiny muted">'+k+'</span>'+(r.builtin?'<span class="chip" style="margin-left:auto">built-in</span>':'<button class="btn sm ghost" style="margin-left:auto" title="Remove" onclick="tamRoleDel(\''+r.id+'\')"><i class="ti ti-trash"></i></button>')+'</div>';}).join('');
+  modal('<div class="modal-h"><h3>Role Master</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'+
+    '<div class="modal-b"><p class="small muted" style="margin-bottom:6px">Built-in roles come from the platform. Add custom roles to map onto tasks.</p>'+list+
+    '<div class="flex center gap8 wrap" style="margin-top:14px"><input id="nr_name" placeholder="New role name" style="flex:1;min-width:160px"><input id="nr_color" type="color" value="#6C5CE7" style="width:46px;padding:3px"><button class="btn pri" onclick="tamRoleAdd()"><i class="ti ti-plus"></i> Add Role</button></div></div>'+
+    '<div class="modal-f"><button class="btn pri" onclick="closeModal()">Done</button></div>');
+}
+function tamRoleAdd(){var nm=((document.getElementById('nr_name')||{}).value||'').trim();if(!nm){toast('Enter a role name','warn');return;}var col=(document.getElementById('nr_color')||{}).value||'#6C5CE7';var key=nm.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,18)||('role'+Math.random().toString(36).slice(2,6));DB.taskroles=DB.taskroles||[];if(tamRoles()[key])key=key+(DB.taskroles.length+1);DB.taskroles.push({id:uid('tr'),key:key,name:nm,color:col,desc:''});persist();audit('role.create',{key:key,name:nm});tamManageRoles();toast('Role added','ok');}
+function tamRoleDel(id){DB.taskroles=(DB.taskroles||[]).filter(function(x){return x.id!==id;});persist();audit('role.delete',{id:id});tamManageRoles();}
+
+/* ---- My Tasks inbox (RBAC: only your role's items) ---- */
+RENDER.mytasks=function(){tamSeed();
+  try{$('#pageTitle').firstChild.textContent='My Tasks';$('#pageSub').textContent='Work items routed to your role';}catch(e){}
+  var u=currentUser();var myRole=session?session.role:'';var now=Date.now();
+  var defs={};(DB.taskdefs||[]).forEach(function(t){defs[t.id]=t;});
+  var mine=(DB.taskitems||[]).filter(function(it){var t=defs[it.taskId];if(!t||t.status!=='active')return false;if(it.userId&&u&&it.userId===u.id)return true;return it.currentRole===myRole;});
+  mine.sort(function(a,b){return (a.dueAt||0)-(b.dueAt||0);});
+  var own=(DB.taskdefs||[]).filter(function(t){return t.status==='active'&&(((t.assignedRoles||[]).indexOf(myRole)>=0)||((t.approvalRoles||[]).indexOf(myRole)>=0));});
+  function card(it){var t=defs[it.taskId];var overdue=it.status==='pending'&&it.dueAt&&it.dueAt<now;
+    var stb=it.status==='approved'?'bg-teal':it.status==='rejected'?'bg-coral':overdue?'bg-coral':'bg-amber';
+    var stl=overdue&&it.status==='pending'?'overdue':it.status;
+    var stepInfo=(t.assignType==='workflow'&&t.workflow&&t.workflow.length)?('Step '+it.step+' / '+t.workflow.length+' · '+((t.workflow[it.step-1]||{}).name||'')):'';
+    var esc=(overdue&&t.escalationRoles&&t.escalationRoles.length)?('<span style="color:var(--coral-ink)"><i class="ti ti-arrow-up-right"></i> Escalates to '+escAttr(tamRoleLabel(t.escalationRoles[0]))+'</span>'):'';
+    return '<div class="card" style="margin-bottom:10px;padding:14px">'+
+      '<div class="flex between center" style="margin-bottom:6px"><div class="flex center gap8"><span class="fw6">'+escAttr(t.name)+'</span><span class="chip">'+escAttr(t.category||'')+'</span></div><span class="badge '+stb+'">'+stl+'</span></div>'+
+      '<div class="small" style="margin-bottom:9px">'+escAttr(it.ref||'')+'</div>'+
+      '<div class="flex center gap12 wrap tiny muted" style="margin-bottom:'+(it.status==='pending'?'11px':'0')+'">'+(stepInfo?('<span><i class="ti ti-route"></i> '+stepInfo+'</span>'):'')+(it.dueAt?('<span><i class="ti ti-clock"></i> '+tamDue(it.dueAt)+'</span>'):'')+esc+'</div>'+
+      (it.status==='pending'?('<div class="flex gap8"><button class="btn ok sm" onclick="tamAct(\''+it.id+'\',\'approve\')"><i class="ti ti-check"></i> Approve</button><button class="btn danger sm" onclick="tamAct(\''+it.id+'\',\'reject\')"><i class="ti ti-x"></i> Reject</button></div>'):'')+
+    '</div>';
+  }
+  var inbox=mine.length?mine.map(card).join(''):'<div class="empty"><i class="ti ti-inbox"></i>No work items are routed to your role right now.</div>';
+  var ownHtml=own.map(function(t){return '<div class="flex between center" style="padding:8px 0;border-top:1px solid var(--line)"><div class="flex center gap8"><span class="fw6 small">'+escAttr(t.name)+'</span><span class="chip">'+escAttr(t.category||'')+'</span></div><div class="flex gap8">'+(((t.assignedRoles||[]).indexOf(myRole)>=0)?'<span class="badge bg-violet">Owner</span>':'')+(((t.approvalRoles||[]).indexOf(myRole)>=0)?'<span class="badge bg-teal">Approver</span>':'')+'</div></div>';}).join('')||'<div class="tiny muted" style="padding:8px 0">No task types are assigned to your role.</div>';
+  $('#content').innerHTML=
+    '<div class="card" style="margin-bottom:14px;padding:13px"><div class="fw6 small" style="margin-bottom:4px"><i class="ti ti-id-badge-2"></i> Signed in as '+tamRoleChip(myRole)+'</div><div class="tiny muted">RBAC: you only see tasks routed to your role'+(u?' or assigned to you personally':'')+'.</div></div>'+
+    '<div class="fw7" style="margin:4px 0 9px"><i class="ti ti-inbox"></i> Work Queue <span class="tiny muted">('+mine.filter(function(x){return x.status==='pending';}).length+' pending)</span></div>'+inbox+
+    '<div class="fw7" style="margin:20px 0 9px"><i class="ti ti-checklist"></i> Task types you own</div><div class="card" style="padding:4px 14px">'+ownHtml+'</div>';
+};
+function tamDue(ts){var diff=ts-Date.now(),past=diff<0;diff=Math.abs(diff);var h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000);var s=h>=24?(Math.floor(h/24)+'d '+(h%24)+'h'):(h+'h '+m+'m');return past?('overdue by '+s):('due in '+s);}
+function tamAct(id,act){var it=(DB.taskitems||[]).find(function(x){return x.id===id;});if(!it)return;var t=(DB.taskdefs||[]).find(function(x){return x.id===it.taskId;});var u=currentUser();
+  it.history=it.history||[];it.history.push({by:u?u.name:'-',role:session?session.role:'-',act:act,ts:Date.now()});
+  if(act==='reject'){it.status='rejected';audit('taskitem.reject',{task:t&&t.code,ref:it.ref});}
+  else{if(t&&t.assignType==='workflow'&&t.workflow&&t.workflow.length&&it.step<t.workflow.length){it.step++;it.currentRole=(t.workflow[it.step-1]||{}).role;it.status='pending';}else{it.status='approved';}audit('taskitem.approve',{task:t&&t.code,ref:it.ref});}
+  persist();go('mytasks');toast(act==='approve'?'Approved':'Rejected',act==='approve'?'ok':'warn');
+}
+
+/* =========================================================
+   ENHANCEMENTS: Multi-user Workload Assignments (Exam/Subject/Topic + per-user targets),
+   Progress reporting, My Workload, and QP Publisher "Create Set from Unused Questions".
+   Table: assignments. Reuses existing q.used / q.author / q.reviewedBy.
+========================================================= */
+try{if(TABLES.indexOf('assignments')<0)TABLES.push('assignments');}catch(e){}
+(function(){function add(role,beforeId,entry){var a=NAV[role];if(!a||a.some(function(x){return x[0]===entry[0];}))return;var i=beforeId?a.findIndex(function(x){return x[0]===beforeId;}):-1;if(i<0)i=a.length;a.splice(i,0,entry);}
+  try{['itadmin','projadmin'].forEach(function(r){add(r,'audit',['workload','Workload','ti-target-arrow']);add(r,'audit',['progress','Progress','ti-chart-bar']);});
+  ['creator','reviewer','translator','transverifier'].forEach(function(r){add(r,null,['myload','My Workload','ti-target']);});}catch(e){}
+})();
+
+var WL_ROLES=[['creator','Creator','ti-pencil-plus'],['reviewer','Verifier','ti-checkup-list'],['translator','Translator','ti-language'],['transverifier','Translation Verifier','ti-checks']];
+function wlRoleName(r){var x=WL_ROLES.find(function(z){return z[0]===r;});return x?x[1]:r;}
+var WL={scope:'subject',examId:'',subjectId:'',topic:'',role:'creator'};
+function wlAsg(){DB.assignments=DB.assignments||[];return DB.assignments;}
+function wlMember(teamId){return (state.team||[]).find(function(t){return t.id===teamId;})||(DB.team||[]).find(function(t){return t.id===teamId;});}
+function wlSeed(){DB.assignments=DB.assignments||[];if(DB.assignments.length)return;var made=false;(DB.team||[]).forEach(function(t){if(['creator','reviewer','translator','transverifier'].indexOf(t.role)<0)return;var bid=(t.banks||[])[0];if(!bid)return;var b=(DB.banks||[]).find(function(x){return x.id===bid;});if(!b)return;DB.assignments.push({id:uid('as'),scopeLevel:'subject',examId:b.project,subjectId:bid,topic:'',role:t.role,teamId:t.id,target:30,status:'active',ts:Date.now(),createdBy:''});made=true;});if(made)persist();}
+
+function wlScopeQs(a){var qs=state.questions||[];
+  if(a.scopeLevel==='exam'){var bids=(state.banks||[]).filter(function(b){return b.project===a.examId;}).map(function(b){return b.id;});return qs.filter(function(q){return bids.indexOf(q.bank)>=0;});}
+  if(a.scopeLevel==='subject')return qs.filter(function(q){return q.bank===a.subjectId;});
+  return qs.filter(function(q){return q.bank===a.subjectId&&(q.topic||'')===a.topic;});}
+function wlCompleted(a){var m=wlMember(a.teamId);if(!m)return 0;var name=m.name;var qs=wlScopeQs(a);
+  if(a.role==='creator')return qs.filter(function(q){return q.author===name;}).length;
+  if(a.role==='reviewer')return qs.filter(function(q){return q.status==='verified'&&(q.reviewedBy||[]).some(function(r){return r.by===name||r.byId===m.user_id;});}).length;
+  /* translations carry no per-user field -> team-level translated count in scope */
+  return qs.filter(function(q){return q.status==='verified'&&Object.keys(q.translations||{}).length>0;}).length;}
+function wlScopeShort(a){if(a.scopeLevel==='exam')return 'Whole exam';if(a.scopeLevel==='subject')return (bankById(a.subjectId)||{}).name||'Subject';return ((bankById(a.subjectId)||{}).name||'')+' › '+a.topic;}
+function wlNodeLabel(){var ex=(projectById(WL.examId)||{}).name||'';if(WL.scope==='exam')return ex+' (whole exam)';var sb=(bankById(WL.subjectId)||{}).name||'';if(WL.scope==='subject')return ex+' › '+sb;return ex+' › '+sb+' › '+(WL.topic||'');}
+
+RENDER.workload=function(){
+  if(!guard('team.manage')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>You do not have permission to assign workload.</div>';return;}
+  wlSeed();try{$('#pageTitle').firstChild.textContent='Workload Assignments';$('#pageSub').textContent='Assign multiple users with per-user targets at Exam, Subject or Topic level';}catch(e){}
+  var exams=state.projects||[];if(!exams.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams yet.</div>';return;}
+  if(!WL.examId||!exams.some(function(e){return e.id===WL.examId;}))WL.examId=exams[0].id;
+  var subs=(state.banks||[]).filter(function(b){return b.project===WL.examId;});
+  if(WL.scope!=='exam'&&(!WL.subjectId||!subs.some(function(b){return b.id===WL.subjectId;})))WL.subjectId=subs.length?subs[0].id:'';
+  var topics=WL.scope==='topic'?(((bankById(WL.subjectId)||{}).topics)||[]):[];
+  if(WL.scope==='topic'&&(!WL.topic||topics.indexOf(WL.topic)<0))WL.topic=topics.length?topics[0]:'';
+  var scopeBtns=[['exam','Exam'],['subject','Subject'],['topic','Topic']].map(function(s){return '<button class="btn '+(WL.scope===s[0]?'pri ':'')+'sm" onclick="wlSetScope(\''+s[0]+'\')">'+s[1]+'</button>';}).join(' ');
+  var examSel='<select onchange="WL.examId=this.value;WL.subjectId=\'\';WL.topic=\'\';go(\'workload\')">'+exams.map(function(e){return '<option value="'+e.id+'" '+(WL.examId===e.id?'selected':'')+'>'+escAttr(e.name)+'</option>';}).join('')+'</select>';
+  var subSel=WL.scope!=='exam'?('<select onchange="WL.subjectId=this.value;WL.topic=\'\';go(\'workload\')">'+(subs.length?subs.map(function(b){return '<option value="'+b.id+'" '+(WL.subjectId===b.id?'selected':'')+'>'+escAttr(b.name)+'</option>';}).join(''):'<option>—</option>')+'</select>'):'';
+  var topSel=WL.scope==='topic'?('<select onchange="WL.topic=this.value;go(\'workload\')">'+(topics.length?topics.map(function(t){return '<option value="'+escAttr(t)+'" '+(WL.topic===t?'selected':'')+'>'+escAttr(t)+'</option>';}).join(''):'<option>— no topics —</option>')+'</select>'):'';
+  var roleTabs=WL_ROLES.map(function(r){return '<button class="btn '+(WL.role===r[0]?'pri ':'')+'sm" onclick="WL.role=\''+r[0]+'\';go(\'workload\')"><i class="ti '+r[2]+'"></i> '+r[1]+'</button>';}).join(' ');
+  var members=(state.team||[]).filter(function(t){return t.role===WL.role;});
+  var rows=members.map(function(m){var ex=wlAsg().find(function(a){return a.role===WL.role&&a.scopeLevel===WL.scope&&a.examId===WL.examId&&(WL.scope==='exam'||a.subjectId===WL.subjectId)&&(WL.scope!=='topic'||a.topic===WL.topic)&&a.teamId===m.id;});var done=ex?wlCompleted(ex):0;
+    return '<div class="wl-mrow flex center gap8" data-tid="'+m.id+'" style="padding:9px 0;border-top:1px solid var(--line)">'+
+      '<label class="checkline" style="margin:0;flex:1"><input type="checkbox" class="wl-on" '+(ex?'checked':'')+'> <span class="fw6 small">'+escAttr(m.name)+'</span> <span class="tiny muted">'+escAttr(m.email||'')+'</span></label>'+
+      (ex?('<span class="tiny muted">done '+done+'</span>'):'')+
+      '<span class="tiny muted">Target</span><input type="number" min="0" class="wl-tgt" value="'+(ex?ex.target:0)+'" style="width:84px">'+
+    '</div>';}).join('')||'<div class="tiny muted" style="padding:12px 0">No team members hold the '+wlRoleName(WL.role)+' role yet. Add them in Team &amp; Assignments.</div>';
+  $('#content').innerHTML=
+    '<div class="card" style="margin-bottom:14px"><div><div class="tiny muted" style="margin-bottom:5px">Assignment scope</div><div class="flex gap8">'+scopeBtns+'</div></div>'+
+      '<div class="flex center gap8 wrap" style="margin-top:13px"><span class="tiny muted">Exam</span>'+examSel+(subSel?('<span class="tiny muted">Subject</span>'+subSel):'')+(topSel?('<span class="tiny muted">Topic</span>'+topSel):'')+'</div></div>'+
+    '<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-users"></i> '+wlRoleName(WL.role)+'(s)</span></div>'+
+      '<div class="flex gap8 wrap" style="margin-bottom:12px">'+roleTabs+'</div>'+
+      '<p class="small muted" style="margin:0 0 4px">Tick each user to assign them to <b>'+escAttr(wlNodeLabel())+'</b> and set their question target. Multiple users per role are supported.</p>'+rows+
+      '<div class="flex between center" style="margin-top:14px"><span class="tiny muted">Assigning at <b>'+WL.scope+'</b> level</span><button class="btn pri" onclick="wlSave()"><i class="ti ti-check"></i> Save Workload</button></div></div>';
+};
+function wlSetScope(s){WL.scope=s;go('workload');}
+function wlGrant(teamId,exam,scope,sub){var m=(state.team||[]).find(function(t){return t.id===teamId;});if(!m)return;m.banks=m.banks||[];var add=[];if(scope==='exam'){(state.banks||[]).filter(function(b){return b.project===exam;}).forEach(function(b){add.push(b.id);});}else if(sub){add.push(sub);}add.forEach(function(bid){if(m.banks.indexOf(bid)<0)m.banks.push(bid);});}
+function wlSave(){if(!guard('team.manage'))return;var exam=WL.examId,scope=WL.scope,sub=WL.subjectId,top=WL.topic,role=WL.role;
+  if(!exam)return toast('Select an exam','warn');if(scope!=='exam'&&!sub)return toast('Select a subject','warn');if(scope==='topic'&&!top)return toast('Select a topic','warn');
+  var changed=0;document.querySelectorAll('.wl-mrow').forEach(function(row){var teamId=row.dataset.tid;var on=row.querySelector('.wl-on').checked;var tgt=Math.max(0,+(row.querySelector('.wl-tgt').value)||0);
+    var ex=wlAsg().find(function(a){return a.role===role&&a.scopeLevel===scope&&a.examId===exam&&(scope==='exam'||a.subjectId===sub)&&(scope!=='topic'||a.topic===top)&&a.teamId===teamId;});
+    if(on){if(ex){if(ex.target!==tgt){ex.target=tgt;changed++;}}else{wlAsg().push({id:uid('as'),scopeLevel:scope,examId:exam,subjectId:scope==='exam'?'':sub,topic:scope==='topic'?top:'',role:role,teamId:teamId,target:tgt,status:'active',ts:Date.now(),createdBy:(currentUser()||{}).id});changed++;}wlGrant(teamId,exam,scope,sub);}
+    else if(ex){wlAsg().splice(wlAsg().indexOf(ex),1);changed++;}});
+  persist();save();audit('assignment.save',{exam:exam,scope:scope,role:role,changed:changed});toast('Workload saved'+(changed?(' · '+changed+' change(s)'):''),'ok');go('workload');}
+
+RENDER.progress=function(){
+  if(!guard('team.manage')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Permission denied.</div>';return;}
+  wlSeed();try{$('#pageTitle').firstChild.textContent='Assignment Progress';$('#pageSub').textContent='Workload tracking by user, topic, subject & exam';}catch(e){}
+  var asg=wlAsg().filter(function(a){return a.status==='active';});
+  function sumRole(role){var t=0,d=0;asg.filter(function(a){return a.role===role;}).forEach(function(a){t+=a.target||0;d+=wlCompleted(a);});return {t:t,d:d};}
+  var cr=sumRole('creator'),vr=sumRole('reviewer'),tr=sumRole('translator');var totalAssigned=asg.reduce(function(s,a){return s+(a.target||0);},0);
+  var top='<div class="grid g4" style="margin-bottom:16px">'+stat('Assigned targets',totalAssigned,'ti-target-arrow','#6C5CE7','all roles','')+stat('Created',cr.d,'ti-pencil-plus','#F5A623',cr.t+' target','')+stat('Verified',vr.d,'ti-checkup-list','#FF6B57',vr.t+' target','')+stat('Translated',tr.d,'ti-language','#E84393',tr.t+' target','')+'</div>';
+  var body=(state.projects||[]).map(function(e){var ea=asg.filter(function(a){return a.examId===e.id;});if(!ea.length)return '';
+    var rows=ea.map(function(a){var done=wlCompleted(a),tgt=a.target||0,pct=tgt?Math.min(100,Math.round(done/tgt*100)):0,pend=Math.max(0,tgt-done);
+      return '<tr><td>'+escAttr((wlMember(a.teamId)||{}).name||'—')+'</td><td><span class="chip">'+wlRoleName(a.role)+'</span></td><td class="tiny">'+escAttr(wlScopeShort(a))+'</td><td class="tiny">'+tgt+'</td><td class="tiny">'+done+'</td><td class="tiny">'+pend+'</td><td style="min-width:130px"><div class="cbar"><div style="width:'+pct+'%"></div></div></td></tr>';}).join('');
+    return '<div class="card" style="margin-bottom:14px"><div class="card-h"><span class="ttl"><i class="ti ti-folder"></i> '+escAttr(e.name)+'</span></div><table class="tam-tbl"><thead><tr><th>User</th><th>Role</th><th>Scope</th><th>Target</th><th>Done</th><th>Pending</th><th>Progress</th></tr></thead><tbody>'+rows+'</tbody></table></div>';}).join('')||'<div class="empty"><i class="ti ti-chart-bar"></i>No assignments yet — create them in Workload.</div>';
+  $('#content').innerHTML=top+body;
+};
+RENDER.myload=function(){try{$('#pageTitle').firstChild.textContent='My Workload';$('#pageSub').textContent='Your assigned question targets & progress';}catch(e){}
+  var u=currentUser();var m=(DB.team||[]).find(function(t){return t.user_id===(u||{}).id||((t.email||'').toLowerCase()===((u||{}).email||'').toLowerCase());});
+  var mine=m?wlAsg().filter(function(a){return a.teamId===m.id&&a.status==='active';}):[];
+  if(!mine.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-target"></i>No workload targets assigned to you yet.</div>';return;}
+  var totT=0,totD=0;mine.forEach(function(a){totT+=a.target||0;totD+=wlCompleted(a);});
+  var cards=mine.map(function(a){var done=wlCompleted(a),tgt=a.target||0,pct=tgt?Math.min(100,Math.round(done/tgt*100)):0,pend=Math.max(0,tgt-done);
+    return '<div class="card" style="margin-bottom:10px;padding:14px"><div class="flex between center" style="margin-bottom:7px"><div class="fw6">'+escAttr(wlScopeShort(a))+'</div><span class="chip">'+wlRoleName(a.role)+'</span></div><div class="flex center gap12 small" style="margin-bottom:9px"><span><b>'+done+'</b> done</span><span><b>'+pend+'</b> pending</span><span class="muted">of '+tgt+' target</span></div><div class="cbar"><div style="width:'+pct+'%"></div></div></div>';}).join('');
+  $('#content').innerHTML='<div class="grid g4" style="margin-bottom:16px">'+stat('My target',totT,'ti-target','#6C5CE7','total questions','')+stat('Completed',totD,'ti-checks','#27AE60','so far','')+stat('Pending',Math.max(0,totT-totD),'ti-clock','#F5A623','remaining','')+'</div>'+cards;
+};
+
+/* ---- QP Publisher: Create Set from Unused Questions (Enhancement 6) ---- */
+var UQ={course:'',subject:'',topic:'',diff:'',type:'',count:10,mode:'build'};
+var _wlOrigExport=RENDER.export;
+RENDER.export=function(){_wlOrigExport.apply(this,arguments);try{uqInject('build');}catch(e){}};
+var _wlOrigPublish=RENDER.publish;
+RENDER.publish=function(){_wlOrigPublish.apply(this,arguments);try{uqInject('publish');}catch(e){}};
+function uqInject(mode){
+  if(mode==='build'){if(typeof EXPORT_FILTER!=='undefined'&&EXPORT_FILTER)return;}
+  else{if(typeof PUB_COURSE==='undefined'||!PUB_COURSE)return;if(typeof PUB_FILTER!=='undefined'&&PUB_FILTER)return;}
+  var c=document.getElementById('content');if(!c||document.getElementById('uqBtnBar'))return;
+  var bar=document.createElement('div');bar.id='uqBtnBar';bar.className='actionrow';bar.style.cssText='margin-bottom:12px;background:linear-gradient(150deg,#efedff66,#e3f2fc66);border:1px solid #d8d2ff;border-radius:12px;padding:10px 14px';
+  bar.innerHTML='<div class="fw6 small" style="flex:1"><i class="ti ti-wand" style="color:var(--violet)"></i> Build a paper using only never-used (fresh) questions</div><button class="btn pri sm" onclick="uqModal(\''+mode+'\')"><i class="ti ti-sparkles"></i> Create Set from Unused Questions</button>';
+  c.insertBefore(bar,c.firstChild);
+}
+function uqCtxCourse(mode){return mode==='publish'?(typeof PUB_COURSE!=='undefined'?PUB_COURSE:''):EXPORT.course;}
+function uqPool(){return (state.questions||[]).filter(function(q){return q.bank===UQ.subject&&q.status==='verified'&&!q.used&&(!UQ.topic||(q.topic||'')===UQ.topic)&&(!UQ.diff||q.diff===UQ.diff)&&(!UQ.type||q.type===UQ.type);});}
+function uqModal(mode){mode=mode||'build';
+  if(mode==='publish'){if(!guard('qp.publish'))return;}else{if(!guard('set.build'))return;}
+  var cid=uqCtxCourse(mode);var course=projectById(cid);if(!course)return toast('Open an exam first','warn');
+  if(mode==='build'&&!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
+  var subs=(state.banks||[]).filter(function(b){return b.project===course.id;});if(!subs.length)return toast('No subjects in this exam','warn');
+  UQ={course:course.id,subject:subs[0].id,topic:'',diff:'',type:'',count:10,mode:mode};uqRender();}
+function uqRender(){var course=projectById(UQ.course)||{};var subs=(state.banks||[]).filter(function(b){return b.project===UQ.course;});
+  var subOpts=subs.map(function(b){return '<option value="'+b.id+'" '+(UQ.subject===b.id?'selected':'')+'>'+escAttr(b.name)+'</option>';}).join('');
+  var topics=((bankById(UQ.subject)||{}).topics)||[];var topOpts='<option value="">All topics</option>'+topics.map(function(t){return '<option value="'+escAttr(t)+'" '+(UQ.topic===t?'selected':'')+'>'+escAttr(t)+'</option>';}).join('');
+  var types={};(state.questions||[]).filter(function(q){return q.bank===UQ.subject;}).forEach(function(q){if(q.type)types[q.type]=1;});var typeOpts='<option value="">Any type</option>'+Object.keys(types).map(function(t){return '<option value="'+escAttr(t)+'" '+(UQ.type===t?'selected':'')+'>'+escAttr(String(t).toUpperCase())+'</option>';}).join('');
+  var diffOpts=[['','Any'],['easy','Easy'],['medium','Medium'],['hard','Hard']].map(function(d){return '<option value="'+d[0]+'" '+(UQ.diff===d[0]?'selected':'')+'>'+d[1]+'</option>';}).join('');
+  var pool=uqPool();var by={easy:0,medium:0,hard:0};pool.forEach(function(q){if(by[q.diff]!=null)by[q.diff]++;});var avail=pool.length;var cnt=Math.max(1,UQ.count||1);var ok=avail>=cnt;
+  modal('<div class="modal-h"><h3>Create Set from Unused Questions</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'+
+   '<div class="modal-b"><p class="small muted" style="margin:0 0 12px">Pulls only <b>approved (verified)</b> questions that have <b>never</b> been placed in any set. Picked questions are marked <b>Used</b> and recorded in audit.</p>'+
+    '<div class="grid g2">'+
+      '<div class="field"><label class="fl">Exam</label><input value="'+escAttr(course.name||'')+'" disabled></div>'+
+      '<div class="field"><label class="fl">Subject</label><select onchange="uqSet(\'subject\',this.value)">'+subOpts+'</select></div>'+
+      '<div class="field"><label class="fl">Topic (optional)</label><select onchange="uqSet(\'topic\',this.value)">'+topOpts+'</select></div>'+
+      '<div class="field"><label class="fl">Difficulty</label><select onchange="uqSet(\'diff\',this.value)">'+diffOpts+'</select></div>'+
+      '<div class="field"><label class="fl">Question Type</label><select onchange="uqSet(\'type\',this.value)">'+typeOpts+'</select></div>'+
+      '<div class="field"><label class="fl">Number of Questions</label><input id="uq_count" type="number" min="1" value="'+cnt+'" oninput="uqCount(this.value)"></div>'+
+    '</div>'+
+    '<div class="card" style="margin-top:6px;background:'+(ok?'var(--teal-soft)':'var(--coral-soft)')+';border-color:'+(ok?'#b6e6d8':'#f0c4bc')+'"><div class="flex between center"><div class="fw6 small">'+(ok?'<i class="ti ti-circle-check"></i> ':'<i class="ti ti-alert-triangle"></i> ')+avail+' unused question(s) available</div><div class="tiny muted">E '+by.easy+' · M '+by.medium+' · H '+by.hard+'</div></div><div id="uq_msg" class="tiny" style="margin-top:6px;color:'+(ok?'var(--teal-ink)':'var(--coral-ink)')+'">'+(ok?('Enough for '+cnt+' question(s).'):('Need '+cnt+', only '+avail+' available — reduce the count or change filters.'))+'</div></div>'+
+   '</div>'+
+   '<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" id="uq_go" onclick="uqGenerate()" '+(ok?'':'disabled')+'><i class="ti ti-wand"></i> Generate Set</button></div>');
+}
+function uqSet(f,v){UQ[f]=v;if(f==='subject'){UQ.topic='';UQ.type='';}uqRender();}
+function uqCount(v){UQ.count=Math.max(1,+v||1);var pool=uqPool();var ok=pool.length>=UQ.count;var g=document.getElementById('uq_go');if(g)g.disabled=!ok;var msg=document.getElementById('uq_msg');if(msg){msg.style.color=ok?'var(--teal-ink)':'var(--coral-ink)';msg.textContent=ok?('Enough for '+UQ.count+' question(s).'):('Need '+UQ.count+', only '+pool.length+' available — reduce the count or change filters.');}}
+function uqGenerate(){var mode=UQ.mode||'build';
+  if(mode==='publish'){if(!guard('qp.publish'))return;}else{if(!guard('set.build'))return;}
+  var course=projectById(UQ.course);if(!course)return;if(mode==='build'&&!isCourseUnlocked(course.id))return toast('Unlock the exam first','warn');
+  var n=Math.max(1,+((document.getElementById('uq_count')||{}).value)||1);var pool=uqPool();if(pool.length<n){toast('Only '+pool.length+' unused question(s) match — reduce the count','warn');return;}
+  var pick=shuffleArr(pool).slice(0,n);var sub=bankById(UQ.subject)||{name:'Subject'};var n2=(state.sets.filter(function(s){return s.course===course.id;}).length)+1;
+  var nm='UNUSED_'+String(sub.name||'').replace(/[^A-Za-z0-9]+/g,'').slice(0,12)+'_'+n2;var ids=pick.map(function(q){return q.id;});
+  pick.forEach(function(q){q.used=true;q.usedIn=q.usedIn||[];q.usedIn.push({set:nm,session:'',exam:course.name,tags:[{k:'source',v:'unused'}],ts:Date.now()});});
+  var filt=[UQ.topic||'All topics',UQ.diff||'any difficulty',UQ.type?String(UQ.type).toUpperCase():'any type'].join(' · ');var me=currentUser();
+  var setObj={id:uid('s'),course:course.id,bank:UQ.subject,name:nm,session:'',exam:course.name,tags:[{k:'Source',v:'Unused questions'}],count:ids.length,questionIds:ids,freshIds:ids,shuffled:false,usage:'unused',source:'unused',filters:'Unused · '+(sub.name||'')+' · '+filt,status:(mode==='publish'?'qp_verified':'draft')};
+  if(mode==='publish')setObj.verifiedBy={by:(me&&me.name)||'',ts:Date.now(),via:'unused'};
+  state.sets.push(setObj);
+  save();audit('set.unused.build',{set:nm,count:ids.length,subject:sub.name,mode:mode});closeModal();toast('Built "'+nm+'" from '+ids.length+' unused question(s)','ok');go(SCREEN);
+}
+
+/* ===== Unused-Set dialog v2: multi-select subjects + topics, per-difficulty counts.
+   These declarations supersede the earlier single-select versions above. ===== */
+function uqPool(){var subs=UQ.subjects||[];if(!subs.length)return [];var tops=UQ.topics||[];
+  return (state.questions||[]).filter(function(q){return subs.indexOf(q.bank)>=0&&q.status==='verified'&&!q.used&&(tops.length===0||tops.indexOf(q.topic||'')>=0)&&(!UQ.type||q.type===UQ.type);});}
+function uqByDiff(pool){var by={easy:0,medium:0,hard:0};(pool||[]).forEach(function(q){if(by[q.diff]!=null)by[q.diff]++;});return by;}
+function uqTopicsUnion(){var m={};(UQ.subjects||[]).forEach(function(sid){(((bankById(sid)||{}).topics)||[]).forEach(function(t){m[t]=1;});});return Object.keys(m);}
+function uqModal(mode){mode=mode||'build';
+  if(mode==='publish'){if(!guard('qp.publish'))return;}else{if(!guard('set.build'))return;}
+  var cid=uqCtxCourse(mode);var course=projectById(cid);if(!course)return toast('Open an exam first','warn');
+  if(mode==='build'&&!isCourseUnlocked(course.id))return toast('Unlock the exam with its password first','warn');
+  var subs=(state.banks||[]).filter(function(b){return b.project===course.id;});if(!subs.length)return toast('No subjects in this exam','warn');
+  UQ={course:course.id,subjects:subs.map(function(b){return b.id;}),topics:[],type:'',counts:{easy:0,medium:0,hard:0},mode:mode};uqRender();}
+function uqCapture(){if(document.querySelector('.uq-sub')){var subs=[];document.querySelectorAll('.uq-sub:checked').forEach(function(c){subs.push(c.value);});UQ.subjects=subs;}
+  if(document.querySelector('.uq-top')||true){var tops=[];document.querySelectorAll('.uq-top:checked').forEach(function(c){tops.push(c.value);});UQ.topics=tops;}
+  var ts=document.getElementById('uq_type');if(ts)UQ.type=ts.value;
+  function val(id){var e=document.getElementById(id);return e?Math.max(0,+e.value||0):0;}
+  UQ.counts={easy:val('uq_e'),medium:val('uq_m'),hard:val('uq_h')};}
+function uqSync(){uqCapture();uqRender();}
+function uqRender(){var course=projectById(UQ.course)||{};var subs=(state.banks||[]).filter(function(b){return b.project===UQ.course;});
+  var union=uqTopicsUnion();UQ.topics=(UQ.topics||[]).filter(function(t){return union.indexOf(t)>=0;});
+  var subBoxes=subs.map(function(b){var on=(UQ.subjects||[]).indexOf(b.id)>=0;return '<label class="chip" style="cursor:pointer;'+(on?'background:var(--violet-soft);border-color:#d8d2ff;color:var(--violet-ink)':'')+'"><input type="checkbox" class="uq-sub" value="'+b.id+'" '+(on?'checked':'')+' onchange="uqSync()" style="margin-right:6px;width:auto">'+escAttr(b.name)+'</label>';}).join(' ')||'<span class="tiny muted">No subjects.</span>';
+  var topBoxes=union.length?union.map(function(t){var on=(UQ.topics||[]).indexOf(t)>=0;return '<label class="chip" style="cursor:pointer;'+(on?'background:var(--violet-soft);border-color:#d8d2ff;color:var(--violet-ink)':'')+'"><input type="checkbox" class="uq-top" value="'+escAttr(t)+'" '+(on?'checked':'')+' onchange="uqSync()" style="margin-right:6px;width:auto">'+escAttr(t)+'</label>';}).join(' '):'<span class="tiny muted">Select subject(s) above to choose topics. Leave empty to include all topics.</span>';
+  var types={};(state.questions||[]).filter(function(q){return (UQ.subjects||[]).indexOf(q.bank)>=0;}).forEach(function(q){if(q.type)types[q.type]=1;});
+  var typeOpts='<option value="">Any type</option>'+Object.keys(types).map(function(t){return '<option value="'+escAttr(t)+'" '+(UQ.type===t?'selected':'')+'>'+escAttr(String(t).toUpperCase())+'</option>';}).join('');
+  var pool=uqPool();var by=uqByDiff(pool);var cnt=UQ.counts||{easy:0,medium:0,hard:0};var total=(cnt.easy||0)+(cnt.medium||0)+(cnt.hard||0);
+  var over=(cnt.easy>by.easy)||(cnt.medium>by.medium)||(cnt.hard>by.hard);var ok=total>0&&!over&&(UQ.subjects||[]).length>0;
+  modal('<div class="modal-h"><h3>Create Set from Unused Questions</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'+
+   '<div class="modal-b"><p class="small muted" style="margin:0 0 12px">Pulls only <b>approved (verified)</b> questions that have <b>never</b> been placed in any set. Picked questions are marked <b>Used</b>.</p>'+
+    '<div class="field"><label class="fl">Exam</label><input value="'+escAttr(course.name||'')+'" disabled></div>'+
+    '<div class="field"><label class="fl">Subjects <span class="tiny muted">(select one or more)</span></label><div class="flex gap8 wrap">'+subBoxes+'</div></div>'+
+    '<div class="field"><label class="fl">Topics <span class="tiny muted">(optional &middot; multi-select &middot; empty = all topics)</span></label><div class="flex gap8 wrap">'+topBoxes+'</div></div>'+
+    '<div class="field"><label class="fl">Question Type</label><select id="uq_type" onchange="uqSync()">'+typeOpts+'</select></div>'+
+    '<div class="field"><label class="fl">How many to pull per difficulty</label><div class="flex center gap12 wrap">'+
+      '<div class="flex center gap8"><span class="diff-easy" style="font-size:12px">Easy</span><input id="uq_e" type="number" min="0" max="'+by.easy+'" value="'+(cnt.easy||0)+'" style="width:78px" oninput="uqCalc()"><span class="tiny muted">/ '+by.easy+'</span></div>'+
+      '<div class="flex center gap8"><span class="diff-medium" style="font-size:12px">Medium</span><input id="uq_m" type="number" min="0" max="'+by.medium+'" value="'+(cnt.medium||0)+'" style="width:78px" oninput="uqCalc()"><span class="tiny muted">/ '+by.medium+'</span></div>'+
+      '<div class="flex center gap8"><span class="diff-hard" style="font-size:12px">Hard</span><input id="uq_h" type="number" min="0" max="'+by.hard+'" value="'+(cnt.hard||0)+'" style="width:78px" oninput="uqCalc()"><span class="tiny muted">/ '+by.hard+'</span></div>'+
+    '</div></div>'+
+    '<div class="card" style="margin-top:6px;background:var(--surface-2)"><div class="flex between center"><div class="fw6 small"><i class="ti ti-stack-2"></i> <span id="uq_total">'+total+'</span> question(s) in this set</div><div class="tiny muted">Unused available &middot; E '+by.easy+' &middot; M '+by.medium+' &middot; H '+by.hard+'</div></div><div id="uq_msg" class="tiny" style="margin-top:6px;color:'+(ok?'var(--teal-ink)':'var(--coral-ink)')+'">'+(total===0?'Enter how many easy / medium / hard to pull.':(over?'Requested more than available &mdash; reduce the counts.':'Will build a set of '+total+' question(s).'))+'</div></div>'+
+   '</div>'+
+   '<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" id="uq_go" onclick="uqGenerate()" '+(ok?'':'disabled')+'><i class="ti ti-wand"></i> Generate Set</button></div>');
+}
+function uqCalc(){var pool=uqPool();var by=uqByDiff(pool);function val(id){var e=document.getElementById(id);return e?Math.max(0,+e.value||0):0;}
+  var req={easy:val('uq_e'),medium:val('uq_m'),hard:val('uq_h')};var total=req.easy+req.medium+req.hard;var over=(req.easy>by.easy)||(req.medium>by.medium)||(req.hard>by.hard);var ok=total>0&&!over;
+  var tt=document.getElementById('uq_total');if(tt)tt.textContent=total;var g=document.getElementById('uq_go');if(g)g.disabled=!ok;
+  var msg=document.getElementById('uq_msg');if(msg){msg.style.color=ok?'var(--teal-ink)':'var(--coral-ink)';msg.textContent=total===0?'Enter how many easy / medium / hard to pull.':(over?('Requested more than available — E '+req.easy+'/'+by.easy+' · M '+req.medium+'/'+by.medium+' · H '+req.hard+'/'+by.hard):('Will build a set of '+total+' question(s).'));}}
+function uqGenerate(){var mode=UQ.mode||'build';if(mode==='publish'){if(!guard('qp.publish'))return;}else{if(!guard('set.build'))return;}
+  var course=projectById(UQ.course);if(!course)return;if(mode==='build'&&!isCourseUnlocked(course.id))return toast('Unlock the exam first','warn');
+  uqCapture();if(!(UQ.subjects||[]).length)return toast('Select at least one subject','warn');
+  var pool=uqPool();var by=uqByDiff(pool);var req=UQ.counts||{easy:0,medium:0,hard:0};var total=(req.easy||0)+(req.medium||0)+(req.hard||0);
+  if(total<=0)return toast('Enter how many easy / medium / hard questions to pull','warn');
+  if(req.easy>by.easy||req.medium>by.medium||req.hard>by.hard)return toast('Requested more unused questions than available — reduce the counts','warn');
+  var byPool={easy:[],medium:[],hard:[]};pool.forEach(function(q){if(byPool[q.diff])byPool[q.diff].push(q);});
+  var pick=[];['easy','medium','hard'].forEach(function(d){pick=pick.concat(shuffleArr(byPool[d]).slice(0,req[d]||0));});pick=shuffleArr(pick);var ids=pick.map(function(q){return q.id;});
+  var subNames=(UQ.subjects||[]).map(function(id){return (bankById(id)||{}).name||'';}).filter(Boolean);
+  var label=subNames.length===1?subNames[0]:(subNames.length+'subj');var n2=(state.sets.filter(function(s){return s.course===course.id;}).length)+1;
+  var nm='UNUSED_'+String(label).replace(/[^A-Za-z0-9]+/g,'').slice(0,14)+'_'+n2;
+  pick.forEach(function(q){q.used=true;q.usedIn=q.usedIn||[];q.usedIn.push({set:nm,session:'',exam:course.name,tags:[{k:'source',v:'unused'}],ts:Date.now()});});
+  var topLbl=(UQ.topics||[]).length?((UQ.topics||[]).length+' topic(s)'):'all topics';
+  var filt='Unused · '+subNames.join(', ')+' · '+topLbl+' · E'+(req.easy||0)+'/M'+(req.medium||0)+'/H'+(req.hard||0)+(UQ.type?(' · '+String(UQ.type).toUpperCase()):'');var me=currentUser();
+  var setObj={id:uid('s'),course:course.id,bank:(UQ.subjects||[])[0]||'',name:nm,session:'',exam:course.name,tags:[{k:'Source',v:'Unused questions'}],count:ids.length,questionIds:ids,freshIds:ids,shuffled:false,usage:'unused',source:'unused',dist:{easy:req.easy||0,medium:req.medium||0,hard:req.hard||0},filters:filt,status:(mode==='publish'?'qp_verified':'draft')};
+  if(mode==='publish')setObj.verifiedBy={by:(me&&me.name)||'',ts:Date.now(),via:'unused'};
+  state.sets.push(setObj);save();audit('set.unused.build',{set:nm,count:ids.length,subjects:subNames.length,easy:req.easy||0,medium:req.medium||0,hard:req.hard||0,mode:mode});closeModal();toast('Built "'+nm+'" · '+ids.length+' unused question(s)','ok');go(SCREEN);
+}
+
+/* =========================================================
+   TOPIC-LEVEL ACCESS ENFORCEMENT + "Set topic targets" shortcut.
+   A worker sees/creates only within topics assigned to them (topic-scope rows in
+   `assignments`). Users with no topic-scope assignment keep full subject access (legacy-safe).
+========================================================= */
+function wlMemberFor(u){if(!u)return null;return (DB.team||[]).find(function(t){return t.user_id===u.id||((t.email||'').toLowerCase()===((u.email||'').toLowerCase()));});}
+function wlTopicRule(){ /* -> {broadBanks:{}, topicMap:{bank:{topic:1}}} or null if no restriction */
+  if(!session)return null;var u=currentUser();if(!u)return null;var role=u.role;
+  if(['creator','reviewer','translator','transverifier'].indexOf(role)<0)return null;
+  var m=wlMemberFor(u);if(!m)return null;
+  var asg=(DB.assignments||[]).filter(function(a){return a.status==='active'&&a.teamId===m.id&&a.role===role;});
+  if(!asg.length)return null;
+  var broadBanks={},topicMap={};
+  asg.forEach(function(a){
+    if(a.scopeLevel==='exam'){(DB.banks||[]).filter(function(b){return b.project===a.examId;}).forEach(function(b){broadBanks[b.id]=1;});}
+    else if(a.scopeLevel==='subject'){broadBanks[a.subjectId]=1;}
+    else if(a.scopeLevel==='topic'){(topicMap[a.subjectId]=topicMap[a.subjectId]||{})[a.topic]=1;}
+  });
+  Object.keys(broadBanks).forEach(function(bid){delete topicMap[bid];}); /* broad access wins over topic */
+  if(!Object.keys(topicMap).length)return null;
+  return {broadBanks:broadBanks,topicMap:topicMap};
+}
+function wlAllowedTopics(bankId){var r=wlTopicRule();if(!r)return null;var tm=r.topicMap[bankId];return tm?Object.keys(tm):null;}
+function wlApplyTopicScope(){var r=wlTopicRule();if(!r)return;
+  state.questions=(state.questions||[]).filter(function(q){var tm=r.topicMap[q.bank];if(!tm)return true;return !!tm[q.topic||''];});
+}
+if(typeof rescope==='function'){var _wlOrigRescope=rescope;rescope=function(){var r=_wlOrigRescope.apply(this,arguments);try{wlApplyTopicScope();}catch(e){}return r;};}
+
+/* restrict the create-form topic dropdown to the creator's assigned topics */
+if(RENDER&&typeof RENDER.create==='function'){var _wlOrigCreate=RENDER.create;RENDER.create=function(){_wlOrigCreate.apply(this,arguments);try{wlPruneCreateTopics();}catch(e){}};}
+function wlPruneCreateTopics(){var sel=document.getElementById('q_topic');if(!sel)return;var allowed=wlAllowedTopics(typeof CREATE!=='undefined'?CREATE.bank:null);if(!allowed)return;
+  var ok={};allowed.forEach(function(t){ok[t]=1;});
+  Array.prototype.slice.call(sel.options).forEach(function(o){if(!ok[o.value||o.text])o.remove();});
+  if(!sel.options.length)allowed.forEach(function(t){var o=document.createElement('option');o.text=t;sel.add(o);});
+}
+
+/* "Set topic targets" shortcut inside the team member modal (Both option) */
+if(typeof modalTeam==='function'){var _wlOrigModalTeam=modalTeam;modalTeam=function(editId){_wlOrigModalTeam.apply(this,arguments);try{wlInjectTopicBtn(editId);}catch(e){}};}
+function wlInjectTopicBtn(editId){if(!editId)return;var foot=document.querySelector('#modal .modal-f')||document.querySelector('.modal-f');if(!foot||document.getElementById('wlTopicBtn'))return;
+  var m=(state.team||[]).find(function(t){return t.id===editId;});if(!m||['creator','reviewer','translator','transverifier'].indexOf(m.role)<0)return;
+  var btn=document.createElement('button');btn.id='wlTopicBtn';btn.className='btn';btn.style.marginRight='auto';btn.innerHTML='<i class="ti ti-target"></i> Set topic targets';
+  btn.onclick=function(){wlGotoTopicTargets(editId);};foot.insertBefore(btn,foot.firstChild);
+}
+function wlGotoTopicTargets(teamId){var m=(state.team||[]).find(function(t){return t.id===teamId;})||(DB.team||[]).find(function(t){return t.id===teamId;});if(!m){toast('Save the member first, then set topic targets','warn');return;}
+  closeModal();WL.role=['creator','reviewer','translator','transverifier'].indexOf(m.role)>=0?m.role:'creator';WL.scope='topic';
+  var bid=(m.banks||[])[0];var b=bid?((DB.banks||[]).find(function(x){return x.id===bid;})):null;
+  if(b){WL.examId=b.project;WL.subjectId=b.id;WL.topic=(b.topics||[])[0]||'';}
+  go('workload');
+}
+
+/* =========================================================
+   ENH 7-9: Exam translation languages · language-specific translator/verifier
+   assignment & segregation · automatic pre-populated translation drafts on approval.
+   Adds: LANGS gu/pa · project.translationLangs · team.languages · q.translations[l].auto
+========================================================= */
+try{if(typeof LANGS==='object'){if(!LANGS.gu)LANGS.gu='ગુજરાતી (Gujarati)';if(!LANGS.pa)LANGS.pa='ਪੰਜਾਬੀ (Punjabi)';}}catch(e){}
+(function(){function add(role,beforeId,entry){var a=NAV[role];if(!a||a.some(function(x){return x[0]===entry[0];}))return;var i=beforeId?a.findIndex(function(x){return x[0]===beforeId;}):-1;if(i<0)i=a.length;a.splice(i,0,entry);}
+  try{['itadmin','projadmin'].forEach(function(r){add(r,'audit',['translang','Translation Setup','ti-language']);});}catch(e){}
+})();
+
+function tlExamLangs(examId){var p=projectById(examId)||(DB.projects||[]).find(function(x){return x.id===examId;});return (p&&p.translationLangs)||[];}
+function tlUserLangsList(){var u=currentUser();var m=wlMemberFor(u);return (m&&m.languages)||[];}
+
+/* ---- Enh 7: exam-level Translation Languages ---- */
+RENDER.translang=function(){
+  if(!guard('team.manage')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>Permission denied.</div>';return;}
+  try{$('#pageTitle').firstChild.textContent='Translation Setup';$('#pageSub').textContent='Choose required translation languages per exam — "None" disables the workflow';}catch(e){}
+  var exams=state.projects||[];if(!exams.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams yet.</div>';return;}
+  var langKeys=Object.keys(LANGS);
+  $('#content').innerHTML=exams.map(function(e){var cur=e.translationLangs||[];
+    var boxes=langKeys.map(function(l){var on=cur.indexOf(l)>=0;return '<label class="chip" style="cursor:pointer;'+(on?'background:var(--violet-soft);border-color:#d8d2ff;color:var(--violet-ink)':'')+'"><input type="checkbox" class="tlx_'+e.id+'" value="'+l+'" '+(on?'checked':'')+' style="margin-right:6px;width:auto">'+escAttr(LANGS[l])+'</label>';}).join(' ');
+    return '<div class="card" style="margin-bottom:14px"><div class="card-h"><span class="ttl"><i class="ti ti-folder"></i> '+escAttr(e.name)+'</span>'+(cur.length?'<span class="badge bg-teal" style="margin-left:auto">'+cur.length+' language(s)</span>':'<span class="chip" style="margin-left:auto">None</span>')+'</div>'+
+      '<p class="small muted" style="margin:0 0 10px">Every approved question in this exam must be translated into the selected languages. Leave all unticked = <b>None</b> (translation off).</p>'+
+      '<div class="flex gap8 wrap">'+boxes+'</div>'+
+      '<div class="flex between center" style="margin-top:12px"><span class="tiny muted">Drives auto-translation &amp; translator tasks</span><button class="btn pri sm" onclick="tlSaveExamLangs(\''+e.id+'\')"><i class="ti ti-check"></i> Save Languages</button></div></div>';
+  }).join('');
+};
+function tlSaveExamLangs(eid){var langs=[];document.querySelectorAll('.tlx_'+eid+':checked').forEach(function(c){langs.push(c.value);});
+  var p=(state.projects||[]).find(function(x){return x.id===eid;})||(DB.projects||[]).find(function(x){return x.id===eid;});if(!p)return;
+  p.translationLangs=langs;save();audit('exam.translangs',{exam:p.name,langs:langs});toast(langs.length?('Saved '+langs.length+' language(s) for '+p.name):('Translation set to None for '+p.name),'ok');go('translang');}
+
+/* ---- Enh 8: per-user translation language(s) in the team modal ---- */
+if(typeof modalTeam==='function'){var _tlOrigModalTeam=modalTeam;modalTeam=function(editId){_tlOrigModalTeam.apply(this,arguments);try{tlInjectLangs(editId);}catch(e){}};}
+function tlInjectLangs(editId){var body=document.querySelector('#modal .modal-b');if(!body||document.getElementById('tl_langsec'))return;
+  var roleSel=document.getElementById('m_trole');var role=roleSel?roleSel.value:'';
+  var m=editId?((state.team||[]).find(function(t){return t.id===editId;})):null;var cur=(m&&m.languages)||[];
+  var sec=document.createElement('div');sec.id='tl_langsec';sec.className='field';sec.style.display=(role==='translator'||role==='transverifier')?'':'none';
+  sec.innerHTML='<label class="fl"><i class="ti ti-language"></i> Translation language(s) <span class="tiny muted">— for Translator / Translation Verifier</span></label><div class="flex gap8 wrap">'+Object.keys(LANGS).map(function(l){var on=cur.indexOf(l)>=0;return '<label class="chip" style="cursor:pointer;'+(on?'background:var(--violet-soft);border-color:#d8d2ff;color:var(--violet-ink)':'')+'"><input type="checkbox" class="tl-lang" value="'+l+'" '+(on?'checked':'')+' style="margin-right:6px;width:auto">'+escAttr(LANGS[l])+'</label>';}).join(' ')+'</div>';
+  body.appendChild(sec);
+  if(roleSel)roleSel.addEventListener('change',function(){sec.style.display=(roleSel.value==='translator'||roleSel.value==='transverifier')?'':'none';});
+}
+if(typeof saveTeam==='function'){var _tlOrigSaveTeam=saveTeam;saveTeam=async function(){
+  var langs=[];document.querySelectorAll('.tl-lang:checked').forEach(function(c){langs.push(c.value);});
+  var email=((document.getElementById('m_temail')||{}).value||'').trim().toLowerCase();var roleSel=document.getElementById('m_trole');var role=roleSel?roleSel.value:'';
+  var r=await _tlOrigSaveTeam.apply(this,arguments);
+  try{if(email&&(role==='translator'||role==='transverifier')){var m=(DB.team||[]).find(function(t){return (t.email||'').toLowerCase()===email;});if(m){m.languages=langs;persist();}}}catch(e){}
+  return r;};}
+
+/* ---- Enh 8: language segregation in translator / verifier workspaces ---- */
+function tlApplyLangScope(){if(!session)return;var u=currentUser();if(!u||u.role!=='transverifier')return;var m=wlMemberFor(u);var langs=(m&&m.languages)||[];if(!langs.length)return;
+  state.questions=(state.questions||[]).filter(function(q){var tr=q.translations||{};return langs.some(function(l){return tr[l]&&tr[l].text;});});}
+if(typeof rescope==='function'){var _tlOrigRescope=rescope;rescope=function(){var r=_tlOrigRescope.apply(this,arguments);try{tlApplyLangScope();}catch(e){}return r;};}
+function tlFixTRLang(){var allowed=tlUserLangsList();if(!allowed.length)return;if(typeof TR!=='undefined'&&allowed.indexOf(TR.lang)<0)TR.lang=allowed[0];}
+function tlPruneLangSelect(){var allowed=tlUserLangsList();if(!allowed.length)return;var ok={};allowed.forEach(function(l){ok[l]=1;});
+  document.querySelectorAll('#content select').forEach(function(sel){var isLang=Array.prototype.some.call(sel.options,function(o){return o.value&&LANGS[o.value];});if(!isLang)return;Array.prototype.slice.call(sel.options).forEach(function(o){if(o.value&&LANGS[o.value]&&!ok[o.value])o.remove();});});}
+if(RENDER&&typeof RENDER.translate==='function'){var _tlOrigTranslate=RENDER.translate;RENDER.translate=function(){try{tlFixTRLang();}catch(e){}_tlOrigTranslate.apply(this,arguments);try{tlPruneLangSelect();}catch(e){}};}
+
+/* ---- Enh 9: auto-generate editable translation drafts on approval ---- */
+if(typeof verifyQ==='function'){var _tlOrigVerifyQ=verifyQ;verifyQ=function(id){_tlOrigVerifyQ.apply(this,arguments);try{var q=(state.questions||[]).find(function(x){return x.id===id;});if(q&&q.status==='verified')tlAutoGen(q);}catch(e){}};}
+function tlAutoGen(q){var b=bankById(q.bank);if(!b)return;var langs=tlExamLangs(b.project);if(!langs.length)return;
+  q.translations=q.translations||{};var made=false,plain=stripHTML(q.text||'');
+  langs.forEach(function(l){var T=q.translations[l];if(T&&T.text&&!T.auto)return; /* keep human translation */
+    var pre=(LANGS[l]||l).split(' ')[0];
+    q.translations[l]={text:'['+pre+' draft] '+plain,options:(q.options||[]).map(function(o){return o;}),by:'System (AI draft)',auto:true};made=true;});
+  if(made){logEvent(q,'auto translation draft(s) created · '+langs.map(function(l){return (LANGS[l]||l).split(' ')[0];}).join(', '));audit('translation.autogen',{id:q.id,langs:langs});save();tlBackgroundFill(q,langs);}
+}
+async function tlBackgroundFill(q,langs){if(typeof mtTranslate!=='function')return;
+  for(var i=0;i<langs.length;i++){var l=langs[i];var T=q.translations&&q.translations[l];if(!T||!T.auto)continue;
+    try{var tt=await mtTranslate(q.text,l);var opts=[];var os=q.options||[];for(var j=0;j<os.length;j++){try{opts.push(await mtTranslate(os[j],l));}catch(e){opts.push(os[j]);}}
+      if(q.translations[l]&&q.translations[l].auto){q.translations[l].text=tt;q.translations[l].options=opts;}}catch(e){/* keep editable placeholder if offline */}}
+  try{save();}catch(e){}try{if(SCREEN==='translate'&&RENDER.translate)RENDER.translate();}catch(e){}
+}
+
+/* ---- Enh 9/10: language-wise progress on the Progress dashboard ---- */
+if(RENDER&&typeof RENDER.progress==='function'){var _tlOrigProgress=RENDER.progress;RENDER.progress=function(){_tlOrigProgress.apply(this,arguments);try{tlAppendLangReport();}catch(e){}};}
+function tlAppendLangReport(){var c=document.getElementById('content');if(!c)return;
+  var html=(state.projects||[]).map(function(e){var langs=e.translationLangs||[];if(!langs.length)return '';
+    var qs=(state.questions||[]).filter(function(q){var b=bankById(q.bank);return b&&b.project===e.id&&q.status==='verified';});
+    var rows=langs.map(function(l){var tr=qs.filter(function(q){var T=q.translations&&q.translations[l];return T&&T.text&&!T.auto;}).length;var ver=qs.filter(function(q){return q.transVerified&&q.translations&&q.translations[l];}).length;var pct=qs.length?Math.round(tr/qs.length*100):0;
+      return '<tr><td>'+escAttr(LANGS[l]||l)+'</td><td class="tiny">'+qs.length+'</td><td class="tiny">'+tr+'</td><td class="tiny">'+Math.max(0,qs.length-tr)+'</td><td class="tiny">'+ver+'</td><td style="min-width:120px"><div class="cbar"><div style="width:'+pct+'%"></div></div></td></tr>';}).join('');
+    return '<div class="card" style="margin-bottom:14px"><div class="card-h"><span class="ttl"><i class="ti ti-language"></i> '+escAttr(e.name)+' — translation by language</span></div><table class="tam-tbl"><thead><tr><th>Language</th><th>Approved Qs</th><th>Translated</th><th>Pending</th><th>Verified</th><th>Progress</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }).join('');
+  if(html){var d=document.createElement('div');d.innerHTML='<div class="fw7" style="margin:18px 0 8px"><i class="ti ti-language"></i> Translation progress by language</div>'+html;c.appendChild(d);}
+}
+
+/* ---- Enh 7 (revised): Translation Languages inside the Exam Create & Edit forms ---- */
+function tlLangBoxes(cur){cur=cur||[];return Object.keys(LANGS).map(function(l){var on=cur.indexOf(l)>=0;return '<label class="chip" style="cursor:pointer;'+(on?'background:var(--violet-soft);border-color:#d8d2ff;color:var(--violet-ink)':'')+'"><input type="checkbox" class="prj-lang" value="'+l+'" '+(on?'checked':'')+' style="margin-right:6px;width:auto">'+escAttr(LANGS[l])+'</label>';}).join(' ');}
+function tlInjectExamLangField(cur){var body=document.querySelector('#modal .modal-b');if(!body||document.getElementById('prj_langsec'))return;
+  var sec=document.createElement('div');sec.id='prj_langsec';sec.className='field';
+  sec.innerHTML='<label class="fl"><i class="ti ti-language"></i> Translation Languages <span class="tiny muted">— approved questions must be translated into these (none = translation off)</span></label><div class="flex gap8 wrap">'+tlLangBoxes(cur)+'</div>';
+  body.appendChild(sec);}
+function tlReadExamLangs(){var a=[];document.querySelectorAll('#modal .prj-lang:checked').forEach(function(c){a.push(c.value);});return a;}
+if(typeof modalProject==='function'){var _tlOrigModalProject=modalProject;modalProject=function(){_tlOrigModalProject.apply(this,arguments);try{tlInjectExamLangField([]);}catch(e){}};}
+if(typeof addProject==='function'){var _tlOrigAddProject=addProject;addProject=async function(){var langs=tlReadExamLangs();var nm=((document.getElementById('m_pname')||{}).value||'').trim();var r=await _tlOrigAddProject.apply(this,arguments);try{if(nm){var p=(DB.projects||[]).slice().reverse().find(function(x){return x.name===nm;});if(p){p.translationLangs=langs;persist();}}}catch(e){}return r;};}
+if(typeof modalCourseEdit==='function'){var _tlOrigModalCourseEdit=modalCourseEdit;modalCourseEdit=function(id){_tlOrigModalCourseEdit.apply(this,arguments);try{var p=projectById(id)||(DB.projects||[]).find(function(x){return x.id===id;});tlInjectExamLangField((p&&p.translationLangs)||[]);}catch(e){}};}
+if(typeof saveCourse==='function'){var _tlOrigSaveCourse=saveCourse;saveCourse=async function(id){var langs=tlReadExamLangs();var r=await _tlOrigSaveCourse.apply(this,arguments);try{var p=(DB.projects||[]).find(function(x){return x.id===id;});if(p){p.translationLangs=langs;persist();}}catch(e){}return r;};}
+
+/* =========================================================
+   PHASE 2: Independent per-language translation verification.
+   State lives on q.translations[lang]: .verified/.verifiedBy/.flag. Each verifier acts
+   only on their assigned language(s). Legacy whole-question q.transVerified still counts.
+========================================================= */
+function tlVerifierLangs(){var u=currentUser();if(!u||u.role!=='transverifier')return null;var m=wlMemberFor(u);var langs=(m&&m.languages)||[];return langs.length?langs:null;}
+function tlLangSubmitted(q,l){var T=(q.translations||{})[l];return !!(T&&T.text&&!T.auto);}
+function tlLangVerified(q,l){var T=(q.translations||{})[l];if(T&&T.verified)return true;if(q.transVerified&&T&&T.text)return true;return false;}
+function tlLangRejected(q,l){var T=(q.translations||{})[l];return !!(T&&T.flag);}
+function tlQLangsForVerifier(q){var present=Object.keys(q.translations||{}).filter(function(l){return tlLangSubmitted(q,l);});var vl=tlVerifierLangs();if(vl)present=present.filter(function(l){return vl.indexOf(l)>=0;});return present;}
+function tlQHasWork(q){return tlQLangsForVerifier(q).length>0;}
+function tlQPending(q){return tlQLangsForVerifier(q).some(function(l){return !tlLangVerified(q,l);});}
+function tlSyncWholeVerified(q){var subs=Object.keys(q.translations||{}).filter(function(l){return tlLangSubmitted(q,l);});if(subs.length&&subs.every(function(l){return q.translations[l].verified;})){q.transVerified=true;q.transVerifiedBy={by:'system',ts:Date.now()};}}
+function verifyTranslationL(id,lang){if(!guard('translation.verify'))return;var q=state.questions.find(function(x){return x.id===id;});if(!q)return;var T=(q.translations||{})[lang];if(!T)return;var me=currentUser();T.verified=true;T.verifiedBy={by:me.name,ts:Date.now()};delete T.flag;delete T.flagReason;logEvent(q,'translation verified · '+(LANGS[lang]||lang));audit('translation.verify',{id:id,lang:lang});tlSyncWholeVerified(q);save();toast((LANGS[lang]||lang).split(' ')[0]+' translation verified ✓','ok');if(SCREEN==='transverify')RENDER.transverify();else if(SCREEN==='reviewedit')RENDER.reviewedit();}
+function flagTranslationL(id,lang){if(!guard('translation.verify'))return;var q=state.questions.find(function(x){return x.id===id;});if(!q)return;var T=(q.translations||{})[lang];if(!T)return;var r=(typeof prompt==='function'?(prompt('Reason for rejecting the '+(LANGS[lang]||lang).split(' ')[0]+' translation:')||''):'');var me=currentUser();T.verified=false;T.flag={by:me.name,reason:r,ts:Date.now()};T.flagReason=r;q.transVerified=false;logEvent(q,'translation rejected · '+(LANGS[lang]||lang),r);audit('translation.flag',{id:id,lang:lang});save();toast((LANGS[lang]||lang).split(' ')[0]+' translation rejected for rework','warn');if(SCREEN==='transverify')RENDER.transverify();else if(SCREEN==='reviewedit')RENDER.reviewedit();}
+
+function transVerifyCard(q){var b=bankById(q.bank);var langs=tlQLangsForVerifier(q);
+  var head='<div class="flex gap8 wrap" style="margin-bottom:8px">'+codeBadge(q)+verBadge(q)+diffBadge(q.diff)+marksBadge(q)+mediaBadge(q)+'<span class="chip">'+(b?escAttr(b.name):'')+'</span></div>';
+  var eng='<div class="small" style="margin-bottom:8px"><span class="muted">EN:</span> '+escAttr(stripHTML(q.text||''))+'</div>';
+  var rows=langs.map(function(l){var T=q.translations[l]||{};var ver=tlLangVerified(q,l);var rej=tlLangRejected(q,l);var rtl=RTL.indexOf(l)>=0?' dir="rtl"':'';
+    var act=ver?'<span class="badge bg-green" style="padding:6px 11px"><i class="ti ti-check"></i> Verified</span>':'<button class="btn ok sm" onclick="verifyTranslationL(\''+q.id+'\',\''+l+'\')"><i class="ti ti-check"></i> Approve</button> <button class="btn danger sm" onclick="flagTranslationL(\''+q.id+'\',\''+l+'\')"><i class="ti ti-x"></i> Reject</button>';
+    var opts=(T.options&&T.options.length)?('<div style="display:grid;gap:4px;margin-top:6px">'+T.options.map(function(o,j){return '<div class="small"'+rtl+' style="padding:5px 9px;border-radius:7px;background:var(--surface)">'+String.fromCharCode(65+j)+'. '+(o||'<span class="muted">—</span>')+(j===q.correct?' ✓':'')+'</div>';}).join('')+'</div>'):'';
+    return '<div class="card" style="padding:11px 13px;margin-bottom:8px;background:var(--surface-2)"><div class="flex between center" style="margin-bottom:6px;gap:8px"><span class="chip"><i class="ti ti-language"></i> '+escAttr(LANGS[l]||l)+'</span><div class="flex gap8 center">'+(rej?'<span class="badge bg-coral"><i class="ti ti-flag"></i> Rejected</span>':'')+act+'</div></div><div'+rtl+' style="font-weight:600;font-size:14px">'+(T.text||'<span class="muted">—</span>')+'</div>'+opts+((rej&&T.flag&&T.flag.reason)?('<div class="tiny" style="color:var(--coral-ink);margin-top:6px"><i class="ti ti-info-circle"></i> '+escAttr(T.flag.reason)+'</div>'):'')+'</div>';
+  }).join('')||'<div class="tiny muted">No submitted translations in your language(s) yet.</div>';
+  return '<div class="card" style="margin-bottom:12px">'+head+eng+qImg(q.image)+rows+'</div>';
+}
+RENDER.transverify=function(){var banks=state.banks;
+  function subCard(b){var tr=state.questions.filter(function(q){return q.bank===b.id&&tlQHasWork(q);});var pend=tr.filter(tlQPending).length;var pct=tr.length?Math.round((tr.length-pend)/tr.length*100):0;return '<div class="ccard" onclick="transverifyOpen(\''+b.id+'\')"><div class="flex between center" style="gap:6px"><div class="ccnm">'+escAttr(b.name)+'</div><span class="badge '+(pend?'bg-amber':'bg-green')+'" style="font-size:10px;padding:2px 7px">'+(pend?pend+' to verify':'done')+'</span></div><div class="ccmeta">'+tr.length+' translated · '+(tr.length-pend)+' verified</div><div class="flex center gap8"><div class="cbar"><div style="width:'+pct+'%"></div></div></div></div>';}
+  if(TV_SUB){var b=bankById(TV_SUB);if(!b){TV_SUB=null;return RENDER.transverify();}var course=(DB.projects||[]).find(function(p){return p.id===b.project;});
+    var tr=state.questions.filter(function(q){return q.bank===TV_SUB&&tlQHasWork(q);});var pending=tr.filter(tlQPending);
+    $('#content').innerHTML='<div class="actionrow"><button class="btn" onclick="transverifyBack()"><i class="ti ti-arrow-left"></i> Subjects</button><div style="flex:1"><div class="fw6">'+escAttr(b.name)+'</div><div class="tiny muted">'+(course?escAttr(course.name):'')+'</div></div><span class="badge bg-amber" style="padding:7px 12px">'+pending.length+' to verify</span><span class="badge bg-green" style="padding:7px 12px">'+(tr.length-pending.length)+' done</span></div>'+(pending.length?pending.map(transVerifyCard).join(''):'<div class="empty"><i class="ti ti-checks"></i>All translations in your language(s) are verified for this subject.</div>');
+    return;}
+  var courses=[...new Set(banks.map(function(b){return b.project;}))].map(function(id){return (DB.projects||[]).find(function(p){return p.id===id;});}).filter(Boolean);
+  var html='';
+  courses.forEach(function(c){var cb=banks.filter(function(b){return b.project===c.id;});if(!cb.length)return;html+='<div class="card-h" style="margin:4px 2px 10px"><span class="ttl"><i class="ti ti-folders"></i> '+escAttr(c.name)+'</span></div><div class="cgrid" style="margin-bottom:18px">'+cb.map(subCard).join('')+'</div>';});
+  var orphans=banks.filter(function(b){return !courses.some(function(c){return c.id===b.project;});});
+  if(orphans.length)html+='<div class="card-h" style="margin:4px 2px 10px"><span class="ttl"><i class="ti ti-folder-question"></i> Other Subjects</span></div><div class="cgrid" style="margin-bottom:18px">'+orphans.map(subCard).join('')+'</div>';
+  if(!html)html='<div class="empty"><i class="ti ti-database-off"></i>No translations awaiting your verification.</div>';
+  var vl=tlVerifierLangs();var note=vl?('<span class="chip"><i class="ti ti-language"></i> Your language(s): '+vl.map(function(l){return (LANGS[l]||l).split(' ')[0];}).join(', ')+'</span>'):'';
+  $('#content').innerHTML='<div class="actionrow"><div class="fw6" style="flex:1">Verify translations</div>'+note+'</div>'+html;
+};
+
+/* per-language verified count in the language report */
+function tlAppendLangReport(){var c=document.getElementById('content');if(!c)return;
+  var html=(state.projects||[]).map(function(e){var langs=e.translationLangs||[];if(!langs.length)return '';
+    var qs=(state.questions||[]).filter(function(q){var b=bankById(q.bank);return b&&b.project===e.id&&q.status==='verified';});
+    var rows=langs.map(function(l){var tr=qs.filter(function(q){return tlLangSubmitted(q,l);}).length;var ver=qs.filter(function(q){return tlLangVerified(q,l);}).length;var pct=qs.length?Math.round(tr/qs.length*100):0;
+      return '<tr><td>'+escAttr(LANGS[l]||l)+'</td><td class="tiny">'+qs.length+'</td><td class="tiny">'+tr+'</td><td class="tiny">'+Math.max(0,qs.length-tr)+'</td><td class="tiny">'+ver+'</td><td style="min-width:120px"><div class="cbar"><div style="width:'+pct+'%"></div></div></td></tr>';}).join('');
+    return '<div class="card" style="margin-bottom:14px"><div class="card-h"><span class="ttl"><i class="ti ti-language"></i> '+escAttr(e.name)+' — translation by language</span></div><table class="tam-tbl"><thead><tr><th>Language</th><th>Approved Qs</th><th>Translated</th><th>Pending</th><th>Verified</th><th>Progress</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }).join('');
+  if(html){var d=document.createElement('div');d.innerHTML='<div class="fw7" style="margin:18px 0 8px"><i class="ti ti-language"></i> Translation progress by language</div>'+html;c.appendChild(d);}
+}
+
+/* surface a verifier's rejection back to the translator's editor */
+if(RENDER&&typeof RENDER.translate==='function'){var _tlOrigTranslate3=RENDER.translate;RENDER.translate=function(){_tlOrigTranslate3.apply(this,arguments);try{tlShowRejectionNote();}catch(e){}};}
+function tlShowRejectionNote(){if(typeof TR==='undefined')return;var qsAll=(state.questions||[]).filter(function(q){return q.bank===TR.bank;});var qs=(TR.topic==='all'||!TR.topic)?qsAll:qsAll.filter(function(q){return q.topic===TR.topic;});var q=qs[TR.idx];if(!q)return;var T=(q.translations||{})[TR.lang];if(!T||!T.flag)return;var c=document.getElementById('content');if(!c||document.getElementById('tlRejNote'))return;var d=document.createElement('div');d.id='tlRejNote';d.className='card';d.style.cssText='margin-bottom:12px;background:var(--coral-soft);border-color:#f0c4bc';d.innerHTML='<div class="fw6 small" style="color:var(--coral-ink)"><i class="ti ti-flag"></i> '+(LANGS[TR.lang]||TR.lang).split(' ')[0]+' translation was rejected'+(T.flag.reason?(': '+escAttr(T.flag.reason)):'')+'. Edit it and Mark Done to resubmit.</div>';c.insertBefore(d,c.firstChild);}
+
+/* ============================================================
+   CUSTOM USERS & GRANULAR PRIVILEGES  ("Roles & Privileges")
+   Lets a Management Executive create a single user with a hand-
+   picked mix of module/activity privileges (e.g. create + verify
+   + translate + translation-verify) instead of one fixed role.
+   Self-contained patch: registers a synthetic "custom" role,
+   makes can() consult per-user grants, and derives the left-nav
+   from those grants. Content scoping reuses the existing team
+   assignment path in rescope().
+   ============================================================ */
+(function(){
+  /* 1) Register the synthetic role so existing UI (avatars, badges,
+        dashboards, nav landing in enterApp) never hits undefined. */
+  if(!ROLES.custom)ROLES.custom={name:'Custom User',icon:'ti-user-cog',color:'#7C5CFF',desc:'Privileges assigned individually per user.'};
+  if(!PERMS.custom)PERMS.custom=[];                                        // base empty; grants live on the user
+  if(!NAV.custom)NAV.custom=[['dashboard','Dashboard','ti-layout-dashboard']]; // safe landing for enterApp()'s NAV[role][0][0]
+
+  /* 2) Privilege catalog: module -> activities -> the screen it unlocks. */
+  var PRIV_CATALOG=[
+    {group:'Content Authoring',screen:'create',navLabel:'Create Questions',navIcon:'ti-pencil-plus',acts:[
+      {id:'question.create',label:'Create / author questions'}]},
+    {group:'Content Review',screen:'review',navLabel:'Review Queue',navIcon:'ti-checkup-list',acts:[
+      {id:'question.verify',label:'Verify / approve questions'},
+      {id:'question.edit',label:'Edit questions during review'},
+      {id:'question.reject',label:'Reject / send for rework'}]},
+    {group:'Translation',screen:'translate',navLabel:'Translation Workspace',navIcon:'ti-language',acts:[
+      {id:'question.translate',label:'Translate content'}]},
+    {group:'Translation Verification',screen:'transverify',navLabel:'Verify Translations',navIcon:'ti-checks',acts:[
+      {id:'translation.verify',label:'Verify translations'}]},
+    {group:'Question Papers',screen:'export',navLabel:'Build QP Sets',navIcon:'ti-stack-2',acts:[
+      {id:'set.build',label:'Build question-paper sets'},
+      {id:'export.run',label:'Export sets'},
+      {id:'assesspro.push',label:'Push to AssessPro'}]},
+    {group:'QP Verification',screen:'qpverify',navLabel:'Verify QP Sets',navIcon:'ti-clipboard-check',acts:[
+      {id:'set.verify',label:'Verify QP sets'}]},
+    {group:'QP Publishing',screen:'publish',navLabel:'Publish QP',navIcon:'ti-rocket',acts:[
+      {id:'qp.publish',label:'Publish final question papers'}]},
+    {group:'Subjects / Banks',screen:'qbank',navLabel:'Subjects',navIcon:'ti-database',acts:[
+      {id:'bank.create',label:'Create subjects / banks'},
+      {id:'bank.configure',label:'Configure banks'},
+      {id:'bank.setPassword',label:'Set bank password'},
+      {id:'review.configure',label:'Configure review levels'}]},
+    {group:'Team',screen:'team',navLabel:'Team & Assignments',navIcon:'ti-users',acts:[
+      {id:'team.manage',label:'Manage team & assignments'}]},
+    {group:'Oversight',screen:'audit',navLabel:'Audit Log',navIcon:'ti-history',acts:[
+      {id:'audit.view',label:'View audit log'}]}
+  ];
+  var PLABEL={};PRIV_CATALOG.forEach(function(g){g.acts.forEach(function(a){PLABEL[a.id]=a.label;});});
+  var PRESETS={content:['question.create','question.verify','question.edit','question.reject','question.translate','translation.verify']};
+
+  /* 3) Per-user privilege check: union the user's own grants on top of can(). */
+  var _origCan=can;
+  can=function(action){
+    if(session){var u=currentUser();if(u&&u.perms&&u.perms.indexOf(action)>=0)return true;}
+    return _origCan(action);
+  };
+
+  /* 4) Derive the left-nav for a custom user from their granted privileges. */
+  function customNav(){
+    var u=currentUser();var perms=(u&&u.perms)||[];
+    var items=[['dashboard','Dashboard','ti-layout-dashboard']];
+    PRIV_CATALOG.forEach(function(g){
+      if(g.acts.some(function(a){return perms.indexOf(a.id)>=0;}))items.push([g.screen,g.navLabel,g.navIcon]);
+    });
+    return items;
+  }
+  var _origNavFor=navFor;
+  navFor=function(role){
+    if(role==='custom')return customNav();
+    var items=_origNavFor(role);
+    if(role==='itadmin'&&!items.some(function(x){return x[0]==='roles';})){      // expose page to Management Executive only
+      var i=items.findIndex(function(x){return x[0]==='audit';});if(i<0)i=items.length;
+      items.splice(i,0,['roles','Roles & Privileges','ti-user-shield']);
+    }
+    return items;
+  };
+
+  /* 5) Roles & Privileges admin page (Management Executive only). */
+  RENDER.roles=function(){
+    var content=document.getElementById('content');
+    if(session.role!=='itadmin'&&session.role!=='instadmin'){content.innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only the Commissioner can manage custom privileges.</div>';return;}
+    try{$('#pageTitle').firstChild.textContent='Roles & Privileges';$('#pageSub').textContent='Create users with a custom mix of module privileges';}catch(e){}
+    var cur=currentUser();
+    var list=(DB.users||[]).filter(function(u){return u.role==='custom'&&(!cur.institute_id||u.institute_id===cur.institute_id);});
+    var rows=list.length?list.map(function(u){
+      var chips=((u.roles&&u.roles.length)?u.roles.map(function(rk){var r=ROLES[rk]||{name:rk,color:'#6C5CE7'};return '<span class="badge" style="margin:1px 2px;background:'+r.color+'1a;color:'+r.color+'">'+escAttr(r.name)+'</span>';}):(u.perms||[]).map(function(p){return '<span class="badge bg-violet" style="margin:1px 2px">'+escAttr(PLABEL[p]||p)+'</span>';})).join(' ')||'<span class="tiny muted">no privileges</span>';
+      return '<tr><td class="flex center gap8"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--violet-soft);color:var(--violet-ink)">'+initials(u.name)+'</div>'+escAttr(u.name)+'</td><td class="muted">'+escAttr(u.email)+'</td><td>'+chips+'</td><td style="white-space:nowrap"><button class="btn sm" title="Edit privileges" onclick="rolesEdit(\''+u.id+'\')"><i class="ti ti-edit"></i></button> <button class="btn sm danger" title="Delete" onclick="rolesDelete(\''+u.id+'\')"><i class="ti ti-trash"></i></button></td></tr>';
+    }).join(''):'<tr><td colspan="4"><div class="empty" style="padding:26px"><i class="ti ti-user-shield"></i>No custom users yet — create one.</div></td></tr>';
+    content.innerHTML=
+      '<div class="actionrow" style="justify-content:flex-end"><button class="btn pri" onclick="rolesModal()"><i class="ti ti-user-plus"></i> Create Custom User</button></div>'+
+      '<div class="card"><table><thead><tr><th>Name</th><th>Email</th><th>Roles / Privileges</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  };
+
+  /* Built-in operational roles that can be combined onto one custom user. */
+  var ASSIGN_ROLES=['creator','reviewer','translator','transverifier','publisher','qpverifier','qppublisher'];
+  function roleChipsHTML(selRoles){
+    selRoles=selRoles||[];
+    return ASSIGN_ROLES.map(function(rk){
+      var r=ROLES[rk]||{name:rk,color:'#6C5CE7'};var on=selRoles.indexOf(rk)>=0;
+      return '<label class="chip" style="cursor:pointer;gap:7px;'+(on?'background:var(--violet-soft);border-color:#d8d2ff':'')+'"><input type="checkbox" class="rp-role" value="'+rk+'" '+(on?'checked':'')+' onchange="rolesToggleRole()" style="width:auto;margin:0"><span style="width:9px;height:9px;border-radius:50%;background:'+r.color+';display:inline-block;flex-shrink:0"></span><span class="small">'+escAttr(r.name)+'</span></label>';
+    }).join(' ');
+  }
+  function permMatrixHTML(sel){
+    sel=sel||[];
+    return PRIV_CATALOG.map(function(g){
+      var boxes=g.acts.map(function(a){
+        var ck=sel.indexOf(a.id)>=0?' checked':'';
+        return '<label class="flex center gap8" style="padding:3px 0"><input type="checkbox" class="rp-perm" value="'+a.id+'"'+ck+'> <span class="small">'+escAttr(a.label)+'</span></label>';
+      }).join('');
+      return '<div class="card" style="padding:10px 12px;margin-bottom:8px"><div class="flex between center" style="margin-bottom:4px"><span class="fw6 small"><i class="ti '+g.navIcon+'" style="color:var(--violet)"></i> '+escAttr(g.group)+'</span><label class="tiny muted flex center gap6" style="cursor:pointer"><input type="checkbox" class="rp-group" onchange="rolesToggleGroup(this)"> select all</label></div>'+boxes+'</div>';
+    }).join('');
+  }
+  function bankPickHTML(sel){
+    var banks=(state.banks||[]);
+    if(!banks.length)return '<div class="tiny muted">No subjects available to assign yet.</div>';
+    return banks.map(function(b){
+      var ck=(!sel||sel.indexOf(b.id)>=0)?' checked':'';
+      return '<label class="flex center gap8" style="padding:3px 0"><input type="checkbox" class="rp-bank" value="'+b.id+'"'+ck+'> <span class="small">'+escAttr(b.name)+'</span></label>';
+    }).join('');
+  }
+  window.rolesToggleGroup=function(el){var card=el.closest('.card');if(!card)return;card.querySelectorAll('.rp-perm').forEach(function(c){c.checked=el.checked;});};
+  window.rolesApplyPreset=function(key){var ids=PRESETS[key]||[];document.querySelectorAll('.rp-perm').forEach(function(c){c.checked=ids.indexOf(c.value)>=0;});document.querySelectorAll('.rp-group').forEach(function(c){c.checked=false;});toast('Preset applied — adjust as needed','ok');};
+  /* When roles are (de)selected, fill the privilege matrix with the union of the checked roles' permissions. */
+  window.rolesToggleRole=function(){
+    var roles=[].slice.call(document.querySelectorAll('.rp-role')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
+    var union={};roles.forEach(function(rk){(PERMS[rk]||[]).forEach(function(p){union[p]=1;});});
+    document.querySelectorAll('.rp-perm').forEach(function(c){c.checked=!!union[c.value];});
+    document.querySelectorAll('.rp-group').forEach(function(c){c.checked=false;});
+  };
+
+  function openModal(userId){
+    var u=userId?(DB.users||[]).find(function(x){return x.id===userId;}):null;
+    var tm=u?(DB.team||[]).find(function(t){return t.email&&u.email&&t.email.toLowerCase()===u.email.toLowerCase();}):null;
+    var sel=u?(u.perms||[]):PRESETS.content.slice();      // new users default to the content-lifecycle preset
+    var selRoles=u?(u.roles||[]):['creator','reviewer','translator'];  // default new users to the 3 content roles
+    var banksSel=tm?(tm.banks||[]):null;                  // null => all subjects checked
+    modal('<div class="modal-h"><h3>'+(u?'Edit Custom User':'Create Custom User')+'</h3><button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button></div>'+
+      '<div class="modal-b">'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+          '<div class="field"><label class="fl">Full Name *</label><input id="rp_name" value="'+(u?escAttr(u.name):'')+'" placeholder="e.g. Ishan Verma"></div>'+
+          '<div class="field"><label class="fl">Email (Login ID) *</label><input id="rp_email" type="email" '+(u?'readonly':'')+' value="'+(u?escAttr(u.email):'')+'" placeholder="name@org.edu"></div>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'+
+          '<div class="field"><label class="fl">Mobile</label><input id="rp_mobile" value="'+(u?escAttr(u.mobile||''):'')+'" placeholder="optional"></div>'+
+          '<div class="field"><label class="fl">Password '+(u?'(blank = keep)':'*')+'</label><input id="rp_pw" type="password" placeholder="min 6 chars"></div>'+
+          '<div class="field"><label class="fl">Confirm</label><input id="rp_pw2" type="password" placeholder="re-enter"></div>'+
+        '</div>'+
+        '<div class="fl" style="margin-bottom:6px">Assign roles * <span class="tiny muted">(combine multiple — privileges below fill in automatically)</span></div>'+
+        '<div class="flex gap8 wrap" style="margin-bottom:12px">'+roleChipsHTML(selRoles)+'</div>'+
+        '<details style="margin-bottom:6px"><summary class="small fw6" style="cursor:pointer"><i class="ti ti-adjustments"></i> Fine-tune individual privileges</summary><div style="margin-top:8px">'+permMatrixHTML(sel)+'</div></details>'+
+        '<details style="margin-top:6px"><summary class="small fw6" style="cursor:pointer"><i class="ti ti-database"></i> Assign subjects (content this user can work on)</summary><div style="margin-top:8px">'+bankPickHTML(banksSel)+'</div></details>'+
+      '</div>'+
+      '<div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="rolesSave('+(u?('\''+u.id+'\''):'')+')"><i class="ti ti-check"></i> '+(u?'Save Changes':'Create User')+'</button></div>',true);
+  }
+  window.rolesModal=function(){openModal();};
+  window.rolesEdit=function(id){openModal(id);};
+
+  window.rolesSave=async function(userId){
+    if(!guard('user.create'))return;                       // Management Executive already holds user.create
+    var name=(document.getElementById('rp_name').value||'').trim();
+    var email=(document.getElementById('rp_email').value||'').trim().toLowerCase();
+    var mobile=(document.getElementById('rp_mobile').value||'').trim();
+    var pw=document.getElementById('rp_pw').value||'',pw2=document.getElementById('rp_pw2').value||'';
+    var roles=[].slice.call(document.querySelectorAll('.rp-role')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
+    var perms=[].slice.call(document.querySelectorAll('.rp-perm')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
+    roles.forEach(function(rk){(PERMS[rk]||[]).forEach(function(p){if(perms.indexOf(p)<0)perms.push(p);});});  // assigned-role perms always included
+    var banks=[].slice.call(document.querySelectorAll('.rp-bank')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
+    if(!name)return toast('Full name required','warn');
+    if(!email)return toast('Email (Login ID) required','warn');
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return toast('Enter a valid email address','warn');
+    if(!perms.length)return toast('Assign at least one role or privilege','warn');
+    var cur=currentUser();var instId=cur?cur.institute_id:'';
+    if(userId){
+      var u=(DB.users||[]).find(function(x){return x.id===userId;});if(!u)return toast('User not found','err');
+      if(pw){if(pw.length<6)return toast('Password must be at least 6 characters','warn');if(pw!==pw2)return toast('Passwords do not match','warn');var salt=randomSalt();u.pwSalt=salt;u.pwHash=await hashPassword(pw,salt);}
+      u.name=name;u.mobile=mobile;u.perms=perms;u.roles=roles;
+      var tm=(DB.team||[]).find(function(t){return t.email&&t.email.toLowerCase()===email;});
+      if(tm){tm.name=name;tm.banks=banks;}else{DB.team=DB.team||[];DB.team.push({id:uid('u'),name:name,email:email,role:'custom',banks:banks,institute_id:instId});}
+      persist();audit('role.update',{user:name,perms:perms});
+      closeModal();rescope();go('roles');toast('Custom user updated','ok');
+    }else{
+      if(findUser(email))return toast('That email / login is already in use','warn');
+      if(pw.length<6)return toast('Password must be at least 6 characters','warn');
+      if(pw!==pw2)return toast('Passwords do not match','warn');
+      var acc=await createAccount(name,email,'custom',{mobile:mobile,institute_id:instId,project_id:''},pw);
+      if(!acc)return toast('Could not create user','err');
+      acc.role='custom';acc.perms=perms;acc.roles=roles;
+      DB.team=DB.team||[];
+      if(!DB.team.find(function(t){return t.email&&t.email.toLowerCase()===email;}))DB.team.push({id:uid('u'),name:name,email:email,role:'custom',banks:banks,institute_id:instId});
+      persist();audit('user.create',{name:name,role:'custom'});audit('role.assign',{user:name,roles:roles,perms:perms});
+      closeModal();rescope();go('roles');toast('Custom user created · '+email,'ok');
+    }
+  };
+
+  window.rolesDelete=function(id){
+    var u=(DB.users||[]).find(function(x){return x.id===id;});if(!u)return;
+    if(!confirm('Delete custom user '+u.name+'?'))return;
+    DB.users=DB.users.filter(function(x){return x.id!==id;});
+    DB.team=(DB.team||[]).filter(function(t){return !(t.email&&u.email&&t.email.toLowerCase()===u.email.toLowerCase()&&t.role==='custom');});
+    persist();audit('user.delete',{name:u.name,role:'custom'});rescope();go('roles');toast('Custom user deleted','warn');
+  };
+})();
+
+/* ============================================================
+   CONSOLIDATION: hide "Management Executive" (itadmin) and fold
+   ALL of its responsibilities into "Commissioner" (instadmin).
+   The itadmin role + code are kept intact (still referenced
+   internally); it is only hidden from selection/creation UIs and
+   the Commissioner is elevated to do everything it could.
+   ============================================================ */
+(function(){
+  /* a) Commissioner inherits every Management Executive permission. */
+  try{
+    var merged=(PERMS.instadmin||[]).slice();
+    (PERMS.itadmin||[]).forEach(function(p){if(merged.indexOf(p)<0)merged.push(p);});
+    if(merged.indexOf('task.manage')<0)merged.push('task.manage');
+    PERMS.instadmin=merged;
+  }catch(e){}
+
+  /* b) Commissioner gets the Management Executive navigation
+        (Exams, Team & Assignments, Device Approvals, Roles & Privileges, ...). */
+  var _navBase=navFor;
+  navFor=function(role){
+    if(role==='instadmin')return _navBase('itadmin');   // build the ME menu for the signed-in Commissioner
+    return _navBase(role);
+  };
+
+  /* c) Device-approval chain now terminates at the Commissioner. */
+  deviceApprover=function(role){return 'instadmin';};
+})();
+
 (async function boot(){
   await initDB();
   var APP_VERSION='v1.0-final',APP_BUILD='gyansetu-v1.0-final-2026-06-07';var SEED_VERSION='pcm-mba-pcb-v15';
