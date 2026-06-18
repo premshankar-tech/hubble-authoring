@@ -1060,7 +1060,7 @@ const NAV={
   sysadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['institutes','User Management','ti-users-cog'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   itadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   instadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['users','Management Executive','ti-user-shield'],['devices','Device Approvals','ti-devices'],['audit','Audit Log','ti-history']],
-  projadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['qbank','Subjects','ti-database'],['team','Team & Assignments','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
+  projadmin:[['dashboard','Dashboard','ti-layout-dashboard'],['qbank','Subjects','ti-database'],['usermgmt','User Management','ti-users'],['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']],
   creator:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
   reviewer:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
   translator:[['dashboard','Work','ti-layout-dashboard'],['work','Exams','ti-folders']],
@@ -1272,7 +1272,7 @@ function continueAfterGates(){var u=currentUser();if(!u)return;hideGate();enterA
 function navFor(role){
   if(role==='itadmin'){
     const u=currentUser(); const inst=u&&DB.institutes.find(i=>i.id===u.institute_id);
-    const items=[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['team','Team & Assignments','ti-users'],['devices','Device Approvals','ti-devices']];
+    const items=[['dashboard','Dashboard','ti-layout-dashboard'],['projects','Exams','ti-folders'],['usermgmt','User Management','ti-users'],['devices','Device Approvals','ti-devices']];
     items.push(['audit','Audit Log','ti-history'],['settings','Security & Settings','ti-shield-lock']);
     return items;
   }
@@ -1293,7 +1293,7 @@ function go(screen){ckDestroyAll();
   if(screen==='work'){ if(!WORK._keep)WORK.course=null; WORK._keep=false; }
   document.querySelectorAll('.nav-item[data-screen]').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen||(screen==='reviewedit'&&n.dataset.screen==='work')));
   const titles={dashboard:['Dashboard',''],work:['Exams','Pick an exam, then a subject'],institutes:['Clients','Manage client institutes & their admin logins'],projects:['Exams','Exams for this client'],
-    users:['User Accounts','Create & manage user accounts'],qbank:['Subjects','Subjects & question banks by exam'],team:['Team & Assignments','Assign subjects to creators, reviewers & translators'],
+    users:['User Accounts','Create & manage user accounts'],qbank:['Subjects','Subjects & question banks by exam'],team:['Team & Assignments','Assign subjects to creators, reviewers & translators'],usermgmt:['User Management','Team members, assignments, roles & privileges'],
     create:['Create Questions',''],reviewedit:['Review & Edit','Review and edit the questions you created'],review:['Review Queue','Approve questions through review levels'],translate:['Translation Workspace',''],
     export:['Sets & Export','Build sets, export & push to AssessPro'],audit:['Audit Log','Immutable record of all actions'],devices:['Device Approvals','Approve devices before users can sign in'],settings:['Security & Settings',''],transverify:['Verify Translations','Approve translated content'],qpverify:['Verify QP Sets','Check built question papers'],publish:['Publish QP','Final publish of verified papers']};
   const[t,s]=titles[screen]||[screen,''];
@@ -2127,7 +2127,22 @@ function teamTimeChip(t){const due=t.dueDate;if(!due)return '<span class="tiny m
   else if(d===0)chip=`<span class="badge bg-amber"><i class="ti ti-clock"></i> Due Today</span>`;
   else chip=`<span class="badge ${d<=7?'bg-amber':'bg-green'}"><i class="ti ti-calendar"></i> ${d}d left</span>`;
   return `${chip}<div class="tiny muted" style="margin-top:3px">${ds}</div>`;}
-RENDER.team=()=>{$('#content').innerHTML=`
+/* ===== MERGED "User Management" screen: Team & Assignments + Roles & Privileges ===== */
+let UM_TAB='team';
+function umMount(){return document.getElementById('umBody')||document.getElementById('content');}
+function umCanRoles(){return !!(session&&(session.role==='itadmin'||session.role==='instadmin'));}
+function umRefresh(tab){if(SCREEN==='usermgmt'){UM_TAB=tab||UM_TAB;go('usermgmt');}else{go(tab||'team');}}
+window.umTab=function(t){UM_TAB=t;RENDER.usermgmt();};
+RENDER.usermgmt=function(){
+  var showRoles=umCanRoles();
+  if(!showRoles)UM_TAB='team';
+  var tabs=[['team','Team & Assignments','ti-users']];
+  if(showRoles)tabs.push(['roles','Roles & Privileges','ti-user-shield']);
+  var bar=tabs.length>1?('<div class="um-tabs" style="display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--line)">'+tabs.map(function(t){var on=UM_TAB===t[0];return '<button class="btn '+(on?'pri':'ghost')+'" onclick="umTab(\''+t[0]+'\')" style="border-radius:8px 8px 0 0">'+'<i class="ti '+t[2]+'"></i> '+t[1]+'</button>';}).join('')+'</div>'):'';
+  $('#content').innerHTML=bar+'<div id="umBody"></div>';
+  if(UM_TAB==='roles'&&showRoles){RENDER.roles();}else{RENDER.team();}
+};
+RENDER.team=()=>{umMount().innerHTML=`
   <div class="actionrow"><div class="searchbar"><i class="ti ti-search"></i><input placeholder="Search team..."></div>
     <button class="btn pri" onclick="modalTeam()"><i class="ti ti-user-plus"></i> Add Team Member</button></div>
   <div class="card" style="padding:0;overflow:hidden"><table><thead><tr><th style="padding-left:20px">Member</th><th>Role</th><th>Username</th><th>Mobile</th><th>Assigned Subjects</th><th>Timeline</th><th></th></tr></thead><tbody>
@@ -2200,14 +2215,14 @@ async function saveTeam(){if(!guard('team.manage'))return;
     if(DB.users.some(x=>(!u||x.id!==u.id)&&(x.username||'').toLowerCase()===un))return toast('Username already in use','warn');
     Object.assign(t,{name:n,role,email:em,mobile:mob,username:un,banks,startDate,dueDate});
     if(u)Object.assign(u,{name:n,role,email:em,mobile:mob,username:un});
-    audit('team.update',{name:n,role});save();closeModal();TEAM_EDIT_ID=null;go('team');toast('Member updated','ok');return;
+    audit('team.update',{name:n,role});save();closeModal();TEAM_EDIT_ID=null;umRefresh('team');toast('Member updated','ok');return;
   }
   const pw=$('#m_tpw').value;if(pw.length<6)return toast('Password must be at least 6 characters','warn');
   if(DB.users.some(x=>x.email.toLowerCase()===em))return toast('Email already in use','warn');
   if(DB.users.some(x=>(x.username||'').toLowerCase()===un))return toast('Username already in use','warn');
   const acc=await createAccount(n,em,role,{institute_id:inst,project_id:proj,username:un,mobile:mob},pw);
   state.team.push({id:uid('u'),user_id:acc?acc.id:'',name:n,role,email:em,mobile:mob,username:un,banks:banks,startDate,dueDate,institute_id:inst,project_id:proj});
-  audit('team.add',{name:n,role});save();closeModal();TEAM_EDIT_ID=null;go('team');
+  audit('team.add',{name:n,role});save();closeModal();TEAM_EDIT_ID=null;umRefresh('team');
   toast('Member created · login: '+un,'ok');
 }
 function resetTeamPw(teamId){const t=state.team.find(x=>x.id===teamId)||DB.team.find(x=>x.id===teamId);if(!t)return;const u=userForTeam(t);if(!u)return toast('No login account linked','warn');resetUserPw(u.id);}
@@ -2217,7 +2232,7 @@ function modalAssign(uid_){const u=state.team.find(x=>x.id===uid_);modal(`<div c
   <div class="modal-f"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveAssign('${uid_}')"><i class="ti ti-check"></i> Save</button></div>`);}
 function saveAssign(uid_){if(!guard('team.manage'))return;const u=state.team.find(x=>x.id===uid_);
   u.banks=[...document.querySelectorAll('#modal input[data-bid]:checked')].map(c=>c.dataset.bid);
-  audit('team.assign',{user:u.name,banks:u.banks});save();closeModal();go('team');toast('Assignments updated','ok');}
+  audit('team.assign',{user:u.name,banks:u.banks});save();closeModal();umRefresh('team');toast('Assignments updated','ok');}
 
 /* QUESTION BANKS */
 let WORK={course:null,_keep:false};
@@ -3248,7 +3263,7 @@ try{if(TABLES.indexOf('assignments')<0)TABLES.push('assignments');}catch(e){}
 
 var WL_ROLES=[['creator','Creator','ti-pencil-plus'],['reviewer','Verifier','ti-checkup-list'],['translator','Translator','ti-language'],['transverifier','Translation Verifier','ti-checks']];
 function wlRoleName(r){var x=WL_ROLES.find(function(z){return z[0]===r;});return x?x[1]:r;}
-var WL={scope:'subject',examId:'',subjectId:'',topic:'',role:'creator'};
+var WL={scope:'subject',examId:'',subjectId:'',topic:'',role:'creator',focusTeamId:''};
 function wlAsg(){DB.assignments=DB.assignments||[];return DB.assignments;}
 function wlMember(teamId){return (state.team||[]).find(function(t){return t.id===teamId;})||(DB.team||[]).find(function(t){return t.id===teamId;});}
 function wlSeed(){DB.assignments=DB.assignments||[];if(DB.assignments.length)return;var made=false;(DB.team||[]).forEach(function(t){if(['creator','reviewer','translator','transverifier'].indexOf(t.role)<0)return;var bid=(t.banks||[])[0];if(!bid)return;var b=(DB.banks||[]).find(function(x){return x.id===bid;});if(!b)return;DB.assignments.push({id:uid('as'),scopeLevel:'subject',examId:b.project,subjectId:bid,topic:'',role:t.role,teamId:t.id,target:30,status:'active',ts:Date.now(),createdBy:''});made=true;});if(made)persist();}
@@ -3269,24 +3284,31 @@ RENDER.workload=function(){
   if(!guard('team.manage')){$('#content').innerHTML='<div class="empty"><i class="ti ti-lock"></i>You do not have permission to assign workload.</div>';return;}
   wlSeed();try{$('#pageTitle').firstChild.textContent='Workload Assignments';$('#pageSub').textContent='Assign multiple users with per-user targets at Exam, Subject or Topic level';}catch(e){}
   var exams=state.projects||[];if(!exams.length){$('#content').innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>No exams yet.</div>';return;}
+  var fm=WL.focusTeamId?wlMember(WL.focusTeamId):null;var fbanks=fm?(fm.banks||[]):null;   /* member-focused mode (entered via "Set topic targets") */
+  if(fm&&['creator','reviewer','translator','transverifier'].indexOf(fm.role)>=0)WL.role=fm.role;
+  if(fm){var _fex=exams.filter(function(e){return (state.banks||[]).some(function(b){return b.project===e.id&&fbanks.indexOf(b.id)>=0;});});if(_fex.length)exams=_fex;}
   if(!WL.examId||!exams.some(function(e){return e.id===WL.examId;}))WL.examId=exams[0].id;
   var subs=(state.banks||[]).filter(function(b){return b.project===WL.examId;});
+  if(fm)subs=subs.filter(function(b){return fbanks.indexOf(b.id)>=0;});   /* only this member's assigned subjects */
   if(WL.scope!=='exam'&&(!WL.subjectId||!subs.some(function(b){return b.id===WL.subjectId;})))WL.subjectId=subs.length?subs[0].id:'';
   var topics=WL.scope==='topic'?(((bankById(WL.subjectId)||{}).topics)||[]):[];
   if(WL.scope==='topic'&&(!WL.topic||topics.indexOf(WL.topic)<0))WL.topic=topics.length?topics[0]:'';
   var scopeBtns=[['exam','Exam'],['subject','Subject'],['topic','Topic']].map(function(s){return '<button class="btn '+(WL.scope===s[0]?'pri ':'')+'sm" onclick="wlSetScope(\''+s[0]+'\')">'+s[1]+'</button>';}).join(' ');
   var examSel='<select onchange="WL.examId=this.value;WL.subjectId=\'\';WL.topic=\'\';go(\'workload\')">'+exams.map(function(e){return '<option value="'+e.id+'" '+(WL.examId===e.id?'selected':'')+'>'+escAttr(e.name)+'</option>';}).join('')+'</select>';
-  var subSel=WL.scope!=='exam'?('<select onchange="WL.subjectId=this.value;WL.topic=\'\';go(\'workload\')">'+(subs.length?subs.map(function(b){return '<option value="'+b.id+'" '+(WL.subjectId===b.id?'selected':'')+'>'+escAttr(b.name)+'</option>';}).join(''):'<option>—</option>')+'</select>'):'';
+  var subSel=WL.scope!=='exam'?('<select onchange="WL.subjectId=this.value;WL.topic=\'\';go(\'workload\')">'+(subs.length?subs.map(function(b){return '<option value="'+b.id+'" '+(WL.subjectId===b.id?'selected':'')+'>'+escAttr(b.name)+'</option>';}).join(''):'<option>'+(fm?'— none assigned —':'—')+'</option>')+'</select>'):'';
   var topSel=WL.scope==='topic'?('<select onchange="WL.topic=this.value;go(\'workload\')">'+(topics.length?topics.map(function(t){return '<option value="'+escAttr(t)+'" '+(WL.topic===t?'selected':'')+'>'+escAttr(t)+'</option>';}).join(''):'<option>— no topics —</option>')+'</select>'):'';
-  var roleTabs=WL_ROLES.map(function(r){return '<button class="btn '+(WL.role===r[0]?'pri ':'')+'sm" onclick="WL.role=\''+r[0]+'\';go(\'workload\')"><i class="ti '+r[2]+'"></i> '+r[1]+'</button>';}).join(' ');
+  var roleTabs=fm?('<span class="chip"><i class="ti ti-user"></i> '+escAttr(fm.name)+' · '+wlRoleName(WL.role)+'</span>'):WL_ROLES.map(function(r){return '<button class="btn '+(WL.role===r[0]?'pri ':'')+'sm" onclick="WL.role=\''+r[0]+'\';go(\'workload\')"><i class="ti '+r[2]+'"></i> '+r[1]+'</button>';}).join(' ');
   var members=(state.team||[]).filter(function(t){return t.role===WL.role;});
+  if(fm)members=members.filter(function(t){return t.id===fm.id;});
   var rows=members.map(function(m){var ex=wlAsg().find(function(a){return a.role===WL.role&&a.scopeLevel===WL.scope&&a.examId===WL.examId&&(WL.scope==='exam'||a.subjectId===WL.subjectId)&&(WL.scope!=='topic'||a.topic===WL.topic)&&a.teamId===m.id;});var done=ex?wlCompleted(ex):0;
     return '<div class="wl-mrow flex center gap8" data-tid="'+m.id+'" style="padding:9px 0;border-top:1px solid var(--line)">'+
       '<label class="checkline" style="margin:0;flex:1"><input type="checkbox" class="wl-on" '+(ex?'checked':'')+'> <span class="fw6 small">'+escAttr(m.name)+'</span> <span class="tiny muted">'+escAttr(m.email||'')+'</span></label>'+
       (ex?('<span class="tiny muted">done '+done+'</span>'):'')+
       '<span class="tiny muted">Target</span><input type="number" min="0" class="wl-tgt" value="'+(ex?ex.target:0)+'" style="width:84px">'+
     '</div>';}).join('')||'<div class="tiny muted" style="padding:12px 0">No team members hold the '+wlRoleName(WL.role)+' role yet. Add them in Team &amp; Assignments.</div>';
+  var focusBar=fm?('<div class="card" style="margin-bottom:14px;background:var(--violet-soft);border-color:#d8d2ff"><div class="flex between center gap8"><span class="small"><i class="ti ti-target"></i> Setting targets for <b>'+escAttr(fm.name)+'</b> — only their assigned subjects &amp; topics are shown.</span><button class="btn sm" onclick="wlClearFocus()"><i class="ti ti-users"></i> Show all members</button></div></div>'):'';
   $('#content').innerHTML=
+    focusBar+
     '<div class="card" style="margin-bottom:14px"><div><div class="tiny muted" style="margin-bottom:5px">Assignment scope</div><div class="flex gap8">'+scopeBtns+'</div></div>'+
       '<div class="flex center gap8 wrap" style="margin-top:13px"><span class="tiny muted">Exam</span>'+examSel+(subSel?('<span class="tiny muted">Subject</span>'+subSel):'')+(topSel?('<span class="tiny muted">Topic</span>'+topSel):'')+'</div></div>'+
     '<div class="card"><div class="card-h"><span class="ttl"><i class="ti ti-users"></i> '+wlRoleName(WL.role)+'(s)</span></div>'+
@@ -3295,6 +3317,9 @@ RENDER.workload=function(){
       '<div class="flex between center" style="margin-top:14px"><span class="tiny muted">Assigning at <b>'+WL.scope+'</b> level</span><button class="btn pri" onclick="wlSave()"><i class="ti ti-check"></i> Save Workload</button></div></div>';
 };
 function wlSetScope(s){WL.scope=s;go('workload');}
+function wlClearFocus(){WL.focusTeamId='';go('workload');}
+/* drop member-focus the moment we navigate away from the workload screen, so the general "Workload" view is never stuck filtered */
+if(typeof go==='function'&&!go._wlFocusHook){var _wlOrigGo=go;go=function(screen){if(screen!=='workload'){try{WL.focusTeamId='';}catch(e){}}return _wlOrigGo.apply(this,arguments);};go._wlFocusHook=true;}
 function wlGrant(teamId,exam,scope,sub){var m=(state.team||[]).find(function(t){return t.id===teamId;});if(!m)return;m.banks=m.banks||[];var add=[];if(scope==='exam'){(state.banks||[]).filter(function(b){return b.project===exam;}).forEach(function(b){add.push(b.id);});}else if(sub){add.push(sub);}add.forEach(function(bid){if(m.banks.indexOf(bid)<0)m.banks.push(bid);});}
 function wlSave(){if(!guard('team.manage'))return;var exam=WL.examId,scope=WL.scope,sub=WL.subjectId,top=WL.topic,role=WL.role;
   if(!exam)return toast('Select an exam','warn');if(scope!=='exam'&&!sub)return toast('Select a subject','warn');if(scope==='topic'&&!top)return toast('Select a topic','warn');
@@ -3493,7 +3518,7 @@ function wlInjectTopicBtn(editId){if(!editId)return;var foot=document.querySelec
   btn.onclick=function(){wlGotoTopicTargets(editId);};foot.insertBefore(btn,foot.firstChild);
 }
 function wlGotoTopicTargets(teamId){var m=(state.team||[]).find(function(t){return t.id===teamId;})||(DB.team||[]).find(function(t){return t.id===teamId;});if(!m){toast('Save the member first, then set topic targets','warn');return;}
-  closeModal();WL.role=['creator','reviewer','translator','transverifier'].indexOf(m.role)>=0?m.role:'creator';WL.scope='topic';
+  closeModal();WL.focusTeamId=m.id;WL.role=['creator','reviewer','translator','transverifier'].indexOf(m.role)>=0?m.role:'creator';WL.scope='topic';
   var bid=(m.banks||[])[0];var b=bid?((DB.banks||[]).find(function(x){return x.id===bid;})):null;
   if(b){WL.examId=b.project;WL.subjectId=b.id;WL.topic=(b.topics||[])[0]||'';}
   go('workload');
@@ -3614,13 +3639,19 @@ function flagTranslationL(id,lang){if(!guard('translation.verify'))return;var q=
 
 function transVerifyCard(q){var b=bankById(q.bank);var langs=tlQLangsForVerifier(q);
   var head='<div class="flex gap8 wrap" style="margin-bottom:8px">'+codeBadge(q)+verBadge(q)+diffBadge(q.diff)+marksBadge(q)+mediaBadge(q)+'<span class="chip">'+(b?escAttr(b.name):'')+'</span></div>';
-  var eng='<div class="small" style="margin-bottom:8px"><span class="muted">EN:</span> '+escAttr(stripHTML(q.text||''))+'</div>';
+  /* shared option-list renderer for one side (English or translated) */
+  function optList(opts,rtl){return (opts&&opts.length)?('<div style="display:grid;gap:4px;margin-top:6px">'+opts.map(function(o,j){return '<div class="small"'+rtl+' style="padding:5px 9px;border-radius:7px;background:var(--surface)">'+String.fromCharCode(65+j)+'. '+(o||'<span class="muted">—</span>')+(j===q.correct?' ✓':'')+'</div>';}).join('')+'</div>'):'';}
+  var engText=escAttr(stripHTML(q.text||''));
+  var engOpts=optList((q.options||[]).map(function(o){return escAttr(stripHTML(o||''));}),'');
   var rows=langs.map(function(l){var T=q.translations[l]||{};var ver=tlLangVerified(q,l);var rej=tlLangRejected(q,l);var rtl=RTL.indexOf(l)>=0?' dir="rtl"':'';
     var act=ver?'<span class="badge bg-green" style="padding:6px 11px"><i class="ti ti-check"></i> Verified</span>':'<button class="btn ok sm" onclick="verifyTranslationL(\''+q.id+'\',\''+l+'\')"><i class="ti ti-check"></i> Approve</button> <button class="btn danger sm" onclick="flagTranslationL(\''+q.id+'\',\''+l+'\')"><i class="ti ti-x"></i> Reject</button>';
-    var opts=(T.options&&T.options.length)?('<div style="display:grid;gap:4px;margin-top:6px">'+T.options.map(function(o,j){return '<div class="small"'+rtl+' style="padding:5px 9px;border-radius:7px;background:var(--surface)">'+String.fromCharCode(65+j)+'. '+(o||'<span class="muted">—</span>')+(j===q.correct?' ✓':'')+'</div>';}).join('')+'</div>'):'';
-    return '<div class="card" style="padding:11px 13px;margin-bottom:8px;background:var(--surface-2)"><div class="flex between center" style="margin-bottom:6px;gap:8px"><span class="chip"><i class="ti ti-language"></i> '+escAttr(LANGS[l]||l)+'</span><div class="flex gap8 center">'+(rej?'<span class="badge bg-coral"><i class="ti ti-flag"></i> Rejected</span>':'')+act+'</div></div><div'+rtl+' style="font-weight:600;font-size:14px">'+(T.text||'<span class="muted">—</span>')+'</div>'+opts+((rej&&T.flag&&T.flag.reason)?('<div class="tiny" style="color:var(--coral-ink);margin-top:6px"><i class="ti ti-info-circle"></i> '+escAttr(T.flag.reason)+'</div>'):'')+'</div>';
+    var sidebyside='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+      '<div style="border-right:1px solid var(--line);padding-right:12px"><div class="tiny muted" style="margin-bottom:4px"><i class="ti ti-letter-case"></i> Original (English)</div><div style="font-weight:600;font-size:14px">'+engText+'</div>'+engOpts+'</div>'+
+      '<div'+rtl+'><div class="tiny muted" style="margin-bottom:4px"><i class="ti ti-language"></i> '+escAttr(LANGS[l]||l)+'</div><div style="font-weight:600;font-size:14px">'+(T.text||'<span class="muted">—</span>')+'</div>'+optList(T.options,rtl)+'</div>'+
+    '</div>';
+    return '<div class="card" style="padding:11px 13px;margin-bottom:8px;background:var(--surface-2)"><div class="flex between center" style="margin-bottom:8px;gap:8px"><span class="chip"><i class="ti ti-language"></i> '+escAttr(LANGS[l]||l)+'</span><div class="flex gap8 center">'+(rej?'<span class="badge bg-coral"><i class="ti ti-flag"></i> Rejected</span>':'')+act+'</div></div>'+sidebyside+((rej&&T.flag&&T.flag.reason)?('<div class="tiny" style="color:var(--coral-ink);margin-top:6px"><i class="ti ti-info-circle"></i> '+escAttr(T.flag.reason)+'</div>'):'')+'</div>';
   }).join('')||'<div class="tiny muted">No submitted translations in your language(s) yet.</div>';
-  return '<div class="card" style="margin-bottom:12px">'+head+eng+qImg(q.image)+rows+'</div>';
+  return '<div class="card" style="margin-bottom:12px">'+head+qImg(q.image)+rows+'</div>';
 }
 RENDER.transverify=function(){var banks=state.banks;
   function subCard(b){var tr=state.questions.filter(function(q){return q.bank===b.id&&tlQHasWork(q);});var pend=tr.filter(tlQPending).length;var pct=tr.length?Math.round((tr.length-pend)/tr.length*100):0;return '<div class="ccard" onclick="transverifyOpen(\''+b.id+'\')"><div class="flex between center" style="gap:6px"><div class="ccnm">'+escAttr(b.name)+'</div><span class="badge '+(pend?'bg-amber':'bg-green')+'" style="font-size:10px;padding:2px 7px">'+(pend?pend+' to verify':'done')+'</span></div><div class="ccmeta">'+tr.length+' translated · '+(tr.length-pend)+' verified</div><div class="flex center gap8"><div class="cbar"><div style="width:'+pct+'%"></div></div></div></div>';}
@@ -3722,19 +3753,14 @@ function tlShowRejectionNote(){if(typeof TR==='undefined')return;var qsAll=(stat
   var _origNavFor=navFor;
   navFor=function(role){
     if(role==='custom')return customNav();
-    var items=_origNavFor(role);
-    if(role==='itadmin'&&!items.some(function(x){return x[0]==='roles';})){      // expose page to Management Executive only
-      var i=items.findIndex(function(x){return x[0]==='audit';});if(i<0)i=items.length;
-      items.splice(i,0,['roles','Roles & Privileges','ti-user-shield']);
-    }
-    return items;
+    return _origNavFor(role);   // Roles & Privileges is now a sub-tab of the merged "User Management" screen
   };
 
   /* 5) Roles & Privileges admin page (Management Executive only). */
   RENDER.roles=function(){
-    var content=document.getElementById('content');
+    var content=umMount();
     if(session.role!=='itadmin'&&session.role!=='instadmin'){content.innerHTML='<div class="empty"><i class="ti ti-lock"></i>Only the Commissioner can manage custom privileges.</div>';return;}
-    try{$('#pageTitle').firstChild.textContent='Roles & Privileges';$('#pageSub').textContent='Create users with a custom mix of module privileges';}catch(e){}
+    if(!document.getElementById('umBody')){try{$('#pageTitle').firstChild.textContent='Roles & Privileges';$('#pageSub').textContent='Create users with a custom mix of module privileges';}catch(e){}}
     var cur=currentUser();
     var list=(DB.users||[]).filter(function(u){return u.role==='custom'&&(!cur.institute_id||u.institute_id===cur.institute_id);});
     var rows=list.length?list.map(function(u){
@@ -3832,7 +3858,7 @@ function tlShowRejectionNote(){if(typeof TR==='undefined')return;var qsAll=(stat
       var tm=(DB.team||[]).find(function(t){return t.email&&t.email.toLowerCase()===email;});
       if(tm){tm.name=name;tm.banks=banks;}else{DB.team=DB.team||[];DB.team.push({id:uid('u'),name:name,email:email,role:'custom',banks:banks,institute_id:instId});}
       persist();audit('role.update',{user:name,perms:perms});
-      closeModal();rescope();go('roles');toast('Custom user updated','ok');
+      closeModal();rescope();umRefresh('roles');toast('Custom user updated','ok');
     }else{
       if(findUser(email))return toast('That email / login is already in use','warn');
       if(pw.length<6)return toast('Password must be at least 6 characters','warn');
@@ -3843,7 +3869,7 @@ function tlShowRejectionNote(){if(typeof TR==='undefined')return;var qsAll=(stat
       DB.team=DB.team||[];
       if(!DB.team.find(function(t){return t.email&&t.email.toLowerCase()===email;}))DB.team.push({id:uid('u'),name:name,email:email,role:'custom',banks:banks,institute_id:instId});
       persist();audit('user.create',{name:name,role:'custom'});audit('role.assign',{user:name,roles:roles,perms:perms});
-      closeModal();rescope();go('roles');toast('Custom user created · '+email,'ok');
+      closeModal();rescope();umRefresh('roles');toast('Custom user created · '+email,'ok');
     }
   };
 
@@ -3852,7 +3878,7 @@ function tlShowRejectionNote(){if(typeof TR==='undefined')return;var qsAll=(stat
     if(!confirm('Delete custom user '+u.name+'?'))return;
     DB.users=DB.users.filter(function(x){return x.id!==id;});
     DB.team=(DB.team||[]).filter(function(t){return !(t.email&&u.email&&t.email.toLowerCase()===u.email.toLowerCase()&&t.role==='custom');});
-    persist();audit('user.delete',{name:u.name,role:'custom'});rescope();go('roles');toast('Custom user deleted','warn');
+    persist();audit('user.delete',{name:u.name,role:'custom'});rescope();umRefresh('roles');toast('Custom user deleted','warn');
   };
 })();
 
